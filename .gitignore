@@ -1,0 +1,6 @@
+libwebgpu/build/
+.dart_tool
+.idea
+pubspec.lock
+__pycache__
+libwebgpu/dawn
