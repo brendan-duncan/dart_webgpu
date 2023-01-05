@@ -1,4 +1,4 @@
-libwebgpu/build/
+libwebgpu/_build
 .dart_tool
 .idea
 pubspec.lock

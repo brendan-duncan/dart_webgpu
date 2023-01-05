@@ -1,21 +1,21 @@
 import 'package:webgpu/webgpu.dart' as webgpu;
 
 void main() async {
-  final adapter = await webgpu.Adapter.request(
-      webgpu.AdapterOptions());
+  final adapter = await webgpu.Adapter.request();
 
   print(adapter.features);
   print(adapter.limits);
 
   final device = await adapter.requestDevice(
-      webgpu.DeviceDescriptor(requiredFeatures: adapter.features,
-        requiredLimits: adapter.limits));
+      requiredFeatures: adapter.features,
+      requiredLimits: adapter.limits);
 
-  final module = device.createShaderModule(webgpu.ShaderModuleDescriptor(
-    code: _computeShader
-  ));
-
+  final module = device.createShaderModule(code: _computeShader);
   print(module);
+  
+  final buffer = device.createBuffer(length: 12,
+      usage: webgpu.BufferUsage.copyDst);
+  print(buffer);
 }
 
 const _computeShader = '''

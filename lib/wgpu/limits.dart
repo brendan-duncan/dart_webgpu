@@ -74,42 +74,43 @@ class Limits {
   }
 
   void copyTo(wgpu.WGpuSupportedLimits l) {
-    l.maxUniformBufferBindingSize = maxUniformBufferBindingSize;
-    l.maxStorageBufferBindingSize = maxStorageBufferBindingSize;
-    l.maxBufferSize = maxBufferSize;
-    l.maxTextureDimension1D = maxTextureDimension1D;
-    l.maxTextureDimension2D = maxTextureDimension2D;
-    l.maxTextureDimension3D = maxTextureDimension3D;
-    l.maxTextureArrayLayers = maxTextureArrayLayers;
-    l.maxBindGroups = maxBindGroups;
-    l.maxBindingsPerBindGroup = maxBindingsPerBindGroup;
-    l.maxDynamicUniformBuffersPerPipelineLayout =
-        maxDynamicUniformBuffersPerPipelineLayout;
-    l.maxDynamicStorageBuffersPerPipelineLayout =
-        maxDynamicStorageBuffersPerPipelineLayout;
-    l.maxSampledTexturesPerShaderStage = maxSampledTexturesPerShaderStage;
-    l.maxSamplersPerShaderStage = maxSamplersPerShaderStage;
-    l.maxStorageBuffersPerShaderStage = maxStorageBuffersPerShaderStage;
-    l.maxStorageTexturesPerShaderStage = maxStorageTexturesPerShaderStage;
-    l.maxUniformBuffersPerShaderStage = maxUniformBuffersPerShaderStage;
-    l.minUniformBufferOffsetAlignment = minUniformBufferOffsetAlignment;
-    l.minStorageBufferOffsetAlignment = minStorageBufferOffsetAlignment;
-    l.maxVertexBuffers = maxVertexBuffers;
-    l.maxVertexAttributes = maxVertexAttributes;
-    l.maxVertexBufferArrayStride = maxVertexBufferArrayStride;
-    l.maxInterStageShaderComponents = maxInterStageShaderComponents;
-    l.maxInterStageShaderVariables = maxInterStageShaderVariables;
-    l.maxColorAttachments = maxColorAttachments;
-    l.maxColorAttachmentBytesPerSample = maxColorAttachmentBytesPerSample;
-    l.maxComputeWorkgroupStorageSize = maxComputeWorkgroupStorageSize;
-    l.maxComputeInvocationsPerWorkgroup = maxComputeInvocationsPerWorkgroup;
-    l.maxComputeWorkgroupSizeX = maxComputeWorkgroupSizeX;
-    l.maxComputeWorkgroupSizeY = maxComputeWorkgroupSizeY;
-    l.maxComputeWorkgroupSizeZ = maxComputeWorkgroupSizeZ;
+    l..maxUniformBufferBindingSize = maxUniformBufferBindingSize
+    ..maxStorageBufferBindingSize = maxStorageBufferBindingSize
+    ..maxBufferSize = maxBufferSize
+    ..maxTextureDimension1D = maxTextureDimension1D
+    ..maxTextureDimension2D = maxTextureDimension2D
+    ..maxTextureDimension3D = maxTextureDimension3D
+    ..maxTextureArrayLayers = maxTextureArrayLayers
+    ..maxBindGroups = maxBindGroups
+    ..maxBindingsPerBindGroup = maxBindingsPerBindGroup
+    ..maxDynamicUniformBuffersPerPipelineLayout =
+      maxDynamicUniformBuffersPerPipelineLayout
+    ..maxDynamicStorageBuffersPerPipelineLayout =
+      maxDynamicStorageBuffersPerPipelineLayout
+    ..maxSampledTexturesPerShaderStage = maxSampledTexturesPerShaderStage
+    ..maxSamplersPerShaderStage = maxSamplersPerShaderStage
+    ..maxStorageBuffersPerShaderStage = maxStorageBuffersPerShaderStage
+    ..maxStorageTexturesPerShaderStage = maxStorageTexturesPerShaderStage
+    ..maxUniformBuffersPerShaderStage = maxUniformBuffersPerShaderStage
+    ..minUniformBufferOffsetAlignment = minUniformBufferOffsetAlignment
+    ..minStorageBufferOffsetAlignment = minStorageBufferOffsetAlignment
+    ..maxVertexBuffers = maxVertexBuffers
+    ..maxVertexAttributes = maxVertexAttributes
+    ..maxVertexBufferArrayStride = maxVertexBufferArrayStride
+    ..maxInterStageShaderComponents = maxInterStageShaderComponents
+    ..maxInterStageShaderVariables = maxInterStageShaderVariables
+    ..maxColorAttachments = maxColorAttachments
+    ..maxColorAttachmentBytesPerSample = maxColorAttachmentBytesPerSample
+    ..maxComputeWorkgroupStorageSize = maxComputeWorkgroupStorageSize
+    ..maxComputeInvocationsPerWorkgroup = maxComputeInvocationsPerWorkgroup
+    ..maxComputeWorkgroupSizeX = maxComputeWorkgroupSizeX
+    ..maxComputeWorkgroupSizeY = maxComputeWorkgroupSizeY
+    ..maxComputeWorkgroupSizeZ = maxComputeWorkgroupSizeZ;
   }
 
-  String toString() {
-    return '''maxUniformBufferBindingSize: $maxUniformBufferBindingSize
+  @override
+  String toString() =>
+      '''maxUniformBufferBindingSize: $maxUniformBufferBindingSize
 maxStorageBufferBindingSize: $maxStorageBufferBindingSize
 maxBufferSize: $maxBufferSize
 maxTextureDimension1D: $maxTextureDimension1D
@@ -139,5 +140,4 @@ maxComputeInvocationsPerWorkgroup: $maxComputeInvocationsPerWorkgroup
 maxComputeWorkgroupSizeX: $maxComputeWorkgroupSizeX
 maxComputeWorkgroupSizeY: $maxComputeWorkgroupSizeY
 maxComputeWorkgroupSizeZ: $maxComputeWorkgroupSizeZ''';
-  }
 }

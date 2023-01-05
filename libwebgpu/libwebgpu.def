@@ -1,4 +1,4 @@
-LIBRARY webgpu
+LIBRARY libwebgpu
 EXPORTS
     wgpu_get_num_live_objects
     wgpu_object_destroy

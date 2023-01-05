@@ -1,4 +1,7 @@
 name: webgpu
+version: 0.0.1
+description: >-
+  Dart bindings of the WebGPU graphics API.
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
@@ -9,9 +12,14 @@ dependencies:
 
 dev_dependencies:
   ffigen: ^7.2.4
+  lints: ^2.0.1
 
+# This should be run from libwebgpu/build.py, as it sets up the build folder prior to running ffigen.
 ffigen:
+  name: 'libwebgpu'
+  description: >-
+    Dart bindings of the WebGPU graphics API.
   output: 'lib/ffi/ffi_webgpu.dart'
   headers:
     entry-points:
-      - 'libwebgpu/src/lib_webgpu.h'
+      - 'libwebgpu/lib/lib_webgpu.h'

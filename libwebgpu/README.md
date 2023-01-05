@@ -1,18 +1,15 @@
 # libwebgpu
 
-## Building Dawn
+## Building
 
 ### Requirements
 
 * git
-* Python3
+* Python 3.0+
 * CMake 3.15+
+* Dart ffigen package
 
-Run `python3 build_dawn.py`
+Run `python build_libwebgpu.py`
 
-## Building libwebgpu
-
-mkdir build
-cd build
-cmake ..
-cmake --build .
+This will pull dawn and lib_webgpu from git, build them, and build the ffi Dart
+bindings.

@@ -1,20 +1,18 @@
 import 'dart:ffi';
 import 'dart:io';
 
-import 'ffi_webgpu.dart';
+import 'ffi_webgpu.dart' as lib;
 
 class WGpuLibrary {
   late DynamicLibrary library;
-  late NativeLibrary wgpu;
+  late lib.libwebgpu wgpu;
 
-  static late final WGpuLibrary _global = WGpuLibrary._();
-  static WGpuLibrary get() {
-    return _global;
-  }
+  static final WGpuLibrary _global = WGpuLibrary._();
+  static WGpuLibrary get() => _global;
 
   WGpuLibrary._() {
     library = _dlopenWebGpu();
-    wgpu = NativeLibrary(library);
+    wgpu = lib.libwebgpu(library);
   }
 
   void attachFinalizer(Finalizable object, Pointer<Void> token) {
@@ -25,25 +23,25 @@ class WGpuLibrary {
     finalizer.detach(object);
   }
 
-  void destroyObject(WGpuObjectBase object) {
+  void destroyObject(lib.WGpuObjectBase object) {
     wgpu.wgpu_object_destroy(object);
   }
 
   late final wgpuObjectDestroy =
-      library.lookup<NativeFunction<Void Function(WGpuObjectBase)>>(
+      library.lookup<NativeFunction<Void Function(lib.WGpuObjectBase)>>(
           'wgpu_object_destroy');
 
   late final finalizer = NativeFinalizer(wgpuObjectDestroy.cast());
 
   String _getLibraryPath() {
-    final path = '${Directory.current.path}/libwebgpu/libs/win-Release/';
+    final path = '${Directory.current.path}/libwebgpu/lib';
     if (Platform.isMacOS) {
-      return '$path/libwebgpu.dylib';
+      return '$path/mac-arm64-Release/libwebgpu.dylib';
     }
     if (Platform.isWindows) {
-      return '$path/webgpu.dll';
+      return '$path/win-Release/webgpu.dll';
     }
-    return '$path/libwebgpu.so';
+    return '$path/linux-Release/libwebgpu.so';
   }
 
   DynamicLibrary _dlopenWebGpu() {
@@ -53,4 +51,4 @@ class WGpuLibrary {
 }
 
 WGpuLibrary get webgpu => WGpuLibrary.get();
-NativeLibrary get library => WGpuLibrary.get().wgpu;
+lib.libwebgpu get libwebgpu => WGpuLibrary.get().wgpu;

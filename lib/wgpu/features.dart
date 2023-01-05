@@ -17,10 +17,9 @@ class Features {
 
   Features operator |(Features rhs) => Features(value | rhs.value);
 
-  Features remove(Features f) {
-    return Features(value & ~f.value);
-  }
+  Features remove(Features f) => Features(value & ~f.value);
 
+  @override
   String toString() {
     final s = StringBuffer();
     if (supports(depthClipControl)) {
