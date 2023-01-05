@@ -14,12 +14,12 @@ class ShaderModule extends WGpuObject<wgpu.WGpuShaderModule> {
     final p = calloc<wgpu.WGpuShaderModuleDescriptor>();
     p.ref.code = descriptor.code.toNativeUtf8().cast<Char>();
     // TODO: WGpuShaderModuleDescriptor hints
+
     final obj = library.wgpu_device_create_shader_module(device.object, p);
+    setObject(obj);
+    device.addDependent(this);
+
     calloc.free(p.ref.code);
     calloc.free(p);
-
-    setObject(obj);
-
-    device.addDependent(this);
   }
 }

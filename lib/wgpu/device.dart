@@ -4,6 +4,8 @@ import 'package:ffi/ffi.dart';
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
 import 'adapter.dart';
+import 'buffer_descriptor.dart';
+import 'buffer.dart';
 import 'features.dart';
 import 'limits.dart';
 import 'shader_module_descriptor.dart';
@@ -31,5 +33,9 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
 
   ShaderModule createShaderModule(ShaderModuleDescriptor descriptor) {
     return ShaderModule(this, descriptor);
+  }
+
+  Buffer createBuffer(BufferDescriptor descriptor) {
+    return Buffer(this, descriptor);
   }
 }

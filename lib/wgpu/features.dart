@@ -10,8 +10,8 @@ class Features {
   static const bgra8UnormStorage = Features(0x100);
   static const rg11b10UfloatRenderable = Features(0x200);
 
-  const Features([this.value = 0]);
   final int value;
+  const Features([this.value = 0]);
 
   bool supports(Features features) => (value & features.value) != 0;
 
