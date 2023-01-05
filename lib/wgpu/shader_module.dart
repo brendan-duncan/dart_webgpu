@@ -19,5 +19,7 @@ class ShaderModule extends WGpuObject<wgpu.WGpuShaderModule> {
     calloc.free(p);
 
     setObject(obj);
+
+    device.addDependent(this);
   }
 }

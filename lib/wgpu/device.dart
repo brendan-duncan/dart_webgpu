@@ -17,6 +17,7 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
 
   Device(this.adapter, Pointer device)
     : super(device) {
+    adapter.addDependent(this);
     features = Features(library.wgpu_adapter_or_device_get_features(object));
     _getLimits();
   }
