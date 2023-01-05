@@ -4,17 +4,24 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
-import 'adapter_info.dart';
+//import 'adapter_info.dart';
 import 'adapter_options.dart';
 import 'device.dart';
 import 'device_descriptor.dart';
 import 'limits.dart';
 import 'features.dart';
+import 'wgpu_object.dart';
 
-final _callbackData = <Pointer<Void>, Completer>{};
+class _AdapterCallbackData {
+  Adapter? adapter;
+  Completer completer;
 
-class Adapter implements Finalizable {
-  wgpu.WGpuAdapter adapter;
+  _AdapterCallbackData(this.adapter, this.completer);
+}
+
+final _callbackData = <Pointer<Void>, _AdapterCallbackData>{};
+
+class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
   late Features features;
   late Limits limits;
 
@@ -25,7 +32,7 @@ class Adapter implements Finalizable {
         (options?.forceFallbackAdapter ?? false) ? 1 : 0;
 
     final completer = Completer<Adapter>();
-    _callbackData[o.cast<Void>()] = completer;
+    _callbackData[o.cast<Void>()] = _AdapterCallbackData(null, completer);
 
     final cbp =
         Pointer.fromFunction<Void Function(wgpu.WGpuAdapter, Pointer<Void>)>(
@@ -36,26 +43,18 @@ class Adapter implements Finalizable {
     return completer.future;
   }
 
-  Adapter._(this.adapter) {
-    webgpu.attachFinalizer(this, adapter.cast());
-    features = Features(library.wgpu_adapter_or_device_get_features(adapter))
+  Adapter._(Pointer o)
+    : super(o) {
+    features = Features(library.wgpu_adapter_or_device_get_features(object))
         .remove(Features.shaderF16);
     _getLimits();
   }
 
   void _getLimits() {
     final l = calloc<wgpu.WGpuSupportedLimits>();
-    library.wgpu_adapter_or_device_get_limits(adapter, l);
+    library.wgpu_adapter_or_device_get_limits(object, l);
     limits = Limits.fromWgpu(l);
     calloc.free(l);
-  }
-
-  bool get isValid => adapter != nullptr;
-
-  void destroy() {
-    webgpu.detachFinalizer(this);
-    webgpu.destroyObject(adapter);
-    adapter = nullptr;
   }
 
   Future<Device> requestDevice([DeviceDescriptor? descriptor]) async {
@@ -71,13 +70,13 @@ class Adapter implements Finalizable {
       calloc.free(q);
     }
 
-    _callbackData[o.cast<Void>()] = completer;
+    _callbackData[o.cast<Void>()] = _AdapterCallbackData(this, completer);
 
     final cbp =
         Pointer.fromFunction<Void Function(wgpu.WGpuDevice, Pointer<Void>)>(
             _requestDeviceCB);
 
-    library.wgpu_adapter_request_device_async(adapter, o, cbp, o.cast<Void>());
+    library.wgpu_adapter_request_device_async(object, o, cbp, o.cast<Void>());
 
     return completer.future;
   }
@@ -85,7 +84,7 @@ class Adapter implements Finalizable {
   bool supportsFeature(Features features) => features.supports(features);
 
   bool get isFallbackAdapter =>
-      library.wgpu_adapter_is_fallback_adapter(adapter) == 1 ? true : false;
+      library.wgpu_adapter_is_fallback_adapter(object) == 1 ? true : false;
 
   /*Future<AdapterInfo> requestAdapterInfo() async {
     final completer = Completer<AdapterInfo>();
@@ -119,20 +118,20 @@ class Adapter implements Finalizable {
   }*/
 
   static void _requestDeviceCB(wgpu.WGpuDevice device, Pointer<Void> userData) {
-    final completer = _callbackData[userData];
+    final data = _callbackData[userData];
     _callbackData.remove(userData);
     calloc.free(userData);
-    if (completer != null) {
-      completer.complete(Device(device));
+    if (data?.completer != null) {
+      data!.completer.complete(Device(data.adapter!, device));
     }
   }
 }
 
 void _requestAdapterCB(wgpu.WGpuAdapter adapter, Pointer<Void> userData) {
-  final completer = _callbackData[userData];
+  final data = _callbackData[userData];
   _callbackData.remove(userData);
   calloc.free(userData);
-  if (completer != null) {
-    completer.complete(Adapter._(adapter));
+  if (data?.completer != null) {
+    data!.completer.complete(Adapter._(adapter));
   }
 }

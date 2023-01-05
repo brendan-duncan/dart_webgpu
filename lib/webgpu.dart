@@ -1,8 +1,12 @@
 export 'wgpu/adapter.dart';
+export 'wgpu/adapter_options.dart';
 export 'wgpu/device.dart';
 export 'wgpu/device_descriptor.dart';
 export 'wgpu/features.dart';
 export 'wgpu/limits.dart';
 export 'wgpu/power_preference.dart';
 export 'wgpu/queue_descriptor.dart';
-export 'wgpu/adapter_options.dart';
+export 'wgpu/shader_module.dart';
+export 'wgpu/shader_module_compilation_hint.dart';
+export 'wgpu/shader_module_descriptor.dart';
+export 'wgpu/wgpu_object.dart';
