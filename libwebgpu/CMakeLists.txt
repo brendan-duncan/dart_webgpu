@@ -11,6 +11,7 @@ add_library(webgpu SHARED
     _build/lib_webgpu/lib/lib_webgpu.cpp
     _build/lib_webgpu/lib/lib_webgpu_cpp11.cpp
     _build/lib_webgpu/lib/lib_webgpu_dawn.cpp
+    lib/src/lib_webgpu_dart.cpp
 )
 
 if(WIN32)

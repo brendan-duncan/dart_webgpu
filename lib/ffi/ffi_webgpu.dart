@@ -2845,6 +2845,26 @@ class libwebgpu {
       _wgpu_load_image_bitmap_from_url_asyncPtr.asFunction<
           void Function(ffi.Pointer<ffi.Char>, int, WGpuLoadImageBitmapCallback,
               ffi.Pointer<ffi.Void>)>();
+
+  ffi.Pointer<ffi.Void> wgpu_buffer_get_mapped_range_dart(
+    WGpuBuffer buffer,
+    int startOffset,
+    int size,
+  ) {
+    return _wgpu_buffer_get_mapped_range_dart(
+      buffer,
+      startOffset,
+      size,
+    );
+  }
+
+  late final _wgpu_buffer_get_mapped_range_dartPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Void> Function(WGpuBuffer, double_int53_t,
+              double_int53_t)>>('wgpu_buffer_get_mapped_range_dart');
+  late final _wgpu_buffer_get_mapped_range_dart =
+      _wgpu_buffer_get_mapped_range_dartPtr
+          .asFunction<ffi.Pointer<ffi.Void> Function(WGpuBuffer, int, int)>();
 }
 
 class WGpuObjectDawn extends ffi.Struct {

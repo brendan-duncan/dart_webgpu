@@ -10,7 +10,8 @@ class ShaderModule extends WGpuObject<wgpu.WGpuShaderModule> {
   final Device device;
 
   ShaderModule(this.device,
-      {required String code/*, Map<String, wgpu.WGpuPipelineLayout>? hints*/}) {
+      {required String
+          code /*, Map<String, wgpu.WGpuPipelineLayout>? hints*/}) {
     final p = calloc<wgpu.WGpuShaderModuleDescriptor>();
     p.ref.code = code.toNativeUtf8().cast<Char>();
     // TODO: WGpuShaderModuleDescriptor hints

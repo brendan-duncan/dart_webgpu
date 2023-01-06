@@ -49,8 +49,7 @@ class WGpuObjectBase implements Finalizable {
 
   void destroyDependents() {
     // The dependents list will be modified from destroying the child
-    final dependents = List<WGpuObjectBase>.from(_dependents,
-        growable: false);
+    final dependents = List<WGpuObjectBase>.from(_dependents, growable: false);
     for (final d in dependents) {
       d.destroy();
     }
@@ -59,8 +58,7 @@ class WGpuObjectBase implements Finalizable {
 }
 
 class WGpuObject<T> extends WGpuObjectBase {
-  WGpuObject([Pointer? object, WGpuObjectBase? parent])
-      : super(object, parent);
+  WGpuObject([Pointer? object, WGpuObjectBase? parent]) : super(object, parent);
 
   T get object => objectPtr as T;
 }

@@ -1,18 +1,28 @@
-# dart_webgpu
-Dart bindings of the WebGPU graphics API
+# Dart WebGPU
+
+Dart bindings of the WebGPU graphics API.
 
 
-## Building
+## Building WebGPU Bindings
 
-To build the webgpu bindings, run
+To update the webgpu bindings, run
 `python build_libwebgpu.py`
 
-This will pull Dawn and lib_webgpu from git, build them, and build the ffi Dart
-bindings.
+This will download the required third-party libraries, build them, and generate
+an updated version of the ffi Dart bindings using ffigen.
 
-### Requirements
+### Build Requirements
 
 * git
 * Python 3.0+
 * CMake 3.15+
 * Dart ffigen package
+
+### Third Party Libraries
+
+Dart WebGPU uses the following third party libraries:
+
+- Dawn: https://dawn.googlesource.com/dawn
+  - This is Google's implementation of WebGPU.
+- lib_webgpu: https://github.com/juj/wasm_webgpu
+  - This is a wrapper around Dawn that simplifies the API making binding simpler.

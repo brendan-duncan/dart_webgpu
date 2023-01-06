@@ -24,9 +24,9 @@ class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
   late Features features;
   late Limits limits;
 
-  static Future<Adapter> request({
-      PowerPreference powerPreference = PowerPreference.highPerformance,
-      bool forceFallbackAdapter = false }) {
+  static Future<Adapter> request(
+      {PowerPreference powerPreference = PowerPreference.highPerformance,
+      bool forceFallbackAdapter = false}) {
     final o = calloc<wgpu.WGpuRequestAdapterOptions>();
     o.ref.powerPreference = powerPreference.index;
     o.ref.forceFallbackAdapter = forceFallbackAdapter ? 1 : 0;
@@ -74,11 +74,11 @@ class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
 
     _callbackData[o.cast<Void>()] = _AdapterCallbackData(this, completer);
 
-    final cbp =
+    final fn =
         Pointer.fromFunction<Void Function(wgpu.WGpuDevice, Pointer<Void>)>(
             _requestDeviceCB);
 
-    libwebgpu.wgpu_adapter_request_device_async(object, o, cbp, o.cast<Void>());
+    libwebgpu.wgpu_adapter_request_device_async(object, o, fn, o.cast<Void>());
 
     return completer.future;
   }

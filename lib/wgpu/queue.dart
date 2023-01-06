@@ -13,8 +13,7 @@ import 'wgpu_object.dart';
 class Queue extends WGpuObject<wgpu.WGpuQueue> {
   Device device;
 
-  Queue(this.device, wgpu.WGpuQueue o)
-      : super(o, device);
+  Queue(this.device, wgpu.WGpuQueue o) : super(o, device);
 
   void submit(CommandBuffer commandBuffer) {
     libwebgpu.wgpu_queue_submit_one(object, commandBuffer.object);
@@ -22,23 +21,14 @@ class Queue extends WGpuObject<wgpu.WGpuQueue> {
 
   void writeBuffer(Buffer buffer, int bufferOffset, Uint8List data) {
     // Uint8List is managed data and we need to convert it to native data.
-    final length = min(data.length, buffer.length);
-    final p = malloc<Uint8>(length)
-    ..asTypedList(length)
-    .setAll(0, data);
+    final size = min(data.length, buffer.size);
+    final p = malloc<Uint8>(size)..asTypedList(size).setAll(0, data);
 
     libwebgpu.wgpu_queue_write_buffer(
-        object, buffer.object, bufferOffset, p.cast(), length);
+        object, buffer.object, bufferOffset, p.cast(), size);
 
     malloc.free(p);
   }
-
-  /*void writeTexture(Texture texture, Uint8List data, Extent3D size) {
-  }
-
-  void copyExternalImageToTexture(ExternalImage source, Texture texture,
-      Extent3D size) {
-  }*/
 
   @override
   String toString() => 'Queue';
