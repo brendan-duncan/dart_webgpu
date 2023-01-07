@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:webgpu/webgpu.dart' as wgpu;
 
 void main() async {
+  // Use the Debug build of the webgpu libs
   wgpu.initializeWebGPU(debug: true);
 
   final adapter = await wgpu.Adapter.request();
@@ -16,6 +17,8 @@ void main() async {
     print('ERROR: $message');
   });
 
+  // From: https://web.dev/gpu-compute
+
   final firstMatrix = Float32List.fromList([
     2 /* rows */, 4 /* columns */,
     1, 2, 3, 4,
@@ -24,11 +27,9 @@ void main() async {
   final gpuBufferFirstMatrix = device.createBuffer(
     mappedAtCreation: true,
     size: firstMatrix.lengthInBytes,
-    usage: wgpu.BufferUsage.storage);
-
-  final rangeFirstMatrix = gpuBufferFirstMatrix.getMappedRange();
-  rangeFirstMatrix.as<Float32List>().setAll(0, firstMatrix);
-  gpuBufferFirstMatrix.unmap();
+    usage: wgpu.BufferUsage.storage)
+  ..getMappedRange().as<Float32List>().setAll(0, firstMatrix)
+  ..unmap();
 
   final secondMatrix = Float32List.fromList([
     4 /* rows */, 2 /* columns */,
@@ -40,10 +41,9 @@ void main() async {
   final gpuBufferSecondMatrix = device.createBuffer(
     mappedAtCreation: true,
     size: secondMatrix.lengthInBytes,
-    usage: wgpu.BufferUsage.storage);
-  final rangeSecondMatrix = gpuBufferSecondMatrix.getMappedRange();
-  rangeSecondMatrix.as<Float32List>().setAll(0, secondMatrix);
-  gpuBufferSecondMatrix.unmap();
+    usage: wgpu.BufferUsage.storage)
+  ..getMappedRange().as<Float32List>().setAll(0, secondMatrix)
+  ..unmap();
 
   // Result Matrix
 
