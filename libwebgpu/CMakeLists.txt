@@ -29,7 +29,7 @@ endif()
 target_include_directories(webgpu PUBLIC _build/dawn_libs/include)
 
 set_property(TARGET webgpu PROPERTY
-  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL") # /MD
 
 target_link_libraries(webgpu PUBLIC
     absl_strings_internal.lib

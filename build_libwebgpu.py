@@ -1,4 +1,3 @@
-import argparse
 import errno
 import os
 import platform
@@ -220,6 +219,7 @@ def copy_all_files_in_dir(srcdir, only_suffixes, ignore_basenames, dstdir, recur
 
 
 def fixupDawnCMake():
+    print('#### Fixup Dawn CMake')
     fp = open('CMakeLists.txt', 'rt')
     txt = fp.read()
     fp.close()
@@ -235,45 +235,14 @@ def fixupDawnCMake():
             modified = True
 
     if WINDOWS:
-        # Add _ITERATOR_DEBUG_LEVEL=0 to the compiler defines
-        if txt.find('_ITERATOR_DEBUG_LEVEL') == -1:
-            txt = txt.replace('set(CMAKE_CXX_STANDARD "17")',
-                              'set(CMAKE_CXX_STANDARD "17")\nadd_definitions(-D_ITERATOR_DEBUG_LEVEL=0)')
-            modified = True
-
+        # Disable warnings as errors because for whatever reason, there are warnings in the build
         if txt.find('/WX') != -1:
             txt = txt.replace("/WX", "")
             modified = True
 
-        # On Windows, we need to compile Dawn libraries with /MT
-        # if txt.find('"/MT"') == -1:
-        #     flags = '''
-        # set(CompilerFlags
-        #         CMAKE_CXX_FLAGS
-        #         CMAKE_CXX_FLAGS_DEBUG
-        #         CMAKE_CXX_FLAGS_RELEASE
-        #         CMAKE_CXX_FLAGS_MINSIZEREL
-        #         CMAKE_CXX_FLAGS_RELWITHDEBINFO
-        #         CMAKE_C_FLAGS
-        #         CMAKE_C_FLAGS_DEBUG
-        #         CMAKE_C_FLAGS_RELEASE
-        #         CMAKE_C_FLAGS_MINSIZEREL
-        #         CMAKE_C_FLAGS_RELWITHDEBINFO
-        #         )
-        #
-        # foreach(CompilerFlag ${CompilerFlags})
-        #     string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-        #     //string(REPLACE "/Ob0 /Od /RTC1" "/O2 /Ob2 /DNDEBUG" ${CompilerFlag} "${${CompilerFlag}}")
-        #     set(${CompilerFlag} "${${CompilerFlag}}" CACHE STRING "msvc compiler flags" FORCE)
-        #     message("!!!!!!!!!!!!!!!!!! MSVC flags: ${CompilerFlag}:${${CompilerFlag}}")
-        # endforeach()'''
-        #
-        #     txt = txt.replace('set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")',
-        #                       'set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")\n\n' + flags, 1)
-        #     modified = True
-
     if modified:
-        fp = open('../CMakeLists.txt', 'wt')
+        print('#### WRITING MODIFIED CMakeLists TO', os.getcwd())
+        fp = open('CMakeLists.txt', 'wt')
         fp.write(txt)
         fp.close()
 
@@ -296,28 +265,17 @@ def prepareDawnForBuild(env, depot_tools_path):
 
 
 def buildDawn():
-    usage_str = 'Usage: __init__.py: Git clones Dawn, builds it, and zips it up to a distributable artifact.'
-    parser = argparse.ArgumentParser(description=usage_str)
-
-    parser.add_argument('--compress_7zip', action='store_true', dest='compress_7zip', default=True,
-                        help='If true, .7z archive files are generated. If false, .zip/.tar.gz files are generated')
-    parser.add_argument('--version_name', dest='version_name', default='1.0.0-unity',
-                        help='Specifies the version name for the generated artifacts.')
-    parser.add_argument('--dawn_url', dest='dawn_url', default='https://dawn.googlesource.com/dawn',
-                        help='The git branch to pull for dawn.')
-    parser.add_argument('--dawn_ref', dest='dawn_ref', default='main', help='The git branch to pull for dawn.')
-    parser.add_argument('--arch', dest='arch', default=arch_name(),
-                        help='The name of the architecture for this build.')
-
-    opts = parser.parse_args(sys.argv[1:])
-
     path = os.getcwd()
     build_path = os.path.join(path, '_build')
     dawn_path = os.path.join(build_path, 'dawn')
     depot_tools_path = os.path.join(build_path, 'depot_tools')
     dawn_libs_path = os.path.join(build_path, 'dawn_libs')
 
+    arch = arch_name()
+
     dawn_clone_strategy = 'fast-forward'
+    dawn_url = 'https://dawn.googlesource.com/dawn'
+    dawn_ref = 'main'
 
     depot_tools_clone_url = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
     depot_tools_ref = 'main'
@@ -327,10 +285,11 @@ def buildDawn():
     git_clone_and_update_to(depot_tools_clone_url, depot_tools_path, depot_tools_ref,
                             clone_strategy=depot_tools_clone_strategy)
 
-    print("#### CLONING Dawn from", opts.dawn_url)
-    git_clone_and_update_to(opts.dawn_url, dawn_path, opts.dawn_ref, clone_strategy=dawn_clone_strategy)
+    print("#### CLONING Dawn from", dawn_url)
+    git_clone_and_update_to(dawn_url, dawn_path, dawn_ref, clone_strategy=dawn_clone_strategy)
 
     env = os.environ.copy()
+    # Add depot_tools to the path
     env['PATH'] = depot_tools_path + ':' + env['PATH']
 
     if WINDOWS:
@@ -354,7 +313,7 @@ def buildDawn():
                               '-DTINT_BUILD_SPV_READER=1', '-DTINT_BUILD_WGSL_WRITER=1', f'-DCMAKE_BUILD_TYPE={config}']
 
                 if OSX:
-                    if opts.arch == 'arm64':
+                    if arch == 'arm64':
                         config_cmd.append('-DCMAKE_OSX_ARCHITECTURES=arm64')
                         config_cmd.append('-DCMAKE_SYSTEM_PROCESSOR=arm64')
                     else:
@@ -409,7 +368,7 @@ def buildDawn():
                                  'third_party/spirv-tools/source/opt/libSPIRV-Tools-opt.a']
 
                 lib_dawn_dest_path = os.path.join(dawn_libs_path,
-                                                  os_name() + '-' + opts.arch + '-' + config)
+                                                  os_name() + '-' + arch + '-' + config)
                 mkdir_p(lib_dawn_dest_path)
 
                 for libPath in libraries:
@@ -430,9 +389,13 @@ def fixHeadersForFFIGen(includes_path):
     fp = open(lib_webgpu_fwd, 'rt')
     txt = fp.read()
     fp.close()
+
+    # Remove stdint.h to avoid generating bindings for it
     txt = txt.replace('#include <stdint.h>\n',
                       'typedef int int32_t;\ntypedef unsigned int uint32_t;\ntypedef unsigned long '
                       'long uint64_t;\n')
+
+    # Add a definition for the extern struct WGpuObjectDawn
     txt = txt.replace('typedef struct _WGpuObject *WGpuObjectBase;\n',
                       'struct WGpuObjectDawn { int type; void* dawnObject; };\n'
                       'typedef struct WGpuObjectDawn *WGpuObjectBase;\n')
@@ -446,9 +409,12 @@ def fixHeadersForFFIGen(includes_path):
     fp = open(lib_webgpu, 'rt')
     txt = fp.read()
     fp.close()
+
+    # Remove math.h to avoid genearing bindings for it
     txt = txt.replace('#include <math.h>\n#define WGPU_INFINITY ((double)INFINITY)\n',
                       '#define WGPU_INFINITY (double)0x7ff0000000000000\n')
 
+    # FFIGen doesn't like unbounded array definitions.
     txt = txt.replace('WGpuCompilationMessage messages[];\n',
                       'WGpuCompilationMessage* messages;\n')
 
@@ -462,7 +428,6 @@ def build():
         print('#### BUILDING libwebgpu in', os.getcwd())
         buildDawn()
 
-        #path = os.path.abspath(os.path.dirname(__file__))
         path = os.getcwd()
         build_path = os.path.join(path, '_build')
 
