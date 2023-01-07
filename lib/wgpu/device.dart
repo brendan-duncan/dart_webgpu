@@ -12,6 +12,7 @@ import 'buffer.dart';
 import 'buffer_usage.dart';
 import 'command_encoder.dart';
 import 'compute_pipeline.dart';
+import 'device_lost_info.dart';
 import 'error_filter.dart';
 import 'error_type.dart';
 import 'features.dart';
@@ -21,8 +22,13 @@ import 'queue.dart';
 import 'shader_module.dart';
 import 'wgpu_object.dart';
 
-typedef ErrorScopeCallback = void Function(
+typedef ErrorCallback = void Function(
     Device device, ErrorType type, String message);
+
+class Error {
+  final String message;
+  const Error(this.message);
+}
 
 /// A Device is the top-level interface through which WebGPU interfaces are
 /// created. A Device is asynchronously created from an Adapter through the
@@ -32,8 +38,12 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
   late final Limits limits;
   late final Features features;
   late final Queue queue;
+  final Completer<DeviceLostInfo> _lost;
+  final uncapturedError = <ErrorCallback>[];
 
-  Device(this.adapter, Pointer device) : super(device) {
+  Device(this.adapter, Pointer device)
+    : _lost = Completer<DeviceLostInfo>()
+    , super(device) {
     adapter.addDependent(this);
     features = Features(libwebgpu.wgpu_adapter_or_device_get_features(object));
     queue = Queue(this, libwebgpu.wgpu_device_get_queue(object));
@@ -42,7 +52,25 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
     libwebgpu.wgpu_adapter_or_device_get_limits(object, l);
     limits = Limits.fromWgpu(l);
     calloc.free(l);
+
+    final cb = Pointer.fromFunction<
+        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int,
+            Pointer<Char>, Pointer<Void>)>(_deviceLostCB);
+
+    libwebgpu.wgpu_device_set_lost_callback(object, cb, object.cast());
+
+    _errorCallbackData[object.cast<Void>()] = _DeviceCallbackData(this);
+
+    final fn = Pointer.fromFunction<
+        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int, Pointer<Char>,
+            Pointer<Void>)>(_uncapturedErrorCB);
+
+    libwebgpu.wgpu_device_set_uncapturederror_callback(object, fn,
+        object.cast());
   }
+
+  /// The lost Future will resolve if the device is lost.
+  Future<DeviceLostInfo> get lost => _lost.future;
 
   /// Create a [ShaderModule].
   ShaderModule createShaderModule({required String code}) =>
@@ -139,7 +167,7 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
     libwebgpu.wgpu_device_push_error_scope(object, filter.index);
   }
 
-  void popErrorScopeAsync(ErrorScopeCallback callback) {
+  void popErrorScopeAsync(ErrorCallback callback) {
     _callbackData[object.cast<Void>()] = _ErrorScopeData(this, callback);
 
     final fn = Pointer.fromFunction<
@@ -162,6 +190,34 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
       data.callback(data.device!, t, msg);
     }
   }
+
+  static void _deviceLostCB(Pointer<wgpu.WGpuObjectDawn> device, int reason,
+      Pointer<Char> message, Pointer<Void> userData) {
+    final data = _callbackData[userData];
+    _callbackData.remove(userData);
+    calloc.free(userData);
+    if (data != null) {
+      final msg = message.cast<Utf8>().toDartString();
+      final rsn = reason >= 0 && reason < DeviceLostReason.values.length ?
+          DeviceLostReason.values[reason] : DeviceLostReason.unknown;
+      data.device?._lost.complete(DeviceLostInfo(msg, rsn));
+    }
+  }
+
+  static void _uncapturedErrorCB(Pointer<wgpu.WGpuObjectDawn> device, int type,
+      Pointer<Char> message, Pointer<Void> userData) {
+    final data = _errorCallbackData[userData];
+    if (data != null && data.device != null) {
+      final device = data.device!;
+      final t = type >= 0 && type < ErrorType.values.length
+          ? ErrorType.values[type]
+          : ErrorType.unknown;
+      final msg = message.cast<Utf8>().toDartString();
+      for (final cb in device.uncapturedError) {
+        cb(device, t, msg);
+      }
+    }
+  }
 }
 
 class _DeviceCallbackData {
@@ -170,7 +226,7 @@ class _DeviceCallbackData {
 }
 
 class _ErrorScopeData extends _DeviceCallbackData {
-  ErrorScopeCallback callback;
+  ErrorCallback callback;
   _ErrorScopeData(super.device, this.callback);
 }
 
@@ -180,3 +236,4 @@ class _ComputePipelineCreationData extends _DeviceCallbackData {
 }
 
 final _callbackData = <Pointer<Void>, _DeviceCallbackData>{};
+final _errorCallbackData = <Pointer<Void>, _DeviceCallbackData>{};

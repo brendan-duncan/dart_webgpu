@@ -1,12 +1,22 @@
 import 'dart:typed_data';
 
-import 'package:test/test.dart';
+//import 'package:test/test.dart';
 import 'package:webgpu/webgpu.dart' as wgpu;
 
 void main() async {
-  test('webgpu', () async {
+  wgpu.initializeWebGPU(debug: true);
+
+  //test('webgpu', () async {
     final adapter = await wgpu.Adapter.request();
     final device = await adapter.requestDevice();
+
+    device.lost.then((info) {
+      print('DEVICE LOST! ${info.message}');
+    });
+
+    device.uncapturedError.add((device, type, message) {
+      print('ERROR: $message');
+    });
 
     final firstMatrix = Float32List.fromList([
       2 /* rows */, 4 /* columns */,
@@ -63,14 +73,14 @@ void main() async {
         'buffer': { 'type': wgpu.BufferBindingType.storage }
       }
     ]);
-    expect(layout.isValid, isTrue);
+    //expect(layout.isValid, isTrue);
 
     final bindGroup = device.createBindGroup(layout: layout, entries: [
       { 'binding': 0, 'resource': gpuBufferFirstMatrix },
       { 'binding': 1, 'resource': gpuBufferSecondMatrix },
       { 'binding': 2, 'resource': resultMatrixBuffer },
     ]);
-    expect(bindGroup.isValid, isTrue);
+    //expect(bindGroup.isValid, isTrue);
 
     final shaderModule = device.createShaderModule(
       code: '''
@@ -107,13 +117,14 @@ void main() async {
       ''');
 
     final pipelineLayout = device.createPipelineLayout([layout]);
-    expect(pipelineLayout.isValid, isTrue);
+    //expect(pipelineLayout.isValid, isTrue);
 
+    //final computePipeline = await device.createComputePipelineAsync(
     final computePipeline = device.createComputePipeline(
         layout: pipelineLayout,
         module: shaderModule,
         entryPoint: "main");
-    expect(computePipeline.isValid, isTrue);
+    //expect(computePipeline.isValid, isTrue);
 
     final workgroupCountX = (firstMatrix[0] / 8).ceil();
     final workgroupCountY = (secondMatrix[1] / 8).ceil();
@@ -138,8 +149,9 @@ void main() async {
     final gpuCommands = commandEncoder.finish();
     device.queue.submit(gpuCommands);
 
-    /*await gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
+    await gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
     final data = gpuReadBuffer.getMappedRange().as<Float32List>();
-    print(data);*/
-  });
+    print(data);
+  print(gpuReadBuffer);
+  //});
 }

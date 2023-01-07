@@ -1,3 +1,5 @@
+import 'ffi/wgpu_library.dart';
+
 export 'wgpu/adapter.dart';
 export 'wgpu/bind_group_layout.dart';
 export 'wgpu/buffer.dart';
@@ -22,3 +24,9 @@ export 'wgpu/queue.dart';
 export 'wgpu/shader_module.dart';
 export 'wgpu/shader_state.dart';
 export 'wgpu/wgpu_object.dart';
+
+/// Call initializeWebGPU(debug: true) prior to using any WebGPU commands
+/// to have it load the Debug library instead of the Release library.
+void initializeWebGPU({bool debug = false }) {
+  WGpuLibrary.initialize(debug: debug);
+}
