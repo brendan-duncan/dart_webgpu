@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:webgpu/webgpu.dart' as wgpu;
 
 void main() async {
-  // Use the Debug build of the webgpu libs
-  wgpu.initializeWebGPU(debug: true);
+  // Optionally use the Debug build of the webgpu libs for debugging.
+  //wgpu.initializeWebGPU(debug: true);
 
   final adapter = await wgpu.Adapter.request();
   final device = await adapter.requestDevice();
