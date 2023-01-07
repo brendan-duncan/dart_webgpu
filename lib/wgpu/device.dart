@@ -31,8 +31,10 @@ class Error {
 }
 
 /// A Device is the top-level interface through which WebGPU interfaces are
-/// created. A Device is asynchronously created from an Adapter through the
-/// Adapter.requestDevice method.
+/// created.
+///
+/// A Device is asynchronously created from an Adapter through
+/// Adapter.requestDevice.
 class Device extends WGpuObject<wgpu.WGpuDevice> {
   Adapter adapter;
   late final Limits limits;
