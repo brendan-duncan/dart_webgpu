@@ -121,6 +121,8 @@ void main() async {
       module: shaderModule,
       entryPoint: "main");
 
+  // We can't read directly from the writable results storage buffer,
+  // so we have to copy the results to a buffer we can read from.
   final gpuReadBuffer = device.createBuffer(
       size: resultMatrixBufferSize,
       usage: wgpu.BufferUsage.copyDst | wgpu.BufferUsage.mapRead);
