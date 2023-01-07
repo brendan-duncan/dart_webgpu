@@ -2,6 +2,11 @@
 
 Dart bindings of the WebGPU graphics API.
 
+## WARNING: Experimental, Work In Progress
+
+Development is on-going, and not everything works.
+* Async functions like mapAsync currently trigger a crash in Dawn that
+I'm trying to track down. 
 
 ## Building WebGPU Bindings
 
