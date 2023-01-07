@@ -141,8 +141,7 @@ void main() async {
       source: resultMatrixBuffer,
       destination: gpuReadBuffer);
 
-  final gpuCommands = commandEncoder.finish();
-  device.queue.submit(gpuCommands);
+  device.queue.submit(commandEncoder.finish());
 
   // TODO: mapAsync is triggering a Dawn crash.
   //await gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
