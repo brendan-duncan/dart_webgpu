@@ -1,9 +1,13 @@
+import 'dart:ffi';
 import 'dart:math' show min;
+
+import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
 import 'buffer.dart';
 import 'command_buffer.dart';
+import 'compute_pass_encoder.dart';
 import 'device.dart';
 import 'wgpu_object.dart';
 
@@ -21,7 +25,13 @@ class CommandEncoder extends WGpuObject<wgpu.WGpuCommandEncoder> {
   }
 
   //RenderPassEncoder beginRenderPass(RenderPassDescriptor descriptor) {}
-  //ComputePassEncoder beginComputePass(ComputePassDescriptor? descriptor) {}
+
+  ComputePassEncoder beginComputePass() {
+    final desc = calloc<wgpu.WGpuComputePassDescriptor>();
+    desc.ref.numTimestampWrites = 0;
+    final o = libwebgpu.wgpu_command_encoder_begin_compute_pass(object, desc);
+    return ComputePassEncoder(this, o);
+  }
 
   void copyBufferToBuffer(
       {required Buffer source,

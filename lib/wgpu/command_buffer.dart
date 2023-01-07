@@ -15,5 +15,5 @@ import 'wgpu_object.dart';
 class CommandBuffer extends WGpuObject<wgpu.WGpuCommandBuffer> {
   /// The Device that owns this CommandBuffer.
   Device device;
-  CommandBuffer(this.device, wgpu.WGpuCommandBuffer o) : super(o);
+  CommandBuffer(this.device, wgpu.WGpuCommandBuffer o) : super(o, device);
 }

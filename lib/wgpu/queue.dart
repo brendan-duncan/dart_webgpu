@@ -15,8 +15,16 @@ class Queue extends WGpuObject<wgpu.WGpuQueue> {
 
   Queue(this.device, wgpu.WGpuQueue o) : super(o, device);
 
-  void submit(CommandBuffer commandBuffer) {
-    libwebgpu.wgpu_queue_submit_one(object, commandBuffer.object);
+  void submit(Object commandBufferOrList) {
+    if (commandBufferOrList is CommandBuffer) {
+      libwebgpu.wgpu_queue_submit_one(object, commandBufferOrList.object);
+    } else if (commandBufferOrList is List<CommandBuffer>) {
+      for (final cb in commandBufferOrList) {
+        libwebgpu.wgpu_queue_submit_one(object, cb.object);
+      }
+    } else {
+      throw Exception('Invalid CommandBuffer for Queue.submit.');
+    }
   }
 
   void writeBuffer(Buffer buffer, int bufferOffset, Uint8List data) {

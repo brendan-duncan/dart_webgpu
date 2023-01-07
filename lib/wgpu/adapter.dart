@@ -92,9 +92,7 @@ class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
     final data = _callbackData[userData];
     _callbackData.remove(userData);
     calloc.free(userData);
-    if (data?.completer != null) {
-      data!.completer.complete(Device(data.adapter!, device));
-    }
+    data?.completer.complete(Device(data.adapter!, device));
   }
 }
 
