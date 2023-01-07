@@ -121,26 +121,31 @@ void main() async {
       module: shaderModule,
       entryPoint: "main");
 
+  final gpuReadBuffer = device.createBuffer(
+      size: resultMatrixBufferSize,
+      usage: wgpu.BufferUsage.copyDst | wgpu.BufferUsage.mapRead);
+
+  // Create and execute a CommandBuffer to execute the compute shader and
+  // copy the results to gpuReadBuffer.
+
   final workgroupCountX = (firstMatrix[0] / 8).ceil();
   final workgroupCountY = (secondMatrix[1] / 8).ceil();
 
   final commandEncoder = device.createCommandEncoder();
 
+  // Execute the compute shader
   commandEncoder.beginComputePass()
   ..setPipeline(computePipeline)
   ..setBindGroup(0, bindGroup)
   ..dispatchWorkgroups(workgroupCountX, workgroupCountY)
   ..end();
 
-  final gpuReadBuffer = device.createBuffer(
-    size: resultMatrixBufferSize,
-    usage: wgpu.BufferUsage.copyDst | wgpu.BufferUsage.mapRead);
-
-  // Encode commands for copying buffer to buffer.
+  // Copy the results storage buffer to a buffer we can read from.
   commandEncoder.copyBufferToBuffer(
       source: resultMatrixBuffer,
       destination: gpuReadBuffer);
 
+  // Finalize and execute the commands.
   device.queue.submit(commandEncoder.finish());
 
   // TODO: mapAsync is triggering a Dawn crash.
