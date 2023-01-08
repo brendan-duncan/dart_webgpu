@@ -10,7 +10,7 @@ class DepthStencilState {
   final StencilFaceState stencilBack;
   final int stencilReadMask;
   final int stencilWriteMask;
-  final num depthBias;
+  final int depthBias;
   final num depthBiasSlopeScale;
   final num depthBiasClamp;
 

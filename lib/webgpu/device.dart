@@ -158,9 +158,24 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
       PipelineLayout(this, layouts);
 
   /// Create a [RenderPipeline] synchronously
-  /*RenderPipeline createRenderPipeline(RenderPipelineDescriptor descriptor) {
-    RenderPipeline(this);
-  }*/
+  RenderPipeline createRenderPipeline(RenderPipelineDescriptor descriptor) {
+    final d = descriptor.toNative();
+    final o = libwebgpu.wgpu_device_create_render_pipeline(object, d);
+    final pipeline = RenderPipeline(this, o);
+    descriptor.deleteNative(d);
+    return pipeline;
+  }
+
+  Future<RenderPipeline> createRenderPipelineAsync(
+      RenderPipelineDescriptor descriptor) async {
+    //final completer = Completer<RenderPipeline>();
+    final d = descriptor.toNative();
+    final o = libwebgpu.wgpu_device_create_render_pipeline(object, d);
+    final pipeline = RenderPipeline(this, o);
+    descriptor.deleteNative(d);
+    return pipeline;
+    //return completer.future;
+  }
 
   /// Create a [ComputePipeline] synchronously
   ComputePipeline createComputePipeline(
@@ -170,10 +185,9 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
       Map<String, num>? constants}) {
     final entryStr = entryPoint.toNativeUtf8().cast<Char>();
 
-    final sizeofConstant = sizeOf<wgpu.WGpuPipelineConstant>();
     final numConstants = constants?.keys.length ?? 0;
     final constantsBuffer =
-        malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
+        malloc<wgpu.WGpuPipelineConstant>(numConstants);
 
     final o = libwebgpu.wgpu_device_create_compute_pipeline(object,
         module.object, entryStr, layout.object, constantsBuffer, numConstants);
