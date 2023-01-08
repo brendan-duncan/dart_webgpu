@@ -13,7 +13,7 @@ import 'wgpu_object.dart';
 /// Encodes commands for a compute pass in a [CommandEncoder].
 /// Created from CommandEncoder.beginComputePass.
 class ComputePassEncoder extends WGpuObject<wgpu.WGpuComputePassEncoder> {
-  CommandEncoder encoder;
+  final CommandEncoder encoder;
 
   ComputePassEncoder(this.encoder, wgpu.WGpuComputePassEncoder o)
       : super(o, encoder);
@@ -33,22 +33,22 @@ class ComputePassEncoder extends WGpuObject<wgpu.WGpuComputePassEncoder> {
       }
     }
 
-    libwebgpu.wgpu_encoder_set_bind_group(object, index, bindGroup.object,
-        dynamicOffsetsPtr, numDynamicOffsets);
+    libwebgpu.wgpu_encoder_set_bind_group(
+        object, index, bindGroup.object, dynamicOffsetsPtr, numDynamicOffsets);
   }
 
   /// Dispatch work to be performed with the current ComputePipeline.
-  void dispatchWorkgroups(int workgroupCountX, [int workgroupCountY = 1,
-      int workgroupCountZ = 1]) {
-    libwebgpu.wgpu_compute_pass_encoder_dispatch_workgroups(object,
-        workgroupCountX, workgroupCountY, workgroupCountZ);
+  void dispatchWorkgroups(int workgroupCountX,
+      [int workgroupCountY = 1, int workgroupCountZ = 1]) {
+    libwebgpu.wgpu_compute_pass_encoder_dispatch_workgroups(
+        object, workgroupCountX, workgroupCountY, workgroupCountZ);
   }
 
   /// Dispatch work to be performed with the current ComputePipeline using
   /// parameters read from a [Buffer].
   void dispatchWorkgroupsIndirect(Buffer indirectBuffer, int indirectOffset) {
-    libwebgpu.wgpu_compute_pass_encoder_dispatch_workgroups_indirect(object,
-        indirectBuffer.object, indirectOffset);
+    libwebgpu.wgpu_compute_pass_encoder_dispatch_workgroups_indirect(
+        object, indirectBuffer.object, indirectOffset);
   }
 
   /// Completes recording of the compute pass commands sequence.

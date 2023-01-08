@@ -15,7 +15,7 @@ import 'wgpu_object.dart';
 /// is created from a Device through the Device.createCommandEncoder method.
 class CommandEncoder extends WGpuObject<wgpu.WGpuCommandEncoder> {
   /// The [Device] that created this CommandEncoder.
-  Device device;
+  final Device device;
 
   CommandEncoder(this.device) {
     final o =
@@ -45,32 +45,6 @@ class CommandEncoder extends WGpuObject<wgpu.WGpuCommandEncoder> {
     libwebgpu.wgpu_command_encoder_copy_buffer_to_buffer(object, source.object,
         sourceOffset, destination.object, destinationOffset, size);
   }
-
-  /*void copyBufferToTexture(
-      ImageCopyBuffer source,
-      ImageCopyTexture destination,
-      Extent3D copySize) {}
-
-  void copyTextureToBuffer(
-      ImageCopyTexture source,
-      ImageCopyBuffer destination,
-      Extent3D copySize) {}
-
-  void copyTextureToTexture(
-      ImageCopyTexture source,
-      ImageCopyTexture destination,
-      Extent3D copySize) {}
-
-  void clearBuffer(Buffer buffer, { int offset = 0, int size = 0 }) {}
-
-  void writeTimestamp(QuerySet querySet, int queryIndex) {}
-
-  void resolveQuerySet(
-      QuerySet querySet,
-      int firstQuery,
-      int queryCount,
-      Buffer destination,
-      int destinationOffset) {}*/
 
   CommandBuffer finish() {
     final buffer = libwebgpu.wgpu_encoder_finish(object);

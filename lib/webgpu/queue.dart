@@ -11,7 +11,7 @@ import 'device.dart';
 import 'wgpu_object.dart';
 
 class Queue extends WGpuObject<wgpu.WGpuQueue> {
-  Device device;
+  final Device device;
 
   Queue(this.device, wgpu.WGpuQueue o) : super(o, device);
 

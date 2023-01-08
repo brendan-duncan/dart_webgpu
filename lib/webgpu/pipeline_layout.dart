@@ -11,7 +11,7 @@ import 'wgpu_object.dart';
 /// objects set up during command encoding in setBindGroup(), and the shaders
 /// of the pipeline set by setPipeline.
 class PipelineLayout extends WGpuObject<wgpu.WGpuPipelineLayout> {
-  Device device;
+  final Device device;
   PipelineLayout(this.device, List<BindGroupLayout> layouts) {
     device.addDependent(this);
 
@@ -21,8 +21,8 @@ class PipelineLayout extends WGpuObject<wgpu.WGpuPipelineLayout> {
     for (var i = 0; i < numEntries; ++i) {
       p.elementAt(i).value = layouts[i].object;
     }
-    final o = libwebgpu.wgpu_device_create_pipeline_layout(device.object, p,
-        numEntries);
+    final o = libwebgpu.wgpu_device_create_pipeline_layout(
+        device.object, p, numEntries);
     malloc.free(p);
 
     setObject(o);

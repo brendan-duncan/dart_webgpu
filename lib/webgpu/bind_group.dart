@@ -14,7 +14,7 @@ import 'wgpu_object.dart';
 ///
 /// BindGroups are created from Device.createBindGroup().
 class BindGroup extends WGpuObject<wgpu.WGpuBindGroup> {
-  Device device;
+  final Device device;
 
   /// Create a BindGroup from the given [device].
   /// [layout] is the BindGroupLayout the entries of this bind group will

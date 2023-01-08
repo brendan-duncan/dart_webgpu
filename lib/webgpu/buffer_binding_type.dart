@@ -1,6 +1,6 @@
 /// Defines how a Buffer will be used by a pipeline.
 enum BufferBindingType {
-  _invalid,
+  undefined,
 
   /// The buffer will be used as a uniform buffer.
   uniform,

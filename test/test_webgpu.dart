@@ -154,4 +154,6 @@ void main() async {
   //await gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
   //final data = gpuReadBuffer.getMappedRange().as<Float32List>();
   //print(data);
+
+  print('Finished');
 }

@@ -47,9 +47,10 @@ class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
   /// constraints. The Adapter features lets you know what features are
   /// available on the system, from which you can include in the list of
   /// features you need when requesting a [Device].
-  late Features features;
+  late final  Features features;
+
   /// Limits tell you the maximum value for various resources in the Adapter.
-  late Limits limits;
+  late final Limits limits;
 
   /// Requests an adapter from the platform. The user agent chooses whether to
   /// return an Adapter, and, if so, chooses according to the provided options.

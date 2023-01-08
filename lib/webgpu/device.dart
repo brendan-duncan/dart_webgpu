@@ -6,20 +6,30 @@ import 'package:ffi/ffi.dart';
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
 import 'adapter.dart';
+import 'address_mode.dart';
 import 'bind_group.dart';
 import 'bind_group_layout.dart';
 import 'buffer.dart';
 import 'buffer_usage.dart';
 import 'command_encoder.dart';
+import 'compare_function.dart';
 import 'compute_pipeline.dart';
 import 'device_lost_info.dart';
 import 'error_filter.dart';
 import 'error_type.dart';
 import 'features.dart';
+import 'filter_mode.dart';
 import 'limits.dart';
 import 'pipeline_layout.dart';
 import 'queue.dart';
+import 'render_pipeline.dart';
+import 'render_pipeline_descriptor.dart';
+import 'sampler.dart';
 import 'shader_module.dart';
+import 'texture.dart';
+import 'texture_dimension.dart';
+import 'texture_format.dart';
+import 'texture_usage.dart';
 import 'wgpu_object.dart';
 
 typedef ErrorCallback = void Function(
@@ -44,8 +54,8 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
   final uncapturedError = <ErrorCallback>[];
 
   Device(this.adapter, Pointer device)
-    : _lost = Completer<DeviceLostInfo>()
-    , super(device) {
+      : _lost = Completer<DeviceLostInfo>(),
+        super(device) {
     adapter.addDependent(this);
     features = Features(libwebgpu.wgpu_adapter_or_device_get_features(object));
     queue = Queue(this, libwebgpu.wgpu_device_get_queue(object));
@@ -56,8 +66,8 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
     calloc.free(l);
 
     final cb = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int,
-            Pointer<Char>, Pointer<Void>)>(_deviceLostCB);
+        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int, Pointer<Char>,
+            Pointer<Void>)>(_deviceLostCB);
 
     libwebgpu.wgpu_device_set_lost_callback(object, cb, object.cast());
 
@@ -67,12 +77,58 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
         Void Function(Pointer<wgpu.WGpuObjectDawn>, Int, Pointer<Char>,
             Pointer<Void>)>(_uncapturedErrorCB);
 
-    libwebgpu.wgpu_device_set_uncapturederror_callback(object, fn,
-        object.cast());
+    libwebgpu.wgpu_device_set_uncapturederror_callback(
+        object, fn, object.cast());
   }
 
   /// The lost Future will resolve if the device is lost.
   Future<DeviceLostInfo> get lost => _lost.future;
+
+  /// Create a [Sampler]
+  Sampler createSampler(
+          {AddressMode addressModeU = AddressMode.clampToEdge,
+          AddressMode addressModeV = AddressMode.clampToEdge,
+          AddressMode addressModeW = AddressMode.clampToEdge,
+          FilterMode magFilter = FilterMode.nearest,
+          FilterMode minFilter = FilterMode.nearest,
+          FilterMode mipmapFilter = FilterMode.nearest,
+          num lodMinClamp = 0,
+          num lodMaxClamp = 32,
+          CompareFunction compare = CompareFunction.always,
+          int maxAnisotropy = 1}) =>
+      Sampler(this,
+          addressModeU: addressModeU,
+          addressModeV: addressModeV,
+          addressModeW: addressModeW,
+          magFilter: magFilter,
+          minFilter: minFilter,
+          mipmapFilter: mipmapFilter,
+          lodMinClamp: lodMinClamp,
+          lodMaxClamp: lodMaxClamp,
+          compare: compare,
+          maxAnisotropy: maxAnisotropy);
+
+  /// Create a [Texture]
+  Texture createTexture(
+          {required int width,
+          int height = 1,
+          int depthOrArrayLayers = 1,
+          required TextureFormat format,
+          required TextureUsage usage,
+          int mipLevelCount = 1,
+          int sampleCount = 1,
+          TextureDimension dimension = TextureDimension.texture2d,
+          List<TextureFormat>? viewFormats}) =>
+      Texture(this,
+          width: width,
+          height: height,
+          depthOrArrayLayers: depthOrArrayLayers,
+          mipLevelCount: mipLevelCount,
+          sampleCount: sampleCount,
+          dimension: dimension,
+          format: format,
+          usage: usage,
+          viewFormats: viewFormats);
 
   /// Create a [ShaderModule].
   ShaderModule createShaderModule({required String code}) =>
@@ -99,21 +155,25 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
 
   /// Create a [PipelineLayout]
   PipelineLayout createPipelineLayout(List<BindGroupLayout> layouts) =>
-    PipelineLayout(this, layouts);
+      PipelineLayout(this, layouts);
+
+  /// Create a [RenderPipeline] synchronously
+  /*RenderPipeline createRenderPipeline(RenderPipelineDescriptor descriptor) {
+    RenderPipeline(this);
+  }*/
 
   /// Create a [ComputePipeline] synchronously
   ComputePipeline createComputePipeline(
       {required PipelineLayout layout,
-        required ShaderModule module,
-        required String entryPoint,
-        List<Map<String,num>>? constants}) {
-
+      required ShaderModule module,
+      required String entryPoint,
+      Map<String, num>? constants}) {
     final entryStr = entryPoint.toNativeUtf8().cast<Char>();
 
     final sizeofConstant = sizeOf<wgpu.WGpuPipelineConstant>();
-    final numConstants = constants?.length ?? 0;
-    final constantsBuffer = malloc<wgpu.WGpuPipelineConstant>(
-        numConstants * sizeofConstant);
+    final numConstants = constants?.keys.length ?? 0;
+    final constantsBuffer =
+        malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
 
     final o = libwebgpu.wgpu_device_create_compute_pipeline(object,
         module.object, entryStr, layout.object, constantsBuffer, numConstants);
@@ -126,28 +186,34 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
   /// Create a [ComputePipeline] asynchronously
   Future<ComputePipeline> createComputePipelineAsync(
       {required PipelineLayout layout,
-        required ShaderModule module,
-        required String entryPoint,
-        List<Map<String,num>>? constants}) async {
+      required ShaderModule module,
+      required String entryPoint,
+      List<Map<String, num>>? constants}) async {
     final completer = Completer<ComputePipeline>();
 
     final cb = Pointer.fromFunction<
         Void Function(wgpu.WGpuDevice, wgpu.WGpuPipelineBase,
-          Pointer<Void>)>(_createComputePipelineCB);
+            Pointer<Void>)>(_createComputePipelineCB);
 
     final entryStr = entryPoint.toNativeUtf8().cast<Char>();
 
     final sizeofConstant = sizeOf<wgpu.WGpuPipelineConstant>();
     final numConstants = constants?.length ?? 0;
-    final constantsBuffer = malloc<wgpu.WGpuPipelineConstant>(
-        numConstants * sizeofConstant);
+    final constantsBuffer =
+        malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
 
-    _callbackData[object.cast<Void>()] = _ComputePipelineCreationData(this,
-        completer);
+    _callbackData[object.cast<Void>()] =
+        _ComputePipelineCreationData(this, completer);
 
-    libwebgpu.wgpu_device_create_compute_pipeline_async(object,
-      module.object, entryStr, layout.object, constantsBuffer, numConstants,
-        cb, object.cast());
+    libwebgpu.wgpu_device_create_compute_pipeline_async(
+        object,
+        module.object,
+        entryStr,
+        layout.object,
+        constantsBuffer,
+        numConstants,
+        cb,
+        object.cast());
 
     malloc.free(entryStr);
 
@@ -200,8 +266,9 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
     calloc.free(userData);
     if (data != null) {
       final msg = message.cast<Utf8>().toDartString();
-      final rsn = reason >= 0 && reason < DeviceLostReason.values.length ?
-          DeviceLostReason.values[reason] : DeviceLostReason.unknown;
+      final rsn = reason >= 0 && reason < DeviceLostReason.values.length
+          ? DeviceLostReason.values[reason]
+          : DeviceLostReason.unknown;
       data.device?._lost.complete(DeviceLostInfo(msg, rsn));
     }
   }

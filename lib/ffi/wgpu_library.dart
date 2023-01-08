@@ -14,7 +14,7 @@ class WGpuLibrary {
 
   /// Call WGpuLibrary.initialize(debug: true) prior to using any WebGPU
   /// commands to have it load the Debug library instead of the Release library.
-  static initialize({ bool debug = false }) {
+  static initialize({bool debug = false}) {
     _debug = debug;
   }
 
