@@ -6,6 +6,7 @@ import '../ffi/wgpu_library.dart';
 import 'device.dart';
 import 'wgpu_object.dart';
 
+/// A reference to an internal shader module object.
 class ShaderModule extends WGpuObject<wgpu.WGpuShaderModule> {
   final Device device;
 

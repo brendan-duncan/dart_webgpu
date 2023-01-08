@@ -36,15 +36,15 @@ class Sampler extends WGpuObject<wgpu.WGpuSampler> {
       this.maxAnisotropy = 1}) {
     device.addDependent(this);
     final d = calloc<wgpu.WGpuSamplerDescriptor>();
-    d.ref.addressModeU = addressModeU.index;
-    d.ref.addressModeV = addressModeV.index;
-    d.ref.addressModeW = addressModeW.index;
-    d.ref.magFilter = magFilter.index;
-    d.ref.minFilter = minFilter.index;
-    d.ref.mipmapFilter = mipmapFilter.index;
+    d.ref.addressModeU = addressModeU.nativeIndex;
+    d.ref.addressModeV = addressModeV.nativeIndex;
+    d.ref.addressModeW = addressModeW.nativeIndex;
+    d.ref.magFilter = magFilter.nativeIndex;
+    d.ref.minFilter = minFilter.nativeIndex;
+    d.ref.mipmapFilter = mipmapFilter.nativeIndex;
     d.ref.lodMinClamp = lodMinClamp.toDouble();
     d.ref.lodMaxClamp = lodMaxClamp.toDouble();
-    d.ref.compare = compare.index;
+    d.ref.compare = compare.nativeIndex;
     d.ref.maxAnisotropy = maxAnisotropy;
     final o = libwebgpu.wgpu_device_create_sampler(object, d);
     setObject(o);

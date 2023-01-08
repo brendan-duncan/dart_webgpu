@@ -3,8 +3,6 @@
 /// specifies the order of components, bits per component, and vertex data type
 /// for the component.
 enum VertexFormat {
-  undefined,
-
   uint8x2,
   uint8x4,
   sint8x2,
@@ -34,5 +32,7 @@ enum VertexFormat {
   sint32,
   sint32x2,
   sint32x3,
-  sint32x4
+  sint32x4;
+
+  int get nativeIndex => index + 1;
 }

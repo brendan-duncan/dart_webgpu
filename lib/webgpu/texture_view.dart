@@ -10,14 +10,27 @@ import 'texture_format.dart';
 import 'texture_view_dimension.dart';
 import 'wgpu_object.dart';
 
+/// A view onto some subset of the texture subresources defined by a particular
+/// [Texture].
 class TextureView extends WGpuObject<wgpu.WGpuTextureView> {
+  /// The [Texture] into which this is a view.
   final Texture texture;
+  /// The format of the texture view. Must be either the format of the texture
+  /// or one of the viewFormats specified during its creation.
   late final TextureFormat format;
+  /// The dimension to view the texture as.
   final TextureViewDimension dimension;
+  /// Which aspect(s) of the texture are accessible to the texture view.
   final TextureAspect aspect;
+  /// The first (most detailed) mipmap level accessible to the texture view.
   final int baseMipLevel;
+  /// How many mipmap levels, starting with baseMipLevel, are accessible to the
+  /// texture view.
   final int mipLevelCount;
+  /// The index of the first array layer accessible to the texture view.
   final int baseArrayLayer;
+  /// How many array layers, starting with baseArrayLayer, are accessible to the
+  /// texture view.
   final int arrayLayerCount;
 
   TextureView(this.texture,
@@ -31,9 +44,9 @@ class TextureView extends WGpuObject<wgpu.WGpuTextureView> {
     texture.addDependent(this);
     this.format = format ?? texture.format;
     final d = calloc<wgpu.WGpuTextureViewDescriptor>();
-    d.ref.format = this.format.index;
-    d.ref.dimension = dimension.index;
-    d.ref.aspect = aspect.index;
+    d.ref.format = this.format.nativeIndex;
+    d.ref.dimension = dimension.nativeIndex;
+    d.ref.aspect = aspect.nativeIndex;
     d.ref.baseMipLevel = baseMipLevel;
     d.ref.mipLevelCount = mipLevelCount;
     d.ref.baseArrayLayer = baseArrayLayer;

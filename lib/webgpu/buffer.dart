@@ -95,7 +95,7 @@ class Buffer extends WGpuObject<wgpu.WGpuBuffer> {
 
     mappedState = MappedState.pending;
     libwebgpu.wgpu_buffer_map_async(
-        object, cb, object.cast(), mode.index, offset, size);
+        object, cb, object.cast(), mode.nativeIndex, offset, size);
 
     return completer.future;
   }

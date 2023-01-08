@@ -1,1 +1,6 @@
-enum PowerPreference { undefined, lowPower, highPerformance }
+enum PowerPreference {
+  lowPower,
+  highPerformance;
+
+  int get nativeIndex => index + 1;
+}

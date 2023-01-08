@@ -16,5 +16,7 @@ enum TextureAspect {
 
   /// Only the depth aspect of a depth-or-stencil format format will be
   /// accessible to the TextureView.
-  depthOnly
+  depthOnly;
+
+  int get nativeIndex => index + 1;
 }

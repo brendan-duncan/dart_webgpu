@@ -19,8 +19,6 @@
 /// Their naming should follow the convention here, with the texture name as a
 /// prefix. e.g. etc2-rgba8unorm.
 enum TextureFormat {
-  undefined,
-
   // 8-bit formats
   r8Unorm,
   r8Snorm,
@@ -135,5 +133,7 @@ enum TextureFormat {
   astc12x10Unorm,
   astc12x10UnormSrgb,
   astc12x12Unorm,
-  astc12x12UnormSrgb,
+  astc12x12UnormSrgb;
+
+  int get nativeIndex => index + 1;
 }

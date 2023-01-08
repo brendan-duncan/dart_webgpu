@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:webgpu/webgpu.dart' as wgpu;
+import 'package:webgpu/webgpu/bind_group_entry.dart';
 
 void main() async {
   // Optionally use the Debug build of the webgpu libs for debugging.
-  //wgpu.initializeWebGPU(debug: true);
+  wgpu.initializeWebGPU(debug: true);
 
   final adapter = await wgpu.Adapter.request();
   final device = await adapter.requestDevice();
@@ -19,31 +20,25 @@ void main() async {
 
   // From: https://web.dev/gpu-compute
 
-  final firstMatrix = Float32List.fromList([
-    2 /* rows */, 4 /* columns */,
-    1, 2, 3, 4,
-    5, 6, 7, 8]);
+  final firstMatrix = Float32List.fromList(
+      [2 /* rows */, 4 /* columns */, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   final gpuBufferFirstMatrix = device.createBuffer(
-    mappedAtCreation: true,
-    size: firstMatrix.lengthInBytes,
-    usage: wgpu.BufferUsage.storage)
-  ..getMappedRange().as<Float32List>().setAll(0, firstMatrix)
-  ..unmap();
+      mappedAtCreation: true,
+      size: firstMatrix.lengthInBytes,
+      usage: wgpu.BufferUsage.storage)
+    ..getMappedRange().as<Float32List>().setAll(0, firstMatrix)
+    ..unmap();
 
-  final secondMatrix = Float32List.fromList([
-    4 /* rows */, 2 /* columns */,
-    1, 2,
-    3, 4,
-    5, 6,
-    7, 8]);
+  final secondMatrix = Float32List.fromList(
+      [4 /* rows */, 2 /* columns */, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   final gpuBufferSecondMatrix = device.createBuffer(
-    mappedAtCreation: true,
-    size: secondMatrix.lengthInBytes,
-    usage: wgpu.BufferUsage.storage)
-  ..getMappedRange().as<Float32List>().setAll(0, secondMatrix)
-  ..unmap();
+      mappedAtCreation: true,
+      size: secondMatrix.lengthInBytes,
+      usage: wgpu.BufferUsage.storage)
+    ..getMappedRange().as<Float32List>().setAll(0, secondMatrix)
+    ..unmap();
 
   // Result Matrix
 
@@ -51,35 +46,33 @@ void main() async {
       (2 + firstMatrix[0].toInt() * secondMatrix[1].toInt());
 
   final resultMatrixBuffer = device.createBuffer(
-    size: resultMatrixBufferSize,
-    usage: wgpu.BufferUsage.storage | wgpu.BufferUsage.copySrc);
+      size: resultMatrixBufferSize,
+      usage: wgpu.BufferUsage.storage | wgpu.BufferUsage.copySrc);
 
   final layout = device.createBindGroupLayout(entries: [
-    {
-      'binding': 0,
-      'visibility': wgpu.ShaderState.compute,
-      'buffer': { 'type': wgpu.BufferBindingType.readOnlyStorage }
-    },
-    {
-      'binding': 1,
-      'visibility': wgpu.ShaderState.compute,
-      'buffer': { 'type': wgpu.BufferBindingType.readOnlyStorage }
-    },
-    {
-      'binding': 2,
-      'visibility': wgpu.ShaderState.compute,
-      'buffer': { 'type': wgpu.BufferBindingType.storage }
-    }
+    const wgpu.BindGroupLayoutEntry(
+        binding: 0,
+        visibility: wgpu.ShaderState.compute,
+        buffer: wgpu.BufferBindingLayout(
+            type: wgpu.BufferBindingType.readOnlyStorage)),
+    const wgpu.BindGroupLayoutEntry(
+        binding: 1,
+        visibility: wgpu.ShaderState.compute,
+        buffer: wgpu.BufferBindingLayout(
+            type: wgpu.BufferBindingType.readOnlyStorage)),
+    const wgpu.BindGroupLayoutEntry(
+        binding: 2,
+        visibility: wgpu.ShaderState.compute,
+        buffer: wgpu.BufferBindingLayout(type: wgpu.BufferBindingType.storage))
   ]);
 
   final bindGroup = device.createBindGroup(layout: layout, entries: [
-    { 'binding': 0, 'resource': gpuBufferFirstMatrix },
-    { 'binding': 1, 'resource': gpuBufferSecondMatrix },
-    { 'binding': 2, 'resource': resultMatrixBuffer },
+    BindGroupEntry(binding: 0, resource: gpuBufferFirstMatrix),
+    BindGroupEntry(binding: 1, resource: gpuBufferSecondMatrix),
+    BindGroupEntry(binding: 2, resource: resultMatrixBuffer)
   ]);
 
-  final shaderModule = device.createShaderModule(
-    code: '''
+  final shaderModule = device.createShaderModule(code: '''
     struct Matrix {
       size : vec2<f32>,
       numbers: array<f32>,
@@ -117,9 +110,7 @@ void main() async {
   // TODO: createComputePipelineAsync is triggering a Dawn crash.
   //final computePipeline = await device.createComputePipelineAsync(
   final computePipeline = device.createComputePipeline(
-      layout: pipelineLayout,
-      module: shaderModule,
-      entryPoint: "main");
+      layout: pipelineLayout, module: shaderModule, entryPoint: "main");
 
   // We can't read directly from the writable results storage buffer,
   // so we have to copy the results to a buffer we can read from.
@@ -137,15 +128,14 @@ void main() async {
 
   // Execute the compute shader
   commandEncoder.beginComputePass()
-  ..setPipeline(computePipeline)
-  ..setBindGroup(0, bindGroup)
-  ..dispatchWorkgroups(workgroupCountX, workgroupCountY)
-  ..end();
+    ..setPipeline(computePipeline)
+    ..setBindGroup(0, bindGroup)
+    ..dispatchWorkgroups(workgroupCountX, workgroupCountY)
+    ..end();
 
   // Copy the results storage buffer to a buffer we can read from.
   commandEncoder.copyBufferToBuffer(
-      source: resultMatrixBuffer,
-      destination: gpuReadBuffer);
+      source: resultMatrixBuffer, destination: gpuReadBuffer);
 
   // Finalize and execute the commands.
   device.queue.submit(commandEncoder.finish());
@@ -154,6 +144,8 @@ void main() async {
   //await gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
   //final data = gpuReadBuffer.getMappedRange().as<Float32List>();
   //print(data);
+
+  adapter.destroy();
 
   print('Finished');
 }

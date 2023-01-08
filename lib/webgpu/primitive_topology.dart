@@ -1,9 +1,10 @@
 /// Defines the primitive type draw calls made with a RenderPipeline will use.
 enum PrimitiveTopology {
-  undefined,
   pointList,
   lineList,
   lineStrip,
   triangleList,
-  triangleStrip
+  triangleStrip;
+
+  int get nativeIndex => index + 1;
 }

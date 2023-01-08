@@ -1,5 +1,7 @@
 enum ErrorFilter {
-  invalid,
   outOfMemory,
   validation,
+  internal;
+
+  int get nativeIndex => index + 1;
 }

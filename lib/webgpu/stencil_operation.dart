@@ -1,5 +1,4 @@
 enum StencilOperation {
-  undefined,
   keep,
   zero,
   replace,
@@ -7,5 +6,7 @@ enum StencilOperation {
   incrementClamp,
   decrementClamp,
   incrementWrap,
-  decrementWrap
+  decrementWrap;
+
+  int get nativeIndex => index + 1;
 }

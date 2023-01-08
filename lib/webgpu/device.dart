@@ -8,7 +8,9 @@ import '../ffi/wgpu_library.dart';
 import 'adapter.dart';
 import 'address_mode.dart';
 import 'bind_group.dart';
+import 'bind_group_entry.dart';
 import 'bind_group_layout.dart';
+import 'bind_group_layout_entry.dart';
 import 'buffer.dart';
 import 'buffer_usage.dart';
 import 'command_encoder.dart';
@@ -144,13 +146,13 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
 
   /// Create a [BindGroupLayout]
   BindGroupLayout createBindGroupLayout(
-          {required List<Map<String, Object>> entries}) =>
+          {required List<BindGroupLayoutEntry> entries}) =>
       BindGroupLayout(this, entries: entries);
 
   /// Create a [BindGroup]
   BindGroup createBindGroup(
           {required BindGroupLayout layout,
-          required List<Map<String, Object>> entries}) =>
+          required List<BindGroupEntry> entries}) =>
       BindGroup(this, layout: layout, entries: entries);
 
   /// Create a [PipelineLayout]
@@ -246,7 +248,7 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
   CommandEncoder createCommandEncoder() => CommandEncoder(this);
 
   void pushErrorScope(ErrorFilter filter) {
-    libwebgpu.wgpu_device_push_error_scope(object, filter.index);
+    libwebgpu.wgpu_device_push_error_scope(object, filter.nativeIndex);
   }
 
   void popErrorScopeAsync(ErrorCallback callback) {
@@ -299,6 +301,21 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
       for (final cb in device.uncapturedError) {
         cb(device, t, msg);
       }
+    }
+  }
+
+  @override
+  void destroy() {
+    destroyDependents();
+    print('Destroy Device $this');
+    webgpu.detachFinalizer(this);
+    /*webgpu
+      ..detachFinalizer(this)
+      ..destroyObject(objectPtr as wgpu.WGpuObjectBase);*/
+    print('~Destroy Device $this');
+    objectPtr = nullptr;
+    if (parent != null) {
+      parent!.removeDependent(this);
     }
   }
 }

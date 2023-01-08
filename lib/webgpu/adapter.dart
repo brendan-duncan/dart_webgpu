@@ -68,7 +68,7 @@ class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
       {PowerPreference powerPreference = PowerPreference.highPerformance,
       bool forceFallbackAdapter = false}) {
     final o = calloc<wgpu.WGpuRequestAdapterOptions>();
-    o.ref.powerPreference = powerPreference.index;
+    o.ref.powerPreference = powerPreference.nativeIndex;
     o.ref.forceFallbackAdapter = forceFallbackAdapter ? 1 : 0;
 
     final completer = Completer<Adapter>();

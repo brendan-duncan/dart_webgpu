@@ -11,5 +11,7 @@ enum BlendFactor {
   oneMinusDstAlpha,
   srcAlphaSaturated,
   constant,
-  oneMinusConstant
+  oneMinusConstant;
+
+  int get nativeIndex => index + 1;
 }

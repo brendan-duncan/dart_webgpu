@@ -46,7 +46,7 @@ class RenderPipelineDescriptor {
         final numAttrs = b.attributes.length;
         final rb = ref.vertex.buffers.elementAt(i).ref
           ..arrayStride = b.arrayStride
-          ..stepMode = b.stepMode.index
+          ..stepMode = b.stepMode.nativeIndex
           ..numAttributes = numAttrs
           ..attributes = malloc<wgpu.WGpuVertexAttribute>(numAttrs);
         for (var j = 0; j < numAttrs; ++j) {
@@ -54,39 +54,39 @@ class RenderPipelineDescriptor {
           rb.attributes.elementAt(j) .ref
             ..offset = a.offset
             ..shaderLocation = a.shaderLocation
-            ..format = a.format.index;
+            ..format = a.format.nativeIndex;
         }
       }
     }
 
     if (primitive != null) {
       ref.primitive
-        ..topology = primitive!.topology.index
-        ..stripIndexFormat = primitive!.stripIndexFormat.index
-        ..frontFace = primitive!.frontFace.index
-        ..cullMode = primitive!.cullMode.index
+        ..topology = primitive!.topology.nativeIndex
+        ..stripIndexFormat = primitive!.stripIndexFormat.nativeIndex
+        ..frontFace = primitive!.frontFace.nativeIndex
+        ..cullMode = primitive!.cullMode.nativeIndex
         ..unclippedDepth = primitive!.unclippedDepth ? 1 : 0;
     }
 
     if (depthStencil != null) {
       final ds = depthStencil!;
       ref.depthStencil
-          ..format = ds.format.index
+          ..format = ds.format.nativeIndex
           ..depthWriteEnabled = ds.depthWriteEnabled ? 1 : 0
-          ..depthCompare = ds.depthCompare.index
+          ..depthCompare = ds.depthCompare.nativeIndex
           ..stencilReadMask = ds.stencilReadMask
           ..stencilWriteMask = ds.stencilWriteMask
           ..depthBias = ds.depthBias
           ..depthBiasSlopeScale = ds.depthBiasSlopeScale.toDouble()
           ..depthBiasClamp = ds.depthBiasClamp.toDouble()
-          ..stencilFront.compare = ds.stencilFront.compare.index
-          ..stencilFront.failOp = ds.stencilFront.failOp.index
-          ..stencilFront.depthFailOp = ds.stencilFront.depthFailOp.index
-          ..stencilFront.passOp = ds.stencilFront.passOp.index
-          ..stencilBack.compare = ds.stencilBack.compare.index
-          ..stencilBack.failOp = ds.stencilBack.failOp.index
-          ..stencilBack.depthFailOp = ds.stencilBack.depthFailOp.index
-          ..stencilBack.passOp = ds.stencilBack.passOp.index
+          ..stencilFront.compare = ds.stencilFront.compare.nativeIndex
+          ..stencilFront.failOp = ds.stencilFront.failOp.nativeIndex
+          ..stencilFront.depthFailOp = ds.stencilFront.depthFailOp.nativeIndex
+          ..stencilFront.passOp = ds.stencilFront.passOp.nativeIndex
+          ..stencilBack.compare = ds.stencilBack.compare.nativeIndex
+          ..stencilBack.failOp = ds.stencilBack.failOp.nativeIndex
+          ..stencilBack.depthFailOp = ds.stencilBack.depthFailOp.nativeIndex
+          ..stencilBack.passOp = ds.stencilBack.passOp.nativeIndex
           ..clampDepth = 0;
     }
 
@@ -114,14 +114,14 @@ class RenderPipelineDescriptor {
       for (var i = 0; i < numTargets; ++i) {
         final t = f.targets[i];
         rt.elementAt(i).ref
-          ..format = t.format.index
+          ..format = t.format.nativeIndex
           ..writeMask = t.writeMask.value
-          ..blend.color.operation = t.blend?.color.operation.index ?? 0
-          ..blend.color.srcFactor = t.blend?.color.srcFactor.index ?? 0
-          ..blend.color.dstFactor = t.blend?.color.dstFactor.index ?? 0
-          ..blend.alpha.operation = t.blend?.alpha.operation.index ?? 0
-          ..blend.alpha.srcFactor = t.blend?.alpha.srcFactor.index ?? 0
-          ..blend.alpha.dstFactor = t.blend?.alpha.dstFactor.index ?? 0;
+          ..blend.color.operation = t.blend?.color.operation.nativeIndex ?? 0
+          ..blend.color.srcFactor = t.blend?.color.srcFactor.nativeIndex ?? 0
+          ..blend.color.dstFactor = t.blend?.color.dstFactor.nativeIndex ?? 0
+          ..blend.alpha.operation = t.blend?.alpha.operation.nativeIndex ?? 0
+          ..blend.alpha.srcFactor = t.blend?.alpha.srcFactor.nativeIndex ?? 0
+          ..blend.alpha.dstFactor = t.blend?.alpha.dstFactor.nativeIndex ?? 0;
       }
     }
 

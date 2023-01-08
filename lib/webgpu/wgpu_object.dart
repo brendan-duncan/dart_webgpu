@@ -3,10 +3,15 @@ import 'dart:ffi';
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
 
-class WGpuObjectBase implements Finalizable {
+/// Base class for WebGPU objects. The methods of this class are considered
+/// @internal.
+abstract class WGpuObjectBase implements Finalizable {
+  /// The pointer to the native WebGPU object.
   Pointer objectPtr = nullptr;
   WGpuObjectBase? _parent;
-  final _dependents = <WGpuObjectBase>[];
+  /// The list of WebGPU objects this object created. When this object is
+  /// destroyed, it will also destroy any objects that it has created.
+  final dependents = <WGpuObjectBase>[];
 
   WGpuObjectBase([Pointer? object, WGpuObjectBase? parent]) {
     if (object != null) {
@@ -17,16 +22,25 @@ class WGpuObjectBase implements Finalizable {
     }
   }
 
+  /// The WebGPU object that created this object.
+  WGpuObjectBase? get parent => _parent;
+
+  /// True if this object is alive, and false if it has been destroyed.
+  bool get isValid => objectPtr != nullptr;
+
+  /// Add a dependent to this object.
   void addDependent(WGpuObjectBase o) {
     o._parent = this;
-    _dependents.add(o);
+    dependents.add(o);
   }
 
+  /// Remove a dependent from this object, because it's been destroyed.
   void removeDependent(WGpuObjectBase o) {
     o._parent = null;
-    _dependents.remove(o);
+    dependents.remove(o);
   }
 
+  /// Set the WebGPU object pointer owned by this object.
   void setObject(Pointer o) {
     if (objectPtr == nullptr) {
       objectPtr = o;
@@ -34,8 +48,7 @@ class WGpuObjectBase implements Finalizable {
     }
   }
 
-  bool get isValid => objectPtr != nullptr;
-
+  /// Destroy the object and all of the objects this object has created.
   void destroy() {
     destroyDependents();
     webgpu
@@ -47,13 +60,14 @@ class WGpuObjectBase implements Finalizable {
     }
   }
 
+  /// Destroy all of the objects this object has created.
   void destroyDependents() {
     // The dependents list will be modified from destroying the child
-    final dependents = List<WGpuObjectBase>.from(_dependents, growable: false);
-    for (final d in dependents) {
+    final dep = List<WGpuObjectBase>.from(dependents, growable: false);
+    for (final d in dep) {
       d.destroy();
     }
-    _dependents.clear();
+    dependents.clear();
   }
 }
 

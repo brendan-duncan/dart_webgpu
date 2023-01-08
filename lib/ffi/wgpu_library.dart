@@ -55,7 +55,7 @@ class WGpuLibrary {
 
   DynamicLibrary _dlopenWebGpu() {
     final path = _getLibraryPath();
-    print('#### LOADING $path');
+    //print('#### LOADING $path');
     return DynamicLibrary.open(path);
   }
 }
