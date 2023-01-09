@@ -10,7 +10,7 @@ import 'device.dart';
 import 'filter_mode.dart';
 import 'wgpu_object.dart';
 
-class Sampler extends WGpuObject<wgpu.WGpuSampler> {
+class Sampler extends WGpuObjectBase<wgpu.WGpuSampler> {
   final Device device;
   final AddressMode addressModeU;
   final AddressMode addressModeV;

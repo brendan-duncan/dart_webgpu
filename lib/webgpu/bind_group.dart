@@ -13,7 +13,7 @@ import 'wgpu_object.dart';
 /// how the resources are used in shader stages.
 ///
 /// BindGroups are created from Device.createBindGroup().
-class BindGroup extends WGpuObject<wgpu.WGpuBindGroup> {
+class BindGroup extends WGpuObjectBase<wgpu.WGpuBindGroup> {
   final Device device;
 
   /// Create a BindGroup from the given [device].

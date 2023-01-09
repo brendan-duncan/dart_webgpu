@@ -12,7 +12,7 @@ import 'wgpu_object.dart';
 
 /// A view onto some subset of the texture subresources defined by a particular
 /// [Texture].
-class TextureView extends WGpuObject<wgpu.WGpuTextureView> {
+class TextureView extends WGpuObjectBase<wgpu.WGpuTextureView> {
   /// The [Texture] into which this is a view.
   final Texture texture;
   /// The format of the texture view. Must be either the format of the texture

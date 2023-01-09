@@ -39,7 +39,7 @@ import 'wgpu_object.dart';
 /// A "3d" texture may have multiple slices, each being the two-dimensional
 /// image at a particular z value in the texture. Slices are not separate
 /// subresources.
-class Texture extends WGpuObject<wgpu.WGpuTexture> {
+class Texture extends WGpuObjectBase<wgpu.WGpuTexture> {
   final Device device;
   /// The width of this Texture.
   final int width;

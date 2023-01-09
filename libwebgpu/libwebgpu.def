@@ -138,3 +138,4 @@ EXPORTS
     wgpu_device_set_uncapturederror_callback
     wgpu_load_image_bitmap_from_url_async
     wgpu_buffer_get_mapped_range_dart
+    wgpu_object_finalize_dart

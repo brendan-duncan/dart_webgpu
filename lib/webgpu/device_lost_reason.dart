@@ -1,0 +1,1 @@
+enum DeviceLostReason { unknown, destroyed }

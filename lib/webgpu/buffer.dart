@@ -17,7 +17,7 @@ import 'wgpu_object.dart';
 /// can be addressed by its offset from the start of the Buffer, subject to
 /// alignment restrictions depending on the operation. Some Buffers can be
 /// mapped which makes the block of memory accessible via a ByteBuffer.
-class Buffer extends WGpuObject<wgpu.WGpuBuffer> {
+class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
   /// The Device that owns this Buffer.
   final Device device;
 

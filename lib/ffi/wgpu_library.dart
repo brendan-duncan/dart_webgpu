@@ -37,7 +37,7 @@ class WGpuLibrary {
 
   late final wgpuObjectDestroy =
       library.lookup<NativeFunction<Void Function(lib.WGpuObjectBase)>>(
-          'wgpu_object_destroy');
+          'wgpu_object_finalize_dart');
 
   late final finalizer = NativeFinalizer(wgpuObjectDestroy.cast());
 

@@ -16,7 +16,7 @@ import 'buffer_usage.dart';
 import 'command_encoder.dart';
 import 'compare_function.dart';
 import 'compute_pipeline.dart';
-import 'device_lost_info.dart';
+import 'device_lost_reason.dart';
 import 'error_filter.dart';
 import 'error_type.dart';
 import 'features.dart';
@@ -37,6 +37,9 @@ import 'wgpu_object.dart';
 typedef ErrorCallback = void Function(
     Device device, ErrorType type, String message);
 
+typedef DeviceLostCallback = void Function(Device device,
+    DeviceLostReason reason, String message);
+
 class Error {
   final String message;
   const Error(this.message);
@@ -47,17 +50,22 @@ class Error {
 ///
 /// A Device is asynchronously created from an Adapter through
 /// Adapter.requestDevice.
-class Device extends WGpuObject<wgpu.WGpuDevice> {
+class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   Adapter adapter;
+  /// The list of [Limits] supported by the Device.
   late final Limits limits;
+  /// The list of [Features] supported by the Device.
   late final Features features;
+  /// The default [Queue] of the Device.
   late final Queue queue;
-  final Completer<DeviceLostInfo> _lost;
+  /// The lost callback will be called if the device is lost.
+  final lost = <DeviceLostCallback>[];
+  /// uncapturedError callbacks will be called for errors that weren't captured
+  /// with pushErrorScope/popErrorScope.
   final uncapturedError = <ErrorCallback>[];
 
   Device(this.adapter, Pointer device)
-      : _lost = Completer<DeviceLostInfo>(),
-        super(device) {
+      : super(device) {
     adapter.addDependent(this);
     features = Features(libwebgpu.wgpu_adapter_or_device_get_features(object));
     queue = Queue(this, libwebgpu.wgpu_device_get_queue(object));
@@ -82,9 +90,6 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
     libwebgpu.wgpu_device_set_uncapturederror_callback(
         object, fn, object.cast());
   }
-
-  /// The lost Future will resolve if the device is lost.
-  Future<DeviceLostInfo> get lost => _lost.future;
 
   /// Create a [Sampler]
   Sampler createSampler(
@@ -265,7 +270,6 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
       Pointer<Char> message, Pointer<Void> userData) {
     final data = _callbackData[userData] as _ErrorScopeData?;
     _callbackData.remove(userData);
-    calloc.free(userData);
     if (data != null && data.device != null) {
       final t = type >= 0 && type < ErrorType.values.length
           ? ErrorType.values[type]
@@ -277,15 +281,17 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
 
   static void _deviceLostCB(Pointer<wgpu.WGpuObjectDawn> device, int reason,
       Pointer<Char> message, Pointer<Void> userData) {
-    final data = _callbackData[userData];
+    final data = _errorCallbackData[userData];
     _callbackData.remove(userData);
-    calloc.free(userData);
-    if (data != null) {
+    if (data != null && data.device != null) {
+      final device = data.device!;
       final msg = message.cast<Utf8>().toDartString();
-      final rsn = reason >= 0 && reason < DeviceLostReason.values.length
+      final r = reason >= 0 && reason < DeviceLostReason.values.length
           ? DeviceLostReason.values[reason]
           : DeviceLostReason.unknown;
-      data.device?._lost.complete(DeviceLostInfo(msg, rsn));
+      for (final cb in device.lost) {
+        cb(device, r, msg);
+      }
     }
   }
 
@@ -304,20 +310,20 @@ class Device extends WGpuObject<wgpu.WGpuDevice> {
     }
   }
 
-  @override
+  /*@override
   void destroy() {
     destroyDependents();
     print('Destroy Device $this');
-    webgpu.detachFinalizer(this);
-    /*webgpu
+    //webgpu.detachFinalizer(this);
+    webgpu
       ..detachFinalizer(this)
-      ..destroyObject(objectPtr as wgpu.WGpuObjectBase);*/
+      ..destroyObject(objectPtr as wgpu.WGpuObjectBase);
     print('~Destroy Device $this');
     objectPtr = nullptr;
     if (parent != null) {
       parent!.removeDependent(this);
     }
-  }
+  }*/
 }
 
 class _DeviceCallbackData {

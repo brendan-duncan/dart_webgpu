@@ -25,7 +25,7 @@ export 'webgpu/compute_pipeline.dart';
 export 'webgpu/cull_mode.dart';
 export 'webgpu/depth_stencil_state.dart';
 export 'webgpu/device.dart';
-export 'webgpu/device_lost_info.dart';
+export 'webgpu/device_lost_reason.dart';
 export 'webgpu/error_filter.dart';
 export 'webgpu/error_type.dart';
 export 'webgpu/external_texture_binding_layout.dart';

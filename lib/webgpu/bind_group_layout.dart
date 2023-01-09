@@ -13,7 +13,7 @@ import 'wgpu_object.dart';
 ///
 /// BindGroupLayouts are created from a Device through the
 /// Device.createBindGroupLayout method.
-class BindGroupLayout extends WGpuObject<wgpu.WGpuBindGroupLayout> {
+class BindGroupLayout extends WGpuObjectBase<wgpu.WGpuBindGroupLayout> {
   final Device device;
 
   BindGroupLayout(this.device, {required List<BindGroupLayoutEntry> entries}) {

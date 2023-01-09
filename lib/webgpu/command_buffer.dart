@@ -12,7 +12,7 @@ import 'wgpu_object.dart';
 ///
 /// A CommandBuffer is created from a CommandEncoder with the
 /// CommandEncoder.finish method.
-class CommandBuffer extends WGpuObject<wgpu.WGpuCommandBuffer> {
+class CommandBuffer extends WGpuObjectBase<wgpu.WGpuCommandBuffer> {
   /// The Device that owns this CommandBuffer.
   final Device device;
 

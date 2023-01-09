@@ -13,7 +13,7 @@ import 'wgpu_object.dart';
 
 /// A CommandEncoder generates commands for a CommandBuffer. A CommandEncoder
 /// is created from a Device through the Device.createCommandEncoder method.
-class CommandEncoder extends WGpuObject<wgpu.WGpuCommandEncoder> {
+class CommandEncoder extends WGpuObjectBase<wgpu.WGpuCommandEncoder> {
   /// The [Device] that created this CommandEncoder.
   final Device device;
 

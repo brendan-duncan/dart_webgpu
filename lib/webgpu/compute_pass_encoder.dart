@@ -12,7 +12,7 @@ import 'wgpu_object.dart';
 
 /// Encodes commands for a compute pass in a [CommandEncoder].
 /// Created from CommandEncoder.beginComputePass.
-class ComputePassEncoder extends WGpuObject<wgpu.WGpuComputePassEncoder> {
+class ComputePassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
   final CommandEncoder encoder;
 
   ComputePassEncoder(this.encoder, wgpu.WGpuComputePassEncoder o)

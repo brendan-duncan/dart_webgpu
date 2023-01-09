@@ -10,7 +10,7 @@ import 'wgpu_object.dart';
 /// A PipelineLayout defines the mapping between resources of all BindGroup
 /// objects set up during command encoding in setBindGroup(), and the shaders
 /// of the pipeline set by setPipeline.
-class PipelineLayout extends WGpuObject<wgpu.WGpuPipelineLayout> {
+class PipelineLayout extends WGpuObjectBase<wgpu.WGpuPipelineLayout> {
   final Device device;
   PipelineLayout(this.device, List<BindGroupLayout> layouts) {
     device.addDependent(this);

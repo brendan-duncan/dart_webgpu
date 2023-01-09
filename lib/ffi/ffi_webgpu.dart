@@ -2865,6 +2865,20 @@ class libwebgpu {
   late final _wgpu_buffer_get_mapped_range_dart =
       _wgpu_buffer_get_mapped_range_dartPtr
           .asFunction<ffi.Pointer<ffi.Void> Function(WGpuBuffer, int, int)>();
+
+  void wgpu_object_finalize_dart(
+    WGpuObjectBase wgpuObject,
+  ) {
+    return _wgpu_object_finalize_dart(
+      wgpuObject,
+    );
+  }
+
+  late final _wgpu_object_finalize_dartPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(WGpuObjectBase)>>(
+          'wgpu_object_finalize_dart');
+  late final _wgpu_object_finalize_dart =
+      _wgpu_object_finalize_dartPtr.asFunction<void Function(WGpuObjectBase)>();
 }
 
 class WGpuObjectDawn extends ffi.Struct {

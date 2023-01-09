@@ -5,15 +5,15 @@ import '../ffi/wgpu_library.dart';
 
 /// Base class for WebGPU objects. The methods of this class are considered
 /// @internal.
-abstract class WGpuObjectBase implements Finalizable {
+abstract class WGpuObject implements Finalizable {
   /// The pointer to the native WebGPU object.
   Pointer objectPtr = nullptr;
-  WGpuObjectBase? _parent;
+  WGpuObject? _parent;
   /// The list of WebGPU objects this object created. When this object is
   /// destroyed, it will also destroy any objects that it has created.
-  final dependents = <WGpuObjectBase>[];
+  final dependents = <WGpuObject>[];
 
-  WGpuObjectBase([Pointer? object, WGpuObjectBase? parent]) {
+  WGpuObject([Pointer? object, WGpuObject? parent]) {
     if (object != null) {
       setObject(object);
     }
@@ -23,19 +23,19 @@ abstract class WGpuObjectBase implements Finalizable {
   }
 
   /// The WebGPU object that created this object.
-  WGpuObjectBase? get parent => _parent;
+  WGpuObject? get parent => _parent;
 
   /// True if this object is alive, and false if it has been destroyed.
   bool get isValid => objectPtr != nullptr;
 
   /// Add a dependent to this object.
-  void addDependent(WGpuObjectBase o) {
+  void addDependent(WGpuObject o) {
     o._parent = this;
     dependents.add(o);
   }
 
   /// Remove a dependent from this object, because it's been destroyed.
-  void removeDependent(WGpuObjectBase o) {
+  void removeDependent(WGpuObject o) {
     o._parent = null;
     dependents.remove(o);
   }
@@ -63,7 +63,7 @@ abstract class WGpuObjectBase implements Finalizable {
   /// Destroy all of the objects this object has created.
   void destroyDependents() {
     // The dependents list will be modified from destroying the child
-    final dep = List<WGpuObjectBase>.from(dependents, growable: false);
+    final dep = List<WGpuObject>.from(dependents, growable: false);
     for (final d in dep) {
       d.destroy();
     }
@@ -71,8 +71,8 @@ abstract class WGpuObjectBase implements Finalizable {
   }
 }
 
-class WGpuObject<T> extends WGpuObjectBase {
-  WGpuObject([Pointer? object, WGpuObjectBase? parent]) : super(object, parent);
+class WGpuObjectBase<T> extends WGpuObject {
+  WGpuObjectBase([Pointer? object, WGpuObject? parent]) : super(object, parent);
 
   T get object => objectPtr as T;
 }

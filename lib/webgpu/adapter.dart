@@ -41,7 +41,7 @@ import 'wgpu_object.dart';
 /// performance caveats in exchange for some combination of wider compatibility,
 /// more predictable behavior, or improved privacy. It is not required that a
 /// fallback adapter is available on every system.
-class Adapter extends WGpuObject<wgpu.WGpuAdapter> {
+class Adapter extends WGpuObjectBase<wgpu.WGpuAdapter> {
   /// A feature is a set of optional WebGPU functionality that is not supported
   /// on all implementations, typically due to hardware or system software
   /// constraints. The Adapter features lets you know what features are
@@ -157,7 +157,7 @@ void _requestAdapterCB(wgpu.WGpuAdapter adapter, Pointer<Void> userData) {
 
 class _AdapterCallbackData {
   Adapter? adapter;
-  Completer<WGpuObject<wgpu.WGpuObjectBase>> completer;
+  Completer<WGpuObjectBase<wgpu.WGpuObjectBase>> completer;
 
   _AdapterCallbackData(this.adapter, this.completer);
 }

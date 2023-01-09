@@ -4,7 +4,7 @@ import 'wgpu_object.dart';
 
 /// A ComputePipeline is a kind of pipeline that controls the compute shader
 /// stage, and can be used in ComputePassEncoder.
-class ComputePipeline extends WGpuObject<wgpu.WGpuComputePipeline> {
+class ComputePipeline extends WGpuObjectBase<wgpu.WGpuComputePipeline> {
   /// The [Device] that created the pipeline.
   final Device device;
 
