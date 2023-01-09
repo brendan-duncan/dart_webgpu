@@ -11,10 +11,8 @@ import 'wgpu_object.dart';
 class QuerySet extends WGpuObjectBase<wgpu.WGpuQuerySet> {
   /// The [Device] that created this QuerySet.
   final Device device;
-
   /// The type of queries managed by QuerySet.
   final QueryType type;
-
   /// The number of queries managed by QuerySet.
   final int count;
 

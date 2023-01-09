@@ -1,1 +1,6 @@
-enum DeviceLostReason { unknown, destroyed }
+enum DeviceLostReason {
+  unknown,
+  destroyed;
+
+  int get nativeIndex => index;
+}
