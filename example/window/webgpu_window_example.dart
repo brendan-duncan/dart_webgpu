@@ -7,6 +7,14 @@ void main() async {
   final adapter = await wgpu.Adapter.request();
   final device = await adapter.requestDevice();
 
+  device.lost.add((device, type, message) {
+    print(message);
+  });
+
+  device.uncapturedError.add((device, type, message) {
+    print('ERROR: $message');
+  });
+
   final window = wgpu.Window(width: 800, height: 600, device: device);
 
   var g = 0.0;
