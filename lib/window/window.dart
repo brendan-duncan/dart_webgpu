@@ -41,7 +41,8 @@ class Window {
   }
 
   void present() {
-    libwebgpu..wgpu_canvas_context_present(context)
-    ..wgpu_window_poll_events();
+    libwebgpu
+      ..wgpu_canvas_context_present(context)
+      ..wgpu_window_poll_events();
   }
 }

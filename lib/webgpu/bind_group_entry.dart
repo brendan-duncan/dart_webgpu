@@ -1,8 +1,8 @@
-import '../webgpu.dart';
+import 'wgpu_object.dart';
 
 class BindGroupEntry {
   final int binding;
-  final WGpuObjectBase resource;
+  final WGpuObject resource;
   final int bufferOffset;
   final int bufferSize;
   const BindGroupEntry(

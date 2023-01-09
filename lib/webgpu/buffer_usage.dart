@@ -1,5 +1,3 @@
-import '../webgpu.dart';
-
 /// Determines how a Buffer may be used after its creation.
 class BufferUsage {
   /// The buffer can be mapped for reading. (Example: calling mapAsync() with
