@@ -37,8 +37,8 @@ import 'wgpu_object.dart';
 typedef ErrorCallback = void Function(
     Device device, ErrorType type, String message);
 
-typedef DeviceLostCallback = void Function(Device device,
-    DeviceLostReason reason, String message);
+typedef DeviceLostCallback = void Function(
+    Device device, DeviceLostReason reason, String message);
 
 class Error {
   final String message;
@@ -52,20 +52,24 @@ class Error {
 /// Adapter.requestDevice.
 class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   Adapter adapter;
+
   /// The list of [Limits] supported by the Device.
   late final Limits limits;
+
   /// The list of [Features] supported by the Device.
   late final Features features;
+
   /// The default [Queue] of the Device.
   late final Queue queue;
+
   /// The lost callback will be called if the device is lost.
   final lost = <DeviceLostCallback>[];
+
   /// uncapturedError callbacks will be called for errors that weren't captured
   /// with pushErrorScope/popErrorScope.
   final uncapturedError = <ErrorCallback>[];
 
-  Device(this.adapter, Pointer device)
-      : super(device) {
+  Device(this.adapter, Pointer device) : super(device) {
     adapter.addDependent(this);
     features = Features(libwebgpu.wgpu_adapter_or_device_get_features(object));
     queue = Queue(this, libwebgpu.wgpu_device_get_queue(object));
@@ -193,8 +197,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
     final entryStr = entryPoint.toNativeUtf8().cast<Char>();
 
     final numConstants = constants?.keys.length ?? 0;
-    final constantsBuffer =
-        malloc<wgpu.WGpuPipelineConstant>(numConstants);
+    final constantsBuffer = malloc<wgpu.WGpuPipelineConstant>(numConstants);
 
     final o = libwebgpu.wgpu_device_create_compute_pipeline(object,
         module.object, entryStr, layout.object, constantsBuffer, numConstants);

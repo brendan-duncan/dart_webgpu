@@ -28,7 +28,8 @@ class RenderPipelineDescriptor {
 
     final ref = d.ref;
 
-    { // vertex
+    {
+      // vertex
       final v = vertex;
       final numBuffers = v.buffers?.length ?? 0;
       final numConstants = v.constants?.length ?? 0;
@@ -51,7 +52,7 @@ class RenderPipelineDescriptor {
           ..attributes = malloc<wgpu.WGpuVertexAttribute>(numAttrs);
         for (var j = 0; j < numAttrs; ++j) {
           final a = b.attributes[j];
-          rb.attributes.elementAt(j) .ref
+          rb.attributes.elementAt(j).ref
             ..offset = a.offset
             ..shaderLocation = a.shaderLocation
             ..format = a.format.nativeIndex;
@@ -71,23 +72,23 @@ class RenderPipelineDescriptor {
     if (depthStencil != null) {
       final ds = depthStencil!;
       ref.depthStencil
-          ..format = ds.format.nativeIndex
-          ..depthWriteEnabled = ds.depthWriteEnabled ? 1 : 0
-          ..depthCompare = ds.depthCompare.nativeIndex
-          ..stencilReadMask = ds.stencilReadMask
-          ..stencilWriteMask = ds.stencilWriteMask
-          ..depthBias = ds.depthBias
-          ..depthBiasSlopeScale = ds.depthBiasSlopeScale.toDouble()
-          ..depthBiasClamp = ds.depthBiasClamp.toDouble()
-          ..stencilFront.compare = ds.stencilFront.compare.nativeIndex
-          ..stencilFront.failOp = ds.stencilFront.failOp.nativeIndex
-          ..stencilFront.depthFailOp = ds.stencilFront.depthFailOp.nativeIndex
-          ..stencilFront.passOp = ds.stencilFront.passOp.nativeIndex
-          ..stencilBack.compare = ds.stencilBack.compare.nativeIndex
-          ..stencilBack.failOp = ds.stencilBack.failOp.nativeIndex
-          ..stencilBack.depthFailOp = ds.stencilBack.depthFailOp.nativeIndex
-          ..stencilBack.passOp = ds.stencilBack.passOp.nativeIndex
-          ..clampDepth = 0;
+        ..format = ds.format.nativeIndex
+        ..depthWriteEnabled = ds.depthWriteEnabled ? 1 : 0
+        ..depthCompare = ds.depthCompare.nativeIndex
+        ..stencilReadMask = ds.stencilReadMask
+        ..stencilWriteMask = ds.stencilWriteMask
+        ..depthBias = ds.depthBias
+        ..depthBiasSlopeScale = ds.depthBiasSlopeScale.toDouble()
+        ..depthBiasClamp = ds.depthBiasClamp.toDouble()
+        ..stencilFront.compare = ds.stencilFront.compare.nativeIndex
+        ..stencilFront.failOp = ds.stencilFront.failOp.nativeIndex
+        ..stencilFront.depthFailOp = ds.stencilFront.depthFailOp.nativeIndex
+        ..stencilFront.passOp = ds.stencilFront.passOp.nativeIndex
+        ..stencilBack.compare = ds.stencilBack.compare.nativeIndex
+        ..stencilBack.failOp = ds.stencilBack.failOp.nativeIndex
+        ..stencilBack.depthFailOp = ds.stencilBack.depthFailOp.nativeIndex
+        ..stencilBack.passOp = ds.stencilBack.passOp.nativeIndex
+        ..clampDepth = 0;
     }
 
     if (multisample != null) {

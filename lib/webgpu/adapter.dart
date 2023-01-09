@@ -47,7 +47,7 @@ class Adapter extends WGpuObjectBase<wgpu.WGpuAdapter> {
   /// constraints. The Adapter features lets you know what features are
   /// available on the system, from which you can include in the list of
   /// features you need when requesting a [Device].
-  late final  Features features;
+  late final Features features;
 
   /// Limits tell you the maximum value for various resources in the Adapter.
   late final Limits limits;

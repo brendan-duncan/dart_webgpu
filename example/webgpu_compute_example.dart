@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:webgpu/webgpu.dart' as wgpu;
-import 'package:webgpu/webgpu/bind_group_entry.dart';
 
 void main() async {
   // Optionally use the Debug build of the webgpu libs for debugging.
@@ -67,9 +66,9 @@ void main() async {
   ]);
 
   final bindGroup = device.createBindGroup(layout: layout, entries: [
-    BindGroupEntry(binding: 0, resource: gpuBufferFirstMatrix),
-    BindGroupEntry(binding: 1, resource: gpuBufferSecondMatrix),
-    BindGroupEntry(binding: 2, resource: resultMatrixBuffer)
+    wgpu.BindGroupEntry(binding: 0, resource: gpuBufferFirstMatrix),
+    wgpu.BindGroupEntry(binding: 1, resource: gpuBufferSecondMatrix),
+    wgpu.BindGroupEntry(binding: 2, resource: resultMatrixBuffer)
   ]);
 
   final shaderModule = device.createShaderModule(code: '''

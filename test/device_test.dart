@@ -36,6 +36,8 @@ void main() async {
       final a = await wgpu.Adapter.request();
       final d = await a.requestDevice();
 
+      // Make sure the test doesn't crash if a lost callback is registered
+      // and the device is closed because of a Finalizer
       d.lost.add((device, reason, message) {
         expect(reason, equals(wgpu.DeviceLostReason.destroyed));
         expect(device, equals(d));

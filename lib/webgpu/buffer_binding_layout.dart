@@ -6,6 +6,8 @@ class BufferBindingLayout extends BindingLayoutType {
   final bool hasDynamicOffset;
   final int minBindingSize;
 
-  const BufferBindingLayout({ this.type = BufferBindingType.uniform,
-    this.hasDynamicOffset = false, this.minBindingSize = 0});
+  const BufferBindingLayout(
+      {this.type = BufferBindingType.uniform,
+      this.hasDynamicOffset = false,
+      this.minBindingSize = 0});
 }

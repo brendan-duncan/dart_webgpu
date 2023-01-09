@@ -4,6 +4,7 @@ enum VertexStepMode {
   /// The address is advanced by arrayStride for each vertex, and reset between
   /// instances.
   vertex,
+
   /// The address is advanced by arrayStride for each instance.
   instance;
 

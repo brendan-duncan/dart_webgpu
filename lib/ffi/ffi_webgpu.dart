@@ -2879,6 +2879,64 @@ class libwebgpu {
           'wgpu_object_finalize_dart');
   late final _wgpu_object_finalize_dart =
       _wgpu_object_finalize_dartPtr.asFunction<void Function(WGpuObjectBase)>();
+
+  WGpuWindow wgpu_create_window(
+    int width,
+    int height,
+    ffi.Pointer<ffi.Char> title,
+  ) {
+    return _wgpu_create_window(
+      width,
+      height,
+      title,
+    );
+  }
+
+  late final _wgpu_create_windowPtr = _lookup<
+      ffi.NativeFunction<
+          WGpuWindow Function(
+              ffi.Int, ffi.Int, ffi.Pointer<ffi.Char>)>>('wgpu_create_window');
+  late final _wgpu_create_window = _wgpu_create_windowPtr
+      .asFunction<WGpuWindow Function(int, int, ffi.Pointer<ffi.Char>)>();
+
+  void wgpu_window_poll_events() {
+    return _wgpu_window_poll_events();
+  }
+
+  late final _wgpu_window_poll_eventsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
+          'wgpu_window_poll_events');
+  late final _wgpu_window_poll_events =
+      _wgpu_window_poll_eventsPtr.asFunction<void Function()>();
+
+  int wgpu_window_should_quit(
+    WGpuWindow window,
+  ) {
+    return _wgpu_window_should_quit(
+      window,
+    );
+  }
+
+  late final _wgpu_window_should_quitPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(WGpuWindow)>>(
+          'wgpu_window_should_quit');
+  late final _wgpu_window_should_quit =
+      _wgpu_window_should_quitPtr.asFunction<int Function(WGpuWindow)>();
+
+  WGpuCanvasContext wgpu_window_get_webgpu_context(
+    WGpuWindow window,
+  ) {
+    return _wgpu_window_get_webgpu_context(
+      window,
+    );
+  }
+
+  late final _wgpu_window_get_webgpu_contextPtr =
+      _lookup<ffi.NativeFunction<WGpuCanvasContext Function(WGpuWindow)>>(
+          'wgpu_window_get_webgpu_context');
+  late final _wgpu_window_get_webgpu_context =
+      _wgpu_window_get_webgpu_contextPtr
+          .asFunction<WGpuCanvasContext Function(WGpuWindow)>();
 }
 
 class WGpuObjectDawn extends ffi.Struct {
@@ -3823,6 +3881,7 @@ typedef WGpuLoadImageBitmapCallback = ffi.Pointer<
 
 /// /////////////////////////////////////////////////////////////
 typedef WGpuImageBitmap = WGpuObjectBase;
+typedef WGpuWindow = ffi.Pointer<ffi.Void>;
 
 const double WGPU_INFINITY = 9218868437227405000.0;
 

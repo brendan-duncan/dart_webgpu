@@ -41,22 +41,31 @@ import 'wgpu_object.dart';
 /// subresources.
 class Texture extends WGpuObjectBase<wgpu.WGpuTexture> {
   final Device device;
+
   /// The width of this Texture.
   final int width;
+
   /// The height of this Texture.
   final int height;
+
   /// The depth or layer count of this Texture.
   final int depthOrArrayLayers;
+
   /// The format of this Texture.
   final TextureFormat format;
+
   /// The allowed usages for this Texture.
   final TextureUsage usage;
+
   /// The number of mip levels of this Texture.
   final int mipLevelCount;
+
   /// The number of sample count of this Texture.
   final int sampleCount;
+
   /// The dimension of the set of texel for each of this Texture's subresources.
   final TextureDimension dimension;
+
   /// Specifies what view format values will be allowed when calling
   /// createView() on this texture (in addition to the texture’s actual format).
   final List<TextureFormat>? viewFormats;

@@ -1,5 +1,5 @@
 import '../ffi/ffi_webgpu.dart' as wgpu;
-import 'device.dart';
+import 'command_encoder.dart';
 import 'wgpu_object.dart';
 
 /// Command buffers are pre-recorded lists of GPU commands that can be submitted
@@ -13,8 +13,8 @@ import 'wgpu_object.dart';
 /// A CommandBuffer is created from a CommandEncoder with the
 /// CommandEncoder.finish method.
 class CommandBuffer extends WGpuObjectBase<wgpu.WGpuCommandBuffer> {
-  /// The Device that owns this CommandBuffer.
-  final Device device;
+  /// The [CommandEncoder] that owns this CommandBuffer.
+  final CommandEncoder encoder;
 
-  CommandBuffer(this.device, wgpu.WGpuCommandBuffer o) : super(o, device);
+  CommandBuffer(this.encoder, wgpu.WGpuCommandBuffer o) : super(o);
 }

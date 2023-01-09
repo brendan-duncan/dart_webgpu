@@ -7,6 +7,7 @@ import '../ffi/wgpu_library.dart';
 import 'bind_group.dart';
 import 'buffer.dart';
 import 'command_encoder.dart';
+import 'compute_pass_descriptor.dart';
 import 'compute_pipeline.dart';
 import 'wgpu_object.dart';
 
@@ -14,9 +15,38 @@ import 'wgpu_object.dart';
 /// Created from CommandEncoder.beginComputePass.
 class ComputePassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
   final CommandEncoder encoder;
+  late final ComputePassDescriptor descriptor;
 
-  ComputePassEncoder(this.encoder, wgpu.WGpuComputePassEncoder o)
-      : super(o, encoder);
+  ComputePassEncoder(this.encoder,
+      {ComputePassDescriptor descriptor = const ComputePassDescriptor()}) {
+    encoder.addDependent(this);
+
+    final desc = descriptor;
+    this.descriptor = desc;
+
+    final d = calloc<wgpu.WGpuComputePassDescriptor>();
+    final numTimestampWrites = desc.timestampWrites?.length ?? 0;
+    d.ref.numTimestampWrites = numTimestampWrites;
+    if (numTimestampWrites > 0) {
+      d.ref.timestampWrites =
+          calloc<wgpu.WGpuComputePassTimestampWrite>(numTimestampWrites);
+      for (var i = 0; i < numTimestampWrites; ++i) {
+        final tsw = desc.timestampWrites![i];
+        d.ref.timestampWrites.elementAt(i).ref
+          ..location = tsw.location.nativeIndex
+          ..queryIndex = tsw.queryIndex
+          ..querySet = tsw.querySet.object;
+      }
+    }
+
+    final o = libwebgpu.wgpu_command_encoder_begin_compute_pass(object, d);
+    setObject(o);
+
+    if (numTimestampWrites > 0) {
+      calloc.free(d.ref.timestampWrites);
+    }
+    calloc.free(d);
+  }
 
   /// Set the current [ComputePipeline].
   void setPipeline(ComputePipeline pipeline) {

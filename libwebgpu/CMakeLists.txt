@@ -55,6 +55,7 @@ target_link_libraries(webgpu PUBLIC
     absl_str_format_internal.lib
     absl_strings.lib
     dxguid.lib
+    glfw3.lib
 )
 
 #set_target_properties(webgpu PROPERTIES

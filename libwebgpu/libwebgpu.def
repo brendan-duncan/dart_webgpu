@@ -139,3 +139,7 @@ EXPORTS
     wgpu_load_image_bitmap_from_url_async
     wgpu_buffer_get_mapped_range_dart
     wgpu_object_finalize_dart
+    wgpu_create_window
+    wgpu_window_poll_events
+    wgpu_window_should_quit
+    wgpu_window_get_webgpu_context

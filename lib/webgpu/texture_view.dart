@@ -14,26 +14,45 @@ import 'wgpu_object.dart';
 /// [Texture].
 class TextureView extends WGpuObjectBase<wgpu.WGpuTextureView> {
   /// The [Texture] into which this is a view.
-  final Texture texture;
+  final Texture? texture;
+
   /// The format of the texture view. Must be either the format of the texture
   /// or one of the viewFormats specified during its creation.
   late final TextureFormat format;
+
   /// The dimension to view the texture as.
   final TextureViewDimension dimension;
+
   /// Which aspect(s) of the texture are accessible to the texture view.
   final TextureAspect aspect;
+
   /// The first (most detailed) mipmap level accessible to the texture view.
   final int baseMipLevel;
+
   /// How many mipmap levels, starting with baseMipLevel, are accessible to the
   /// texture view.
   final int mipLevelCount;
+
   /// The index of the first array layer accessible to the texture view.
   final int baseArrayLayer;
+
   /// How many array layers, starting with baseArrayLayer, are accessible to the
   /// texture view.
   final int arrayLayerCount;
 
-  TextureView(this.texture,
+  TextureView.native(wgpu.WGpuTextureView o)
+      : texture = null,
+        format = TextureFormat.bgra8Unorm,
+        dimension = TextureViewDimension.textureView2d,
+        aspect = TextureAspect.all,
+        baseMipLevel = 0,
+        mipLevelCount = 1,
+        baseArrayLayer = 0,
+        arrayLayerCount = 1 {
+    setObject(o);
+  }
+
+  TextureView(Texture this.texture,
       {required this.dimension,
       TextureFormat? format,
       this.aspect = TextureAspect.all,
@@ -41,8 +60,8 @@ class TextureView extends WGpuObjectBase<wgpu.WGpuTextureView> {
       this.mipLevelCount = 0,
       this.baseArrayLayer = 0,
       this.arrayLayerCount = 0}) {
-    texture.addDependent(this);
-    this.format = format ?? texture.format;
+    texture!.addDependent(this);
+    this.format = format ?? texture!.format;
     final d = calloc<wgpu.WGpuTextureViewDescriptor>();
     d.ref.format = this.format.nativeIndex;
     d.ref.dimension = dimension.nativeIndex;
@@ -51,7 +70,7 @@ class TextureView extends WGpuObjectBase<wgpu.WGpuTextureView> {
     d.ref.mipLevelCount = mipLevelCount;
     d.ref.baseArrayLayer = baseArrayLayer;
     d.ref.arrayLayerCount = arrayLayerCount;
-    final o = libwebgpu.wgpu_texture_create_view(texture.object, d);
+    final o = libwebgpu.wgpu_texture_create_view(texture!.object, d);
     setObject(o);
     calloc.free(d);
   }

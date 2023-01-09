@@ -9,6 +9,7 @@ abstract class WGpuObject implements Finalizable {
   /// The pointer to the native WebGPU object.
   Pointer objectPtr = nullptr;
   WGpuObject? _parent;
+
   /// The list of WebGPU objects this object created. When this object is
   /// destroyed, it will also destroy any objects that it has created.
   final dependents = <WGpuObject>[];

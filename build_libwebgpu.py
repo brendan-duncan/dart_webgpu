@@ -357,7 +357,8 @@ def buildDawn():
                         f'third_party/abseil/absl/numeric/{config}/absl_int128.lib',
                         f'third_party/abseil/absl/base/{config}/absl_throw_delegate.lib',
                         f'third_party/abseil/absl/base/{config}/absl_raw_logging_internal.lib',
-                        f'third_party/abseil/absl/base/{config}/absl_log_severity.lib']
+                        f'third_party/abseil/absl/base/{config}/absl_log_severity.lib',
+                        f'third_party/glfw/src/{config}/glfw3.lib']
 
                 else:
                     libraries = ['src/tint/libtint.a',
@@ -373,6 +374,7 @@ def buildDawn():
 
                 for libPath in libraries:
                     out_path = os.path.join(lib_dawn_dest_path, os.path.basename(libPath))
+                    print('!!!!!!!!!!!!!!!', os.getcwd(), libPath, os.path.exists(libPath))
                     shutil.copyfile(libPath, out_path)
 
             copy_all_files_in_dir(os.path.join(dawn_path, 'include'), [], [],
@@ -381,6 +383,10 @@ def buildDawn():
             gen_path = os.path.join(dawn_path, out_dir, 'gen', 'include')
             copy_all_files_in_dir(gen_path, [], [], os.path.join(dawn_libs_path, 'include'),
                                   recursive=True)
+
+            glfw_path = os.path.join(dawn_path, 'third_party', 'glfw', 'include')
+            copy_all_files_in_dir(glfw_path, [], [],
+                                  os.path.join(dawn_libs_path, 'include'), recursive=True)
 
 
 def fixHeadersForFFIGen(includes_path):
