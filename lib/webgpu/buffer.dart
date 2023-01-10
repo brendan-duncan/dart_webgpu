@@ -12,6 +12,8 @@ import 'map_mode.dart';
 import 'mapped_state.dart';
 import 'wgpu_object.dart';
 
+typedef MapAsyncCallback = void Function();
+
 /// A Buffer represents a block of memory that can be used in GPU operations.
 /// Data is stored in linear layout, meaning that each byte of the allocation
 /// can be addressed by its offset from the start of the Buffer, subject to
@@ -76,8 +78,34 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
     return BufferRange(this, startOffset, size, p.cast<Uint8>());
   }
 
+  /// Synchronously map a buffer for read/write.
+  void map({required MapMode mode, int offset = 0, int size = 0}) {
+    var isMapped = false;
+    mapAsync(mode: mode, offset: offset, size: size, callback: () {
+      isMapped = true;
+    });
+    while (!isMapped) {
+      // Submit an empty command buffer to flush pending commands in the queue,
+      // such as the mapAsync request
+      device.queue.submit();
+    }
+  }
+
+  /// Asynchronously map a buffer for read/write.
+  // TODO: Figure out a way to get Dart async to work with mapAsync.
+  //
+  // mapAsync seems to put a "pending command" into the Queue, and when the
+  // buffer has been mapped, the pending command gets processed during
+  // Queue.submit. Dart crashes with await for this future because it decides
+  // to garbage collect all of the alive objects.
+  //
+  // Only the callback currently works, not the Future. If we could somehow
+  // get Dart's await to call user code while waiting, we could periodically
+  // submit the Queue. Or, perhaps run a pthread from C that calls queue.submit
+  // while a buffer is map pending.
   Future<void> mapAsync(
-      {required MapMode mode, int offset = 0, int size = 0}) async {
+      {required MapMode mode, int offset = 0, int size = 0,
+        MapAsyncCallback? callback}) async {
     if (mappedState != MappedState.unmapped) {
       throw Exception('Cannot call mapAsync on a mapped buffer.');
     }
@@ -87,13 +115,15 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
     }
 
     final completer = Completer<void>();
-    _callbackData[object.cast<Void>()] = _BufferCallbackData(this, completer);
+    _callbackData[object.cast<Void>()] = _BufferCallbackData(this, completer,
+        callback);
 
     final cb = Pointer.fromFunction<
         Void Function(Pointer<wgpu.WGpuObjectDawn>, Pointer<Void>, Int, Uint64,
             Uint64)>(_mapBufferCB);
 
     mappedState = MappedState.pending;
+
     libwebgpu.wgpu_buffer_map_async(
         object, cb, object.cast(), mode.value, offset, size);
 
@@ -117,14 +147,18 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
     _callbackData.remove(userData);
     data?.buffer?.mappedState = MappedState.mapped;
     data?.completer.complete();
+    if (data?.callback != null) {
+      data!.callback!();
+    }
   }
 }
 
 class _BufferCallbackData {
   Buffer? buffer;
   Completer<void> completer;
+  MapAsyncCallback? callback;
 
-  _BufferCallbackData(this.buffer, this.completer);
+  _BufferCallbackData(this.buffer, this.completer, this.callback);
 }
 
 final _callbackData = <Pointer<Void>, _BufferCallbackData>{};

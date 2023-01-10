@@ -19,27 +19,27 @@ class WGpuLibrary {
   }
 
   WGpuLibrary._() {
-    library = _dlopenWebGpu();
+    library = _dlopen();
     wgpu = lib.libwebgpu(library);
   }
 
   void attachFinalizer(Finalizable object, Pointer<Void> token) {
-    finalizer.attach(object, token, detach: object);
+    _finalizer.attach(object, token, detach: object);
   }
 
   void detachFinalizer(Finalizable object) {
-    finalizer.detach(object);
+    _finalizer.detach(object);
   }
 
   void destroyObject(lib.WGpuObjectBase object) {
     wgpu.wgpu_object_destroy(object);
   }
 
-  late final wgpuObjectDestroy =
+  late final _wgpuObjectDestroy =
       library.lookup<NativeFunction<Void Function(lib.WGpuObjectBase)>>(
           'wgpu_object_finalize_dart');
 
-  late final finalizer = NativeFinalizer(wgpuObjectDestroy.cast());
+  late final _finalizer = NativeFinalizer(_wgpuObjectDestroy.cast());
 
   String _getLibraryPath() {
     final path = '${Directory.current.path}/libwebgpu/lib';
@@ -53,7 +53,7 @@ class WGpuLibrary {
     return '$path/linux-$config/libwebgpu.so';
   }
 
-  DynamicLibrary _dlopenWebGpu() {
+  DynamicLibrary _dlopen() {
     final path = _getLibraryPath();
     //print('#### LOADING $path');
     return DynamicLibrary.open(path);

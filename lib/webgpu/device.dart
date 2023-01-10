@@ -323,23 +323,11 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
       for (final cb in device.uncapturedError) {
         cb(device, t, msg);
       }
+      if (device.uncapturedError.isEmpty) {
+        print('ERROR: $msg');
+      }
     }
   }
-
-  /*@override
-  void destroy() {
-    destroyDependents();
-    print('Destroy Device $this');
-    //webgpu.detachFinalizer(this);
-    webgpu
-      ..detachFinalizer(this)
-      ..destroyObject(objectPtr as wgpu.WGpuObjectBase);
-    print('~Destroy Device $this');
-    objectPtr = nullptr;
-    if (parent != null) {
-      parent!.removeDependent(this);
-    }
-  }*/
 }
 
 class _DeviceCallbackData {

@@ -374,7 +374,6 @@ def buildDawn():
 
                 for libPath in libraries:
                     out_path = os.path.join(lib_dawn_dest_path, os.path.basename(libPath))
-                    print('!!!!!!!!!!!!!!!', os.getcwd(), libPath, os.path.exists(libPath))
                     shutil.copyfile(libPath, out_path)
 
             copy_all_files_in_dir(os.path.join(dawn_path, 'include'), [], [],

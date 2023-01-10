@@ -15,8 +15,12 @@ class Queue extends WGpuObjectBase<wgpu.WGpuQueue> {
 
   Queue(this.device, wgpu.WGpuQueue o) : super(o, device);
 
-  void submit(Object commandBufferOrList) {
-    if (commandBufferOrList is CommandBuffer) {
+  void submit([Object? commandBufferOrList]) {
+    // Submitting an empty command-buffer can be used to flush the pending queue
+    // commands.
+    if (commandBufferOrList == null) {
+      libwebgpu.wgpu_queue_submit_multiple(object, nullptr, 0);
+    } else if (commandBufferOrList is CommandBuffer) {
       libwebgpu.wgpu_queue_submit_one(object, commandBufferOrList.object);
       commandBufferOrList.destroy();
     } else if (commandBufferOrList is List<CommandBuffer>) {
