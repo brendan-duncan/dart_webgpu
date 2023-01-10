@@ -3,15 +3,15 @@
 ///
 /// r, g, b, a = red, green, blue, alpha
 ///
-/// Unorm = unsigned normalized
+/// unorm = unsigned normalized
 ///
-/// Snorm = signed normalized
+/// snorm = signed normalized
 ///
-/// Uint = unsigned int
+/// uint = unsigned int
 ///
-/// Sint = signed int
+/// sint = signed int
 ///
-/// Float = floating point
+/// float = floating point
 ///
 /// If the format has the Srgb suffix, then sRGB conversions from gamma to
 /// linear and vice versa are applied during the reading and writing of color
@@ -20,120 +20,120 @@
 /// prefix. e.g. etc2-rgba8unorm.
 enum TextureFormat {
   // 8-bit formats
-  r8Unorm,
-  r8Snorm,
-  r8Uint,
-  r8Sint,
+  r8unorm,
+  r8snorm,
+  r8uint,
+  r8sint,
 
   // 16-bit formats
-  r16Uint,
-  r16Sint,
-  r16Float,
-  rg8Unorm,
-  rg8Snorm,
-  rg8Uint,
-  rg8Sint,
+  r16uint,
+  r16sint,
+  r16float,
+  rg8unorm,
+  rg8snorm,
+  rg8uint,
+  rg8sint,
 
   // 32-bit formats
-  r32Uint,
-  r32Sint,
-  r32Float,
-  rg16Uint,
-  rg16Sint,
-  rg16Float,
-  rgba8Unorm,
-  rgba8UnormSrgb,
-  rgba8Snorm,
-  rgba8Uint,
-  rgba8Sint,
-  bgra8Unorm,
-  bgra8UnormSrgb,
+  r32uint,
+  r32sint,
+  r32float,
+  rg16uint,
+  rg16sint,
+  rg16float,
+  rgba8unorm,
+  rgba8unormSrgb,
+  rgba8snorm,
+  rgba8uint,
+  rgba8sint,
+  bgra8unorm,
+  bgra8unormSrgb,
   // Packed 32-bit formats
-  rgb9e5uFloat,
-  rgb10a2Unorm,
-  rg11b10uFloat,
+  rgb9e5ufloat,
+  rgb10a2unorm,
+  rg11b10ufloat,
 
   // 64-bit formats
-  rg32Uint,
-  rg32Sint,
-  rg32Float,
-  rgba16Uint,
-  rgba16Sint,
-  rgba16Float,
+  rg32uint,
+  rg32sint,
+  rg32float,
+  rgba16uint,
+  rgba16sint,
+  rgba16float,
 
   // 128-bit formats
-  rgba32Uint,
-  rgba32Sint,
-  rgba32Float,
+  rgba32uint,
+  rgba32sint,
+  rgba32float,
 
   // Depth/stencil formats
   stencil8,
-  depth16Unorm,
+  depth16unorm,
   depth24Plus,
   depth24PlusStencil8,
-  depth32Float,
-  depth32FloatStencil8,
+  depth32float,
+  depth32floatStencil8,
 
   // BC compressed formats usable if "texture-compression-bc" is both
   // supported by the device/user agent and enabled in requestDevice.
-  bc1RgbaUnorm,
-  bc1RgbaUnormSrgb,
-  bc2RgbaUnorm,
-  bc2RgbaUnormSrgb,
-  bc3RgbaUnorm,
-  bc3RgbaUnormSrgb,
-  bc4RUnorm,
-  bc4RSnorm,
-  bc5RgUnorm,
-  bc5RgSnorm,
-  bc6hRgbUfloat,
-  bc6hRgbFloat,
-  bc7RgbaUnorm,
-  bc7RgbaUnormSrgb,
+  bc1rgbaunorm,
+  bc1rgbaunormSrgb,
+  bc2rgbaunorm,
+  bc2rgbaunormSrgb,
+  bc3rgbaunorm,
+  bc3rgbaunormSrgb,
+  bc4runorm,
+  bc4rsnorm,
+  bc5rgunorm,
+  bc5rgsnorm,
+  bc6hrgbufloat,
+  bc6hrgbfloat,
+  bc7rgbaunorm,
+  bc7rgbaunormSrgb,
 
   // ETC2 compressed formats usable if "texture-compression-etc2" is both
   // supported by the device/user agent and enabled in requestDevice.
-  etc2Rgb8Unorm,
-  etc2Rgb8UnormSrgb,
-  etc2Rgb8a1UNorm,
-  etc2Rgb8a1UnormSrgb,
-  etc2Rgba8unorm,
-  etc2Rgba8Unorm,
-  eacR11Unorm,
-  eacR11Snorm,
-  eacRg11Unorm,
-  eacRg11Snorm,
+  etc2rgb8unorm,
+  etc2rgb8unormSrgb,
+  etc2rgb8a1UNorm,
+  etc2rgb8a1unormSrgb,
+  etc2rgba8unorm,
+  etc2rgba8snorm,
+  eacr11unorm,
+  eacr11snorm,
+  eacrg11unorm,
+  eacrg11snorm,
 
   // ASTC compressed formats usable if "texture-compression-astc" is both
   // supported by the device/user agent and enabled in requestDevice.
-  astc4x4Unorm,
-  astc4x4UnormSrgb,
-  astc5x4Unorm,
-  astc5x4UnormSrgb,
-  astc5x5Unorm,
-  astc5x5UnormSrgb,
-  astc6x5Unorm,
-  astc6x5UnormSrgb,
-  astc6x6Unorm,
-  astc6x6UnormSrgb,
-  astc8x5Unorm,
-  astc8x5UnormSrgb,
-  astc8x6Unorm,
-  astc8x6UnormSrgb,
-  astc8x8Unorm,
-  astc8x8UnormSrgb,
-  astc10x5Unorm,
-  astc10x5UnormSrgb,
-  astc10x6Unorm,
-  astc10x6UnormSrgb,
-  astc10x8Unorm,
-  astc10x8UnormSrgb,
-  astc10x10Unorm,
-  astc10x10UnormSrgb,
-  astc12x10Unorm,
-  astc12x10UnormSrgb,
-  astc12x12Unorm,
-  astc12x12UnormSrgb;
+  astc4x4unorm,
+  astc4x4unormSrgb,
+  astc5x4unorm,
+  astc5x4unormSrgb,
+  astc5x5unorm,
+  astc5x5unormSrgb,
+  astc6x5unorm,
+  astc6x5unormSrgb,
+  astc6x6unorm,
+  astc6x6unormSrgb,
+  astc8x5unorm,
+  astc8x5unormSrgb,
+  astc8x6unorm,
+  astc8x6unormSrgb,
+  astc8x8unorm,
+  astc8x8unormSrgb,
+  astc10x5unorm,
+  astc10x5unormSrgb,
+  astc10x6unorm,
+  astc10x6unormSrgb,
+  astc10x8unorm,
+  astc10x8unormSrgb,
+  astc10x10unorm,
+  astc10x10unormSrgb,
+  astc12x10unorm,
+  astc12x10unormSrgb,
+  astc12x12unorm,
+  astc12x12unormSrgb;
 
   int get nativeIndex => index + 1;
 }

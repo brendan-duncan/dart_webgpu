@@ -143,7 +143,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
           FilterMode mipmapFilter = FilterMode.nearest,
           num lodMinClamp = 0,
           num lodMaxClamp = 32,
-          CompareFunction compare = CompareFunction.always,
+          CompareFunction compare = CompareFunction.undefined,
           int maxAnisotropy = 1}) =>
       Sampler(this,
           addressModeU: addressModeU,

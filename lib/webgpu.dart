@@ -36,6 +36,7 @@ export 'webgpu/fragment_state.dart';
 export 'webgpu/front_face.dart';
 export 'webgpu/image_copy_buffer.dart';
 export 'webgpu/image_copy_texture.dart';
+export 'webgpu/image_data_layout.dart';
 export 'webgpu/index_format.dart';
 export 'webgpu/limits.dart';
 export 'webgpu/load_op.dart';

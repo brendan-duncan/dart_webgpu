@@ -102,9 +102,9 @@ class Texture extends WGpuObjectBase<wgpu.WGpuTexture> {
       TextureViewDimension? dimension,
       TextureAspect aspect = TextureAspect.all,
       int baseMipLevel = 0,
-      int mipLevelCount = 0,
+      int mipLevelCount = 1,
       int baseArrayLayer = 0,
-      int arrayLayerCount = 0}) {
+      int arrayLayerCount = 1}) {
     format ??= this.format;
     dimension ??= this.dimension == TextureDimension.texture1d
         ? TextureViewDimension.textureView1d

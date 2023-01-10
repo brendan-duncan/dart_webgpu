@@ -42,7 +42,7 @@ class TextureView extends WGpuObjectBase<wgpu.WGpuTextureView> {
 
   TextureView.native(wgpu.WGpuTextureView o)
       : texture = null,
-        format = TextureFormat.bgra8Unorm,
+        format = TextureFormat.bgra8unorm,
         dimension = TextureViewDimension.textureView2d,
         aspect = TextureAspect.all,
         baseMipLevel = 0,
@@ -57,9 +57,9 @@ class TextureView extends WGpuObjectBase<wgpu.WGpuTextureView> {
       TextureFormat? format,
       this.aspect = TextureAspect.all,
       this.baseMipLevel = 0,
-      this.mipLevelCount = 0,
+      this.mipLevelCount = 1,
       this.baseArrayLayer = 0,
-      this.arrayLayerCount = 0}) {
+      this.arrayLayerCount = 1}) {
     texture!.addDependent(this);
     this.format = format ?? texture!.format;
     final d = calloc<wgpu.WGpuTextureViewDescriptor>();

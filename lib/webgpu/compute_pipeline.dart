@@ -1,4 +1,6 @@
 import '../ffi/ffi_webgpu.dart' as wgpu;
+import '../ffi/wgpu_library.dart';
+import 'bind_group_layout.dart';
 import 'device.dart';
 import 'wgpu_object.dart';
 
@@ -9,4 +11,9 @@ class ComputePipeline extends WGpuObjectBase<wgpu.WGpuComputePipeline> {
   final Device device;
 
   ComputePipeline(this.device, wgpu.WGpuComputePipeline o) : super(o, device);
+
+  BindGroupLayout getBindGroupLayout(int index) {
+    final o = libwebgpu.wgpu_pipeline_get_bind_group_layout(object, index);
+    return BindGroupLayout.native(device, o);
+  }
 }

@@ -3,6 +3,9 @@
 /// and the result of this comparison test (0.0f for pass, or 1.0f for fail) is
 /// used in the filtering operation.
 enum CompareFunction {
+  /// Not a comparison sampler.
+  undefined,
+
   /// Comparison tests never pass.
   never,
 
@@ -33,5 +36,5 @@ enum CompareFunction {
   /// Comparison tests always pass.
   always;
 
-  int get nativeIndex => index + 1;
+  int get nativeIndex => index;
 }

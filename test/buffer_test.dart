@@ -29,7 +29,14 @@ void main() async {
       b.unmap();
       expect(b.mappedState, wgpu.MappedState.unmapped);
 
-      b.map(mode: wgpu.MapMode.read);
+      var mapped = false;
+      // await does not work so we have to wait for the callback
+      b.mapAsync(mode: wgpu.MapMode.read, callback: () {
+        mapped = true;
+      });
+      while (!mapped) {
+        d.queue.submit(); // process pending commands
+      }
       expect(b.mappedState, wgpu.MappedState.mapped);
       final data = b.getMappedRange().as<Float32List>();
       expect(data[0], equals(0.5));

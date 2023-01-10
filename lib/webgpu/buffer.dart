@@ -78,19 +78,6 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
     return BufferRange(this, startOffset, size, p.cast<Uint8>());
   }
 
-  /// Synchronously map a buffer for read/write.
-  void map({required MapMode mode, int offset = 0, int size = 0}) {
-    var isMapped = false;
-    mapAsync(mode: mode, offset: offset, size: size, callback: () {
-      isMapped = true;
-    });
-    while (!isMapped) {
-      // Submit an empty command buffer to flush pending commands in the queue,
-      // such as the mapAsync request
-      device.queue.submit();
-    }
-  }
-
   /// Asynchronously map a buffer for read/write.
   // TODO: Figure out a way to get Dart async to work with mapAsync.
   //

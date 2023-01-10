@@ -32,7 +32,7 @@ class Sampler extends WGpuObjectBase<wgpu.WGpuSampler> {
       this.mipmapFilter = FilterMode.nearest,
       this.lodMinClamp = 0,
       this.lodMaxClamp = 32,
-      this.compare = CompareFunction.always,
+      this.compare = CompareFunction.undefined,
       this.maxAnisotropy = 1}) {
     device.addDependent(this);
     final d = calloc<wgpu.WGpuSamplerDescriptor>();
@@ -46,8 +46,8 @@ class Sampler extends WGpuObjectBase<wgpu.WGpuSampler> {
     d.ref.lodMaxClamp = lodMaxClamp.toDouble();
     d.ref.compare = compare.nativeIndex;
     d.ref.maxAnisotropy = maxAnisotropy;
-    final o = libwebgpu.wgpu_device_create_sampler(object, d);
+    final o = libwebgpu.wgpu_device_create_sampler(device.object, d);
     setObject(o);
-    calloc.free(o);
+    calloc.free(d);
   }
 }
