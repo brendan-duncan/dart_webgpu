@@ -18,7 +18,7 @@ void main() async {
       expect(b.isValid, isFalse);
     });
 
-    test('mapAsync', () async {
+    test('map', () async {
       final a = await wgpu.Adapter.request();
       final d = await a.requestDevice();
 

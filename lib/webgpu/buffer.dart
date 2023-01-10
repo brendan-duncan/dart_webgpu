@@ -105,7 +105,7 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
   // while a buffer is map pending.
   Future<void> mapAsync(
       {required MapMode mode, int offset = 0, int size = 0,
-        MapAsyncCallback? callback}) async {
+        required MapAsyncCallback callback}) async {
     if (mappedState != MappedState.unmapped) {
       throw Exception('Cannot call mapAsync on a mapped buffer.');
     }
