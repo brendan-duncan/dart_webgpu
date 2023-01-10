@@ -5,9 +5,11 @@ class BlendComponent {
   /// Defines the [BlendOperation] used to calculate the values written to the
   /// target attachment components.
   final BlendOperation operation;
+
   /// Defines the [BlendFactor] operation to be performed on values from the
   /// fragment shader.
   final BlendFactor srcFactor;
+
   /// Defines the [BlendFactor] operation to be performed on values from the
   /// target attachment.
   final BlendFactor dstFactor;

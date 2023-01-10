@@ -3,8 +3,10 @@
 enum CullMode {
   /// No polygons are discarded.
   none,
+
   /// Front-facing polygons are discarded.
   front,
+
   /// Back-facing polygons are discarded.
   back;
 

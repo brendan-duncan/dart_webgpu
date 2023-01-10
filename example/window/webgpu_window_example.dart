@@ -15,12 +15,13 @@ void main() async {
     print('ERROR: $message');
   });
 
-  final window = wgpu.Window(width: 800, height: 600, device: device);
+  final window = wgpu.Window(width: 800, height: 600);
+  final context = window.createContext(device);
 
   var g = 0.0;
 
   while (!window.shouldQuit) {
-    final textureView = window.getCurrentTextureView();
+    final textureView = context.getCurrentTextureView();
 
     final commandEncoder = device.createCommandEncoder();
 
@@ -40,13 +41,7 @@ void main() async {
     }
 
     final commandBuffer = commandEncoder.finish();
-    //commandEncoder.destroy();
-
     device.queue.submit(commandBuffer);
-    //commandBuffer.destroy();
-
-    window.present();
-
-    //textureView.destroy();
+    context.present();
   }
 }

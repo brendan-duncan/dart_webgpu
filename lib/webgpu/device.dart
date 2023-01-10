@@ -55,16 +55,21 @@ class Error {
 class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   /// The [Adapter] that created this Device.
   Adapter adapter;
+
   /// The limits supported by the device (which are exactly the ones with which
   /// it was created).
   late final Limits limits;
+
   /// A set containing the Features values of the features supported by the
   /// device (i.e. the ones with which it was created).
   late final Features features;
+
   /// The default [Queue] of the Device.
   late final Queue queue;
+
   /// The lost callback will be called if the device is lost.
   final lost = <DeviceLostCallback>[];
+
   /// uncapturedError callbacks will be called for errors that weren't captured
   /// with pushErrorScope/popErrorScope.
   final uncapturedError = <ErrorCallback>[];
@@ -97,23 +102,23 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
 
   /// Create a [Buffer].
   Buffer createBuffer(
-      {required int size,
-        required BufferUsage usage,
-        bool mappedAtCreation = false}) =>
+          {required int size,
+          required BufferUsage usage,
+          bool mappedAtCreation = false}) =>
       Buffer(this,
           size: size, usage: usage, mappedAtCreation: mappedAtCreation);
 
   /// Create a [Texture]
   Texture createTexture(
-      {required int width,
-        int height = 1,
-        int depthOrArrayLayers = 1,
-        required TextureFormat format,
-        required TextureUsage usage,
-        int mipLevelCount = 1,
-        int sampleCount = 1,
-        TextureDimension dimension = TextureDimension.texture2d,
-        List<TextureFormat>? viewFormats}) =>
+          {required int width,
+          int height = 1,
+          int depthOrArrayLayers = 1,
+          required TextureFormat format,
+          required TextureUsage usage,
+          int mipLevelCount = 1,
+          int sampleCount = 1,
+          TextureDimension dimension = TextureDimension.texture2d,
+          List<TextureFormat>? viewFormats}) =>
       Texture(this,
           width: width,
           height: height,
@@ -151,7 +156,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
 
   /// Create a [BindGroupLayout]
   BindGroupLayout createBindGroupLayout(
-      {required List<BindGroupLayoutEntry> entries}) =>
+          {required List<BindGroupLayoutEntry> entries}) =>
       BindGroupLayout(this, entries: entries);
 
   /// Create a [PipelineLayout]
@@ -160,8 +165,8 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
 
   /// Create a [BindGroup]
   BindGroup createBindGroup(
-      {required BindGroupLayout layout,
-        required List<BindGroupEntry> entries}) =>
+          {required BindGroupLayout layout,
+          required List<BindGroupEntry> entries}) =>
       BindGroup(this, layout: layout, entries: entries);
 
   /// Create a [ShaderModule].
@@ -171,9 +176,9 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   /// Create a [ComputePipeline] synchronously
   ComputePipeline createComputePipeline(
       {required PipelineLayout layout,
-        required ShaderModule module,
-        required String entryPoint,
-        Map<String, num>? constants}) {
+      required ShaderModule module,
+      required String entryPoint,
+      Map<String, num>? constants}) {
     final entryStr = entryPoint.toNativeUtf8().cast<Char>();
 
     final numConstants = constants?.keys.length ?? 0;
@@ -199,9 +204,9 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   /// Create a [ComputePipeline] asynchronously
   Future<ComputePipeline> createComputePipelineAsync(
       {required PipelineLayout layout,
-        required ShaderModule module,
-        required String entryPoint,
-        List<Map<String, num>>? constants}) async {
+      required ShaderModule module,
+      required String entryPoint,
+      List<Map<String, num>>? constants}) async {
     final completer = Completer<ComputePipeline>();
 
     final cb = Pointer.fromFunction<
@@ -213,7 +218,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
     final sizeofConstant = sizeOf<wgpu.WGpuPipelineConstant>();
     final numConstants = constants?.length ?? 0;
     final constantsBuffer =
-    malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
+        malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
 
     _callbackData[object.cast<Void>()] =
         _ComputePipelineCreationData(this, completer);
@@ -249,7 +254,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   CommandEncoder createCommandEncoder() => CommandEncoder(this);
 
   /// Create a [QuerySet]
-  QuerySet createQuerySet({ required QueryType type, required int count}) =>
+  QuerySet createQuerySet({required QueryType type, required int count}) =>
       QuerySet(this, type: type, count: count);
 
   /// Pushes a new GPU error scope onto the errorScopeStack.

@@ -9,9 +9,11 @@ enum TextureAspect {
   /// be accessible. Depth-or-stencil formats with a single aspect will only
   /// make that aspect accessible.
   all,
+
   /// Only the stencil aspect of a depth-or-stencil format format will be
   /// accessible to the TextureView.
   stencilOnly,
+
   /// Only the depth aspect of a depth-or-stencil format format will be
   /// accessible to the TextureView.
   depthOnly;

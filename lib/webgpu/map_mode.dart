@@ -6,12 +6,12 @@ class MapMode {
   final int value;
   const MapMode(this.value);
 
-  MapMode operator|(MapMode other) => MapMode(value | other.value);
+  MapMode operator |(MapMode other) => MapMode(value | other.value);
 
   @override
-  bool operator==(Object other) =>
+  bool operator ==(Object other) =>
       other is MapMode && value == other.value ||
-          other is int && value == other;
+      other is int && value == other;
 
   @override
   int get hashCode => value;

@@ -83,6 +83,7 @@ export 'webgpu/vertex_step_mode.dart';
 export 'webgpu/wgpu_object.dart';
 
 export 'window/window.dart';
+export 'window/window_context.dart';
 
 /// Call initializeWebGPU(debug: true) prior to using any WebGPU commands
 /// to have it load the Debug library instead of the Release library.

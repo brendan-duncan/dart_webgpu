@@ -11,6 +11,7 @@ enum QueryType {
   /// occlusion query is begun and ended by calling beginOcclusionQuery() and
   /// endOcclusionQuery() in pairs that cannot be nested.
   occlusion,
+
   /// Timestamp queries allow applications to write timestamps to a QuerySet,
   /// using:
   /// CommandEncoder.writeTimestamp()
