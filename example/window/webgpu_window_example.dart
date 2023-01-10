@@ -43,5 +43,6 @@ void main() async {
     final commandBuffer = commandEncoder.finish();
     device.queue.submit(commandBuffer);
     context.present();
+    window.pollEvents();
   }
 }

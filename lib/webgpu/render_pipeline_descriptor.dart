@@ -13,14 +13,14 @@ class RenderPipelineDescriptor {
   final VertexState vertex;
   final PrimitiveState? primitive;
   final DepthStencilState? depthStencil;
-  final MultisampleState? multisample;
+  final MultisampleState multisample;
   final FragmentState? fragment;
 
   const RenderPipelineDescriptor(
       {required this.vertex,
       this.primitive,
       this.depthStencil,
-      this.multisample,
+      this.multisample = const MultisampleState(),
       this.fragment});
 
   Pointer<wgpu.WGpuRenderPipelineDescriptor> toNative() {
@@ -91,13 +91,11 @@ class RenderPipelineDescriptor {
         ..clampDepth = 0;
     }
 
-    if (multisample != null) {
-      final ms = multisample!;
-      ref.multisample
-        ..count = ms.count
-        ..mask = ms.mask
-        ..alphaToCoverageEnabled = ms.alphaToCoverageEnabled ? 1 : 0;
-    }
+    final ms = multisample;
+    ref.multisample
+      ..count = ms.count
+      ..mask = ms.mask
+      ..alphaToCoverageEnabled = ms.alphaToCoverageEnabled ? 1 : 0;
 
     if (fragment != null) {
       final f = fragment!;

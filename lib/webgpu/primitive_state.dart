@@ -12,7 +12,7 @@ class PrimitiveState {
 
   const PrimitiveState(
       {this.topology = PrimitiveTopology.triangleList,
-      this.stripIndexFormat = IndexFormat.uint16,
+      this.stripIndexFormat = IndexFormat.undefined,
       this.frontFace = FrontFace.ccw,
       this.cullMode = CullMode.none,
       this.unclippedDepth = false});
