@@ -47,6 +47,9 @@ class Error {
   const Error(this.message);
 }
 
+typedef ComputePipelineCallback = void Function(ComputePipeline p);
+typedef RenderPipelineCallback = void Function(RenderPipeline p);
+
 /// A Device is the top-level interface through which WebGPU interfaces are
 /// created.
 ///
@@ -206,7 +209,8 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
       {required PipelineLayout layout,
       required ShaderModule module,
       required String entryPoint,
-      List<Map<String, num>>? constants}) async {
+      List<Map<String, num>>? constants,
+      required ComputePipelineCallback callback}) async {
     final completer = Completer<ComputePipeline>();
 
     final cb = Pointer.fromFunction<
@@ -221,7 +225,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
         malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
 
     _callbackData[object.cast<Void>()] =
-        _ComputePipelineCreationData(this, completer);
+        _ComputePipelineCreationData(this, completer, callback);
 
     libwebgpu.wgpu_device_create_compute_pipeline_async(
         object,
@@ -240,14 +244,23 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
 
   /// Create a [RenderPipeline] asynchronously.
   Future<RenderPipeline> createRenderPipelineAsync(
-      RenderPipelineDescriptor descriptor) async {
-    //final completer = Completer<RenderPipeline>();
+      RenderPipelineDescriptor descriptor,
+      {required RenderPipelineCallback callback}) async {
+    final completer = Completer<RenderPipeline>();
     final d = descriptor.toNative();
-    final o = libwebgpu.wgpu_device_create_render_pipeline(object, d);
-    final pipeline = RenderPipeline(this, o);
+
+    _callbackData[object.cast<Void>()] =
+        _RenderPipelineCreationData(this, completer, callback);
+
+    final cb = Pointer.fromFunction<
+        Void Function(wgpu.WGpuDevice, wgpu.WGpuPipelineBase,
+            Pointer<Void>)>(_createRenderPipelineCB);
+
+    libwebgpu.wgpu_device_create_render_pipeline_async(object,
+        d, cb, object.cast());
+
     descriptor.deleteNative(d);
-    return pipeline;
-    //return completer.future;
+    return completer.future;
   }
 
   /// Create a [CommandEncoder].
@@ -279,6 +292,20 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
     final data = _callbackData[userData] as _ComputePipelineCreationData?;
     _callbackData.remove(userData);
     final obj = ComputePipeline(data!.device!, pipeline);
+    if (data.callback != null) {
+      data.callback!(obj);
+    }
+    data.completer.complete(obj);
+  }
+
+  static void _createRenderPipelineCB(wgpu.WGpuDevice device,
+      wgpu.WGpuPipelineBase pipeline, Pointer<Void> userData) {
+    final data = _callbackData[userData] as _RenderPipelineCreationData?;
+    _callbackData.remove(userData);
+    final obj = RenderPipeline(data!.device!, pipeline);
+    if (data.callback != null) {
+      data.callback!(obj);
+    }
     data.completer.complete(obj);
   }
 
@@ -342,7 +369,14 @@ class _ErrorScopeData extends _DeviceCallbackData {
 
 class _ComputePipelineCreationData extends _DeviceCallbackData {
   Completer<ComputePipeline> completer;
-  _ComputePipelineCreationData(super.device, this.completer);
+  ComputePipelineCallback? callback;
+  _ComputePipelineCreationData(super.device, this.completer, this.callback);
+}
+
+class _RenderPipelineCreationData extends _DeviceCallbackData {
+  Completer<RenderPipeline> completer;
+  RenderPipelineCallback? callback;
+  _RenderPipelineCreationData(super.device, this.completer, this.callback);
 }
 
 final _callbackData = <Pointer<Void>, _DeviceCallbackData>{};
