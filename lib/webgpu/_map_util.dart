@@ -153,9 +153,9 @@ List<T>? getMapListNullable<T>(Object? object) {
 }
 
 List<T> getMapList<T>(Object? object) {
-  final l = getMapListNullable(object);
+  final l = getMapListNullable<T>(object);
   if (l == null) {
     throw Exception('Invalid data for $T');
   }
-  return l as List<T>;
+  return l;
 }

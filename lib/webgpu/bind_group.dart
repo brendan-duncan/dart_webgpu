@@ -23,7 +23,7 @@ class BindGroup extends WGpuObjectBase<wgpu.WGpuBindGroup> {
   /// the shader for each binding described by the layout.
   BindGroup(this.device,
       {required BindGroupLayout layout,
-      required List<BindGroupEntry> entries}) {
+      required List<Object> entries}) {
     device.addDependent(this);
 
     final sizeofEntry = sizeOf<wgpu.WGpuBindGroupEntry>();
@@ -31,7 +31,13 @@ class BindGroup extends WGpuObjectBase<wgpu.WGpuBindGroup> {
     final p = malloc<wgpu.WGpuBindGroupEntry>(sizeofEntry * numEntries);
 
     for (var i = 0; i < numEntries; ++i) {
-      final e = entries[i];
+      var e = entries[i];
+      if (e is Map<String, Object>) {
+        e = BindGroupEntry.fromMap(e);
+      }
+      if (e is! BindGroupEntry) {
+        throw Exception('Invalid data for BindGroup entries.');
+      }
       final binding = e.binding;
       final resource = e.resource;
 

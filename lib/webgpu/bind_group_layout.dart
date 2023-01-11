@@ -19,7 +19,7 @@ class BindGroupLayout extends WGpuObjectBase<wgpu.WGpuBindGroupLayout> {
   BindGroupLayout.native(this.device, wgpu.WGpuBindGroupLayout o)
       : super(o, device);
 
-  BindGroupLayout(this.device, {required List<BindGroupLayoutEntry> entries}) {
+  BindGroupLayout(this.device, {required List<Object> entries}) {
     device.addDependent(this);
 
     final sizeofEntry = sizeOf<wgpu.WGpuBindGroupLayoutEntry>();
@@ -29,7 +29,13 @@ class BindGroupLayout extends WGpuObjectBase<wgpu.WGpuBindGroupLayout> {
         .allocate<wgpu.WGpuBindGroupLayoutEntry>(sizeofEntry * numEntries);
 
     for (var i = 0; i < numEntries; ++i) {
-      final e = entries[i];
+      var e = entries[i];
+      if (e is Map<String, Object>) {
+        e = BindGroupLayoutEntry.fromMap(e);
+      }
+      if (e is! BindGroupLayoutEntry) {
+        throw Exception('Invalid data for BindGroupLayout entries.');
+      }
 
       final ref = p.elementAt(i).ref
         ..binding = e.binding
