@@ -53,6 +53,7 @@ export 'webgpu/queue.dart';
 export 'webgpu/render_pass_color_attachment.dart';
 export 'webgpu/render_pass_depth_stencil_attachment.dart';
 export 'webgpu/render_pass_descriptor.dart';
+export 'webgpu/render_pass_encoder.dart';
 export 'webgpu/render_pipeline.dart';
 export 'webgpu/render_pipeline_descriptor.dart';
 export 'webgpu/sampler.dart';
