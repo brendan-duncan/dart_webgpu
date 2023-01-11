@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'texture.dart';
 import 'texture_aspect.dart';
 
@@ -25,4 +26,13 @@ class ImageCopyTexture {
       this.mipLevel = 0,
       this.origin = const [0, 0, 0],
       this.aspect = TextureAspect.all});
+
+  factory ImageCopyTexture.fromMap(Map<String, Object> map) {
+    final texture = getMapValueRequired<Texture>(map['texture']);
+    final mipLevel = getMapValue<int>(map['mipLevel'], 0);
+    final origin = getMapValue<List<int>>(map['origin'], [0, 0, 0]);
+    final aspect = getMapValue<TextureAspect>(map['aspect'], TextureAspect.all);
+    return ImageCopyTexture(
+        texture: texture, mipLevel: mipLevel, origin: origin, aspect: aspect);
+  }
 }

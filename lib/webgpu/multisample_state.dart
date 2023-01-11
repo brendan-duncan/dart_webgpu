@@ -1,3 +1,5 @@
+import '_map_util.dart';
+
 class MultisampleState {
   final int count;
   final int mask;
@@ -9,9 +11,9 @@ class MultisampleState {
       this.alphaToCoverageEnabled = false});
 
   factory MultisampleState.fromMap(Map<String, Object> map) {
-    final count = map['count'] is int ? map['count'] as int : 1;
-    final mask = map['mask'] is int ? map['mask'] as int : 0xffffffff;
-    final a = map['alphaToCoverageEnabled'] as bool? ?? false;
+    final count = getMapValue<int>(map['count'], 1);
+    final mask = getMapValue<int>(map['mask'], 0xffffffff);
+    final a = getMapValue<bool>(map['alphaToCoverageEnabled'], false);
     return MultisampleState(
         count: count, mask: mask, alphaToCoverageEnabled: a);
   }

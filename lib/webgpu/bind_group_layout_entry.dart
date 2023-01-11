@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'buffer_binding_layout.dart';
 import 'external_texture_binding_layout.dart';
 import 'sampler_binding_layout.dart';
@@ -46,4 +47,25 @@ class BindGroupLayoutEntry {
       this.texture,
       this.storageTexture,
       this.externalTexture});
+
+  factory BindGroupLayoutEntry.fromMap(Map<String, Object> map) {
+    final binding = getMapValueRequired<int>(map['binding']);
+    final visibility = getMapValueRequired<ShaderStage>(map['visibility']);
+    final buffer = getMapObjectNullable<BufferBindingLayout>(map['buffer']);
+    final sampler = getMapObjectNullable<SamplerBindingLayout>(map['sampler']);
+    final texture = getMapObjectNullable<TextureBindingLayout>(map['texture']);
+    final storageTexture = getMapObjectNullable<StorageTextureBindingLayout>(
+        map['storageTexture']);
+    final externalTexture = getMapObjectNullable<ExternalTextureBindingLayout>(
+        map['externalTexture']);
+
+    return BindGroupLayoutEntry(
+        binding: binding,
+        visibility: visibility,
+        buffer: buffer,
+        sampler: sampler,
+        texture: texture,
+        storageTexture: storageTexture,
+        externalTexture: externalTexture);
+  }
 }

@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'timestamp_write.dart';
 
 class ComputePassDescriptor {
@@ -6,4 +7,11 @@ class ComputePassDescriptor {
   final List<TimestampWrite>? timestampWrites;
 
   const ComputePassDescriptor({this.timestampWrites});
+
+  factory ComputePassDescriptor.fromMap(Map<String, Object> map) {
+    final timestampWrites =
+        getMapListNullable<TimestampWrite>(map['timestampWrites']);
+
+    return ComputePassDescriptor(timestampWrites: timestampWrites);
+  }
 }

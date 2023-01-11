@@ -59,26 +59,26 @@ class DepthStencilState {
       this.depthBiasClamp = 0});
 
   factory DepthStencilState.fromMap(Map<String, Object> map) {
-    final format = getMapValueRequired<TextureFormat>(map, 'format');
-    final depthWriteEnabled = getMapValue(map, 'depthWriteEnabled', false);
+    final format = getMapValueRequired<TextureFormat>(map['format']);
+    final depthWriteEnabled = getMapValue(map['depthWriteEnabled'], false);
     final depthCompare =
-        getMapValue(map, 'depthCompare', CompareFunction.always);
+        getMapValue(map['depthCompare'], CompareFunction.always);
     final stencilFront =
-        getMapValue(map, 'stencilFront', const StencilFaceState());
+        getMapObjectNullable<StencilFaceState>(map['stencilFront']);
     final stencilBack =
-        getMapValue(map, 'stencilBack', const StencilFaceState());
-    final stencilReadMask = getMapValue(map, 'stencilReadMask', 0xffffffff);
-    final stencilWriteMask = getMapValue(map, 'stencilWriteMask', 0xffffffff);
-    final depthBias = getMapValue(map, 'depthBias', 0);
-    final depthBiasSlopeScale = getMapValue(map, 'depthBiasSlopeScale', 0);
-    final depthBiasClamp = getMapValue(map, 'depthBiasClamp', 0);
+        getMapObjectNullable<StencilFaceState>(map['stencilBack']);
+    final stencilReadMask = getMapValue(map['stencilReadMask'], 0xffffffff);
+    final stencilWriteMask = getMapValue(map['stencilWriteMask'], 0xffffffff);
+    final depthBias = getMapValue(map['depthBias'], 0);
+    final depthBiasSlopeScale = getMapValue(map['depthBiasSlopeScale'], 0);
+    final depthBiasClamp = getMapValue(map['depthBiasClamp'], 0);
 
     return DepthStencilState(
         format: format,
         depthWriteEnabled: depthWriteEnabled,
         depthCompare: depthCompare,
-        stencilFront: stencilFront,
-        stencilBack: stencilBack,
+        stencilFront: stencilFront ?? const StencilFaceState(),
+        stencilBack: stencilBack ?? const StencilFaceState(),
         stencilReadMask: stencilReadMask,
         stencilWriteMask: stencilWriteMask,
         depthBias: depthBias,

@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'query_set.dart';
 import 'render_pass_color_attachment.dart';
 import 'render_pass_depth_stencil_attachment.dart';
@@ -39,4 +40,24 @@ class RenderPassDescriptor {
       this.occlusionQuerySet,
       this.maxDrawCount = 50000000,
       this.timestampWrites});
+
+  factory RenderPassDescriptor.fromMap(Map<String, Object> map) {
+    final colorAttachments =
+        getMapList<RenderPassColorAttachment>(map['colorAttachments']);
+    final depthStencilAttachment =
+        getMapObjectNullable<RenderPassDepthStencilAttachment>(
+            map['depthStencilAttachment']);
+    final occlusionQuerySet =
+        getMapValue<QuerySet?>(map['occlusionQuerySet'], null);
+    final maxDrawCount = getMapValue<int>(map['maxDrawCount'], 50000000);
+    final timestampWrites =
+        getMapListNullable<TimestampWrite>(map['timestampWrites']);
+
+    return RenderPassDescriptor(
+        colorAttachments: colorAttachments,
+        depthStencilAttachment: depthStencilAttachment,
+        occlusionQuerySet: occlusionQuerySet,
+        maxDrawCount: maxDrawCount,
+        timestampWrites: timestampWrites);
+  }
 }

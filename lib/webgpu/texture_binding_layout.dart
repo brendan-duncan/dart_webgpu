@@ -1,4 +1,5 @@
 import '_binding_layout_type.dart';
+import '_map_util.dart';
 import 'texture_sample_type.dart';
 import 'texture_view_dimension.dart';
 
@@ -18,4 +19,16 @@ class TextureBindingLayout extends BindingLayoutType {
       {this.sampleType = TextureSampleType.float,
       this.viewDimension = TextureViewDimension.textureView2d,
       this.multisampled = false});
+
+  factory TextureBindingLayout.fromMap(Map<String, Object> map) {
+    final sampleType = getMapValue<TextureSampleType>(
+        map['sampleType'], TextureSampleType.float);
+    final viewDimension = getMapValue<TextureViewDimension>(
+        map['viewDimension'], TextureViewDimension.textureView2d);
+    final multisampled = getMapValue<bool>(map['multisampled'], false);
+    return TextureBindingLayout(
+        sampleType: sampleType,
+        viewDimension: viewDimension,
+        multisampled: multisampled);
+  }
 }

@@ -12,6 +12,7 @@ import 'wgpu_object.dart';
 /// of the pipeline set by setPipeline.
 class PipelineLayout extends WGpuObjectBase<wgpu.WGpuPipelineLayout> {
   final Device device;
+
   PipelineLayout(this.device, List<BindGroupLayout> layouts) {
     device.addDependent(this);
 

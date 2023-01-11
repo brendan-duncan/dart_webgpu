@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'load_op.dart';
 import 'store_op.dart';
 import 'texture_view.dart';
@@ -31,4 +32,20 @@ class RenderPassColorAttachment {
       this.clearValue = const [0.0, 0.0, 0.0, 0.0],
       required this.loadOp,
       required this.storeOp});
+
+  factory RenderPassColorAttachment.fromMap(Map<String, Object> map) {
+    final view = getMapValueRequired<TextureView>(map['view']);
+    final resolveTarget = getMapValue<TextureView?>(map['resolveTarget'], null);
+    final clearValue =
+        getMapValue<List<num>>(map['clearValue'], [0.0, 0.0, 0.0, 0.0]);
+    final loadOp = getMapValueRequired<LoadOp>(map['loadOp']);
+    final storeOp = getMapValueRequired<StoreOp>(map['storeOp']);
+
+    return RenderPassColorAttachment(
+        view: view,
+        loadOp: loadOp,
+        storeOp: storeOp,
+        resolveTarget: resolveTarget,
+        clearValue: clearValue);
+  }
 }

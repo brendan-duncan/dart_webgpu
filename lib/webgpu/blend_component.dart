@@ -21,9 +21,9 @@ class BlendComponent {
       this.dstFactor = BlendFactor.zero});
 
   factory BlendComponent.fromMap(Map<String, Object> map) {
-    final operation = getMapValue(map, 'operation', BlendOperation.add);
-    final srcFactor = getMapValue(map, 'srcFactor', BlendFactor.one);
-    final dstFactor = getMapValue(map, 'dstFactor', BlendFactor.zero);
+    final operation = getMapValue(map['operation'], BlendOperation.add);
+    final srcFactor = getMapValue(map['srcFactor'], BlendFactor.one);
+    final dstFactor = getMapValue(map['dstFactor'], BlendFactor.zero);
     return BlendComponent(
         operation: operation, srcFactor: srcFactor, dstFactor: dstFactor);
   }

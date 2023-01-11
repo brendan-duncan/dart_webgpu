@@ -12,14 +12,9 @@ class ColorTargetState {
       {required this.format, this.blend, this.writeMask = ColorWrite.all});
 
   factory ColorTargetState.fromMap(Map<String, Object> map) {
-    final format = getMapValueRequired<TextureFormat>(map, 'format');
-    final b = map['blend'];
-    final blend = b is BlendState
-        ? b
-        : b is Map<String, Object>
-            ? BlendState.fromMap(b)
-            : null;
-    final writeMask = getMapValue<ColorWrite>(map, 'writeMask', ColorWrite.all);
+    final format = getMapValueRequired<TextureFormat>(map['format']);
+    final blend = getMapObjectNullable<BlendState>(map['blend']);
+    final writeMask = getMapValue<ColorWrite>(map['writeMask'], ColorWrite.all);
 
     return ColorTargetState(format: format, blend: blend, writeMask: writeMask);
   }

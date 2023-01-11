@@ -1,4 +1,5 @@
 import '_binding_layout_type.dart';
+import '_map_util.dart';
 import 'storage_texture_access.dart';
 import 'texture_format.dart';
 import 'texture_view_dimension.dart';
@@ -18,4 +19,13 @@ class StorageTextureBindingLayout extends BindingLayoutType {
       {this.access = StorageTextureAccess.writeOnly,
       required this.format,
       this.viewDimension = TextureViewDimension.textureView2d});
+
+  factory StorageTextureBindingLayout.fromMap(Map<String, Object> map) {
+    final access = getMapValue(map['access'], StorageTextureAccess.writeOnly);
+    final format = getMapValueRequired<TextureFormat>(map['format']);
+    final viewDimension =
+        getMapValue(map['viewDimension'], TextureViewDimension.textureView2d);
+    return StorageTextureBindingLayout(
+        format: format, access: access, viewDimension: viewDimension);
+  }
 }

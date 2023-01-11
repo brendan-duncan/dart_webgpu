@@ -19,13 +19,13 @@ class PrimitiveState {
       this.unclippedDepth = false});
 
   factory PrimitiveState.fromMap(Map<String, Object> map) {
-    final topology =
-        getMapValue(map, 'topology', PrimitiveTopology.triangleList);
-    final stripIndexFormat =
-        getMapValue(map, 'stripIndexFormat', IndexFormat.undefined);
-    final frontFace = getMapValue(map, 'frontFace', FrontFace.ccw);
-    final cullMode = getMapValue(map, 'cullMode', CullMode.none);
-    final unclippedDepth = getMapValue(map, 'unclippedDepth', false);
+    final topology = getMapValue<PrimitiveTopology>(
+        map['topology'], PrimitiveTopology.triangleList);
+    final stripIndexFormat = getMapValue<IndexFormat>(
+        map['stripIndexFormat'], IndexFormat.undefined);
+    final frontFace = getMapValue<FrontFace>(map['frontFace'], FrontFace.ccw);
+    final cullMode = getMapValue<CullMode>(map['cullMode'], CullMode.none);
+    final unclippedDepth = getMapValue<bool>(map['unclippedDepth'], false);
 
     return PrimitiveState(
         topology: topology,

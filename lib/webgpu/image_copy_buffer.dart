@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'buffer.dart';
 
 class ImageCopyBuffer {
@@ -30,4 +31,17 @@ class ImageCopyBuffer {
       this.bytesPerRow = 0,
       this.rowsPerImage = 0,
       required this.buffer});
+
+  factory ImageCopyBuffer.fromMap(Map<String, Object> map) {
+    final offset = getMapValue<int>(map['offset'], 0);
+    final bytesPerRow = getMapValue<int>(map['bytesPerRow'], 0);
+    final rowsPerImage = getMapValue<int>(map['rowsPerImage'], 0);
+    final buffer = getMapValueRequired<Buffer>(map['buffer']);
+
+    return ImageCopyBuffer(
+        buffer: buffer,
+        offset: offset,
+        bytesPerRow: bytesPerRow,
+        rowsPerImage: rowsPerImage);
+  }
 }

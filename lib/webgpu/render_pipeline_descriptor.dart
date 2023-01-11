@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
+import '_map_util.dart';
 import 'depth_stencil_state.dart';
 import 'fragment_state.dart';
 import 'multisample_state.dart';
@@ -27,43 +28,14 @@ class RenderPipelineDescriptor {
       this.fragment});
 
   factory RenderPipelineDescriptor.fromMap(Map<String, Object> map) {
-    if (!map.containsKey('vertex')) {
-      throw Exception('Invalid data for RenderPipelineDescriptor');
-    }
-
-    final layout = map['layout'] is PipelineLayout
-        ? map['layout'] as PipelineLayout
-        : null;
-
-    final vertex = VertexState.fromMap(map['vertex'] as Map<String, Object>);
-
-    final mf = map['fragment'];
-    final fragment = mf is FragmentState
-        ? mf
-        : mf is Map<String, Object>
-            ? FragmentState.fromMap(mf)
-            : null;
-
-    final mp = map['primitive'];
-    final primitive = mp is PrimitiveState
-        ? mp
-        : mp is Map<String, Object>
-            ? PrimitiveState.fromMap(mp)
-            : null;
-
-    final ds = map['depthStencil'];
-    final depthStencil = ds is DepthStencilState
-        ? ds
-        : ds is Map<String, Object>
-            ? DepthStencilState.fromMap(ds)
-            : null;
-
-    final ms = map['multisample'];
-    final multisample = ms is MultisampleState
-        ? ms
-        : ms is Map<String, Object>
-            ? MultisampleState.fromMap(ms)
-            : null;
+    final layout = getMapValue<PipelineLayout?>(map['layout'], null);
+    final vertex = getMapObject<VertexState>(map['vertex']);
+    final fragment = getMapObjectNullable<FragmentState>(map['fragment']);
+    final primitive = getMapObjectNullable<PrimitiveState>(map['primitive']);
+    final depthStencil =
+        getMapObjectNullable<DepthStencilState>(map['depthStencil']);
+    final multisample =
+        getMapObjectNullable<MultisampleState>(map['multisample']);
 
     return RenderPipelineDescriptor(
         layout: layout,
