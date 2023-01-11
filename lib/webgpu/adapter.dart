@@ -66,7 +66,8 @@ class Adapter extends WGpuObjectBase<wgpu.WGpuAdapter> {
   /// privacy.
   static Future<Adapter> request(
       {PowerPreference powerPreference = PowerPreference.highPerformance,
-      bool forceFallbackAdapter = false}) {
+      bool forceFallbackAdapter = false}) async {
+    await WGpuLibrary.get().initialize();
     final o = calloc<wgpu.WGpuRequestAdapterOptions>();
     o.ref.powerPreference = powerPreference.nativeIndex;
     o.ref.forceFallbackAdapter = forceFallbackAdapter ? 1 : 0;

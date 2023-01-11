@@ -87,8 +87,9 @@ export 'webgpu/wgpu_object.dart';
 export 'window/window.dart';
 export 'window/window_context.dart';
 
-/// Call initializeWebGPU(debug: true) prior to using any WebGPU commands
-/// to have it load the Debug library instead of the Release library.
-void initializeWebGPU({bool debug = false}) {
-  WGpuLibrary.initialize(debug: debug);
+/// Ensure the WebGPU library is loaded. This will be automatically
+/// called by Adapter.request, but should be called explicitly if
+/// you create a Window before an Adapter, as in `await webgpu.initialize();`.
+Future<void> initialize() async {
+  await WGpuLibrary.get().initialize();
 }
