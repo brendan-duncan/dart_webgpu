@@ -159,7 +159,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
 
   /// Create a [BindGroupLayout]
   BindGroupLayout createBindGroupLayout(
-          {required List<BindGroupLayoutEntry> entries}) =>
+          {required List<Object> entries}) =>
       BindGroupLayout(this, entries: entries);
 
   /// Create a [PipelineLayout]
