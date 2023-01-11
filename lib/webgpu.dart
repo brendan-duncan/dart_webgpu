@@ -59,7 +59,7 @@ export 'webgpu/sampler.dart';
 export 'webgpu/sampler_binding_layout.dart';
 export 'webgpu/sampler_binding_type.dart';
 export 'webgpu/shader_module.dart';
-export 'webgpu/shader_state.dart';
+export 'webgpu/shader_stage.dart';
 export 'webgpu/stencil_face_state.dart';
 export 'webgpu/stencil_operation.dart';
 export 'webgpu/storage_texture_access.dart';

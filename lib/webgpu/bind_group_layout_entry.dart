@@ -1,7 +1,7 @@
 import 'buffer_binding_layout.dart';
 import 'external_texture_binding_layout.dart';
 import 'sampler_binding_layout.dart';
-import 'shader_state.dart';
+import 'shader_stage.dart';
 import 'storage_texture_binding_layout.dart';
 import 'texture_binding_layout.dart';
 
@@ -16,7 +16,7 @@ class BindGroupLayoutEntry {
   /// A bitset of the members of ShaderStage. Each set bit indicates that a
   /// BindGroupLayoutEntry's resource will be accessible from the associated
   /// shader stage.
-  final ShaderState visibility;
+  final ShaderStage visibility;
 
   /// When not null, indicates the binding resource type for this
   /// BindGroupLayoutEntry is BufferBinding.

@@ -51,17 +51,17 @@ void main() async {
   final layout = device.createBindGroupLayout(entries: [
     const wgpu.BindGroupLayoutEntry(
         binding: 0,
-        visibility: wgpu.ShaderState.compute,
+        visibility: wgpu.ShaderStage.compute,
         buffer: wgpu.BufferBindingLayout(
             type: wgpu.BufferBindingType.readOnlyStorage)),
     const wgpu.BindGroupLayoutEntry(
         binding: 1,
-        visibility: wgpu.ShaderState.compute,
+        visibility: wgpu.ShaderStage.compute,
         buffer: wgpu.BufferBindingLayout(
             type: wgpu.BufferBindingType.readOnlyStorage)),
     const wgpu.BindGroupLayoutEntry(
         binding: 2,
-        visibility: wgpu.ShaderState.compute,
+        visibility: wgpu.ShaderStage.compute,
         buffer: wgpu.BufferBindingLayout(type: wgpu.BufferBindingType.storage))
   ]);
 
