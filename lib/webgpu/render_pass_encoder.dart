@@ -17,8 +17,15 @@ import 'wgpu_object.dart';
 class RenderPassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
   final CommandEncoder encoder;
 
-  RenderPassEncoder(this.encoder, {required RenderPassDescriptor descriptor}) {
+  RenderPassEncoder(this.encoder, {required Object descriptor}) {
     encoder.addDependent(this);
+
+    if (descriptor is Map<String, Object>) {
+      descriptor = RenderPassDescriptor.fromMap(descriptor);
+    }
+    if (descriptor is! RenderPassDescriptor) {
+      throw Exception('Invalid descriptor for RenderPassEncoder');
+    }
 
     final d = calloc<wgpu.WGpuRenderPassDescriptor>();
 

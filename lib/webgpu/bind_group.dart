@@ -22,8 +22,7 @@ class BindGroup extends WGpuObjectBase<wgpu.WGpuBindGroup> {
   /// [entries] is the list of entries describing the resources to expose to
   /// the shader for each binding described by the layout.
   BindGroup(this.device,
-      {required BindGroupLayout layout,
-      required List<Object> entries}) {
+      {required BindGroupLayout layout, required List<Object> entries}) {
     device.addDependent(this);
 
     final sizeofEntry = sizeOf<wgpu.WGpuBindGroupEntry>();

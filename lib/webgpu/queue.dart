@@ -52,12 +52,18 @@ class Queue extends WGpuObjectBase<wgpu.WGpuQueue> {
 
   /// Issues a write operation of the provided data into a Texture.
   void writeTexture(
-      {required ImageCopyTexture destination,
+      {required Object destination,
       required Uint8List data,
-      required ImageDataLayout dataLayout,
+      required Object dataLayout,
       required int width,
       int height = 1,
       int depthOrArrayLayers = 1}) {
+    if (destination is Map<String, Object>) {
+      destination = ImageCopyTexture.fromMap(destination);
+    }
+    if (destination is! ImageCopyTexture) {
+      throw Exception('Invalid ImageCopyTexture for writeTexture');
+    }
     final d = calloc<wgpu.WGpuImageCopyTexture>();
     d.ref.texture = destination.texture.object;
     d.ref.mipLevel = destination.mipLevel;
@@ -70,6 +76,13 @@ class Queue extends WGpuObjectBase<wgpu.WGpuQueue> {
     // Uint8List is managed data and we need to convert it to native data.
     final size = data.length;
     final p = malloc<Uint8>(size)..asTypedList(size).setAll(0, data);
+
+    if (dataLayout is Map<String, Object>) {
+      dataLayout = ImageDataLayout.fromMap(dataLayout);
+    }
+    if (dataLayout is! ImageDataLayout) {
+      throw Exception('Invalid data for writeTexture datalayout');
+    }
 
     libwebgpu.wgpu_queue_write_texture(
         object,

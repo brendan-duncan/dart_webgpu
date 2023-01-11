@@ -31,7 +31,7 @@ class CommandEncoder extends WGpuObjectBase<wgpu.WGpuCommandEncoder> {
   }
 
   /// Begins encoding a render pass described by descriptor.
-  RenderPassEncoder beginRenderPass(RenderPassDescriptor descriptor) =>
+  RenderPassEncoder beginRenderPass(Object descriptor) =>
       RenderPassEncoder(this, descriptor: descriptor);
 
   /// Begins encoding a compute pass described by descriptor.

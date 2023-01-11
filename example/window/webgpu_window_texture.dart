@@ -46,14 +46,14 @@ void main() async {
 
   final pipeline = device.createRenderPipeline({
     'vertex': {
-        'module': device.createShaderModule(code: triangleVertWGSL),
-        'entryPoint': 'main'
+      'module': device.createShaderModule(code: triangleVertWGSL),
+      'entryPoint': 'main'
     },
     'fragment': {
       'module': device.createShaderModule(code: redFragWGSL),
       'entryPoint': 'main',
       'targets': [
-        { 'format': presentationFormat},
+        {'format': presentationFormat},
       ],
     }
   });
@@ -68,10 +68,12 @@ void main() async {
       usage: wgpu.TextureUsage.textureBinding | wgpu.TextureUsage.copyDst);
 
   device.queue.writeTexture(
-      destination: wgpu.ImageCopyTexture(texture: texture),
+      destination: {'texture': texture},
       data: image.toUint8List(),
-      dataLayout: wgpu.ImageDataLayout(
-          bytesPerRow: image.rowStride, rowsPerImage: image.height),
+      dataLayout: {
+        'bytesPerRow': image.rowStride,
+        'rowsPerImage': image.height
+      },
       width: image.width,
       height: image.height);
 
@@ -80,8 +82,8 @@ void main() async {
 
   final bindGroup =
       device.createBindGroup(layout: pipeline.getBindGroupLayout(0), entries: [
-    wgpu.BindGroupEntry(binding: 0, resource: sampler),
-    wgpu.BindGroupEntry(binding: 1, resource: texture.createView()),
+    {'binding': 0, 'resource': sampler},
+    {'binding': 1, 'resource': texture.createView()},
   ]);
 
   while (!window.shouldQuit) {
@@ -89,13 +91,16 @@ void main() async {
 
     final commandEncoder = device.createCommandEncoder();
 
-    commandEncoder.beginRenderPass(wgpu.RenderPassDescriptor(colorAttachments: [
-      wgpu.RenderPassColorAttachment(
-          view: textureView,
-          clearValue: [0.8, 0.6, 0.2, 1.0],
-          loadOp: wgpu.LoadOp.clear,
-          storeOp: wgpu.StoreOp.store)
-    ]))
+    commandEncoder.beginRenderPass({
+      'colorAttachments': [
+        {
+          'view': textureView,
+          'clearValue': [0.8, 0.6, 0.2, 1.0],
+          'loadOp': wgpu.LoadOp.clear,
+          'storeOp': wgpu.StoreOp.store
+        }
+      ]
+    })
       ..setPipeline(pipeline)
       ..setBindGroup(0, bindGroup)
       ..draw(3)

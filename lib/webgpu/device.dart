@@ -168,8 +168,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
 
   /// Create a [BindGroup]
   BindGroup createBindGroup(
-          {required BindGroupLayout layout,
-          required List<BindGroupEntry> entries}) =>
+          {required BindGroupLayout layout, required List<Object> entries}) =>
       BindGroup(this, layout: layout, entries: entries);
 
   /// Create a [ShaderModule].
