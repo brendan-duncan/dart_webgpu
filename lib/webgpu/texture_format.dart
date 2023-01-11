@@ -69,8 +69,8 @@ enum TextureFormat {
   // Depth/stencil formats
   stencil8,
   depth16unorm,
-  depth24Plus,
-  depth24PlusStencil8,
+  depth24plus,
+  depth24plusStencil8,
   depth32float,
   depth32floatStencil8,
 
