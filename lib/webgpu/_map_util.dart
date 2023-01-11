@@ -5,6 +5,7 @@ import 'blend_state.dart';
 import 'buffer_binding_layout.dart';
 import 'color_target_state.dart';
 import 'compute_pass_descriptor.dart';
+import 'compute_pipeline_descriptor.dart';
 import 'depth_stencil_state.dart';
 import 'fragment_state.dart';
 import 'image_copy_buffer.dart';
@@ -72,6 +73,9 @@ T? getMapObjectNullable<T>(Object? object) {
     }
     if (T == ComputePassDescriptor) {
       return ComputePassDescriptor.fromMap(object) as T;
+    }
+    if (T == ComputePipelineDescriptor) {
+      return ComputePipelineDescriptor.fromMap(object) as T;
     }
     if (T == DepthStencilState) {
       return DepthStencilState.fromMap(object) as T;

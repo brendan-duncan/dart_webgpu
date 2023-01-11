@@ -4,7 +4,7 @@ import 'package:webgpu/webgpu.dart' as wgpu;
 
 void main() async {
   // Optionally use the Debug build of the webgpu libs for debugging.
-  //wgpu.initializeWebGPU(debug: true);
+  wgpu.initializeWebGPU(debug: true);
 
   final adapter = await wgpu.Adapter.request();
   final device = await adapter.requestDevice();
@@ -49,26 +49,27 @@ void main() async {
       usage: wgpu.BufferUsage.storage | wgpu.BufferUsage.copySrc);
 
   final layout = device.createBindGroupLayout(entries: [
-    const wgpu.BindGroupLayoutEntry(
-        binding: 0,
-        visibility: wgpu.ShaderStage.compute,
-        buffer: wgpu.BufferBindingLayout(
-            type: wgpu.BufferBindingType.readOnlyStorage)),
-    const wgpu.BindGroupLayoutEntry(
-        binding: 1,
-        visibility: wgpu.ShaderStage.compute,
-        buffer: wgpu.BufferBindingLayout(
-            type: wgpu.BufferBindingType.readOnlyStorage)),
-    const wgpu.BindGroupLayoutEntry(
-        binding: 2,
-        visibility: wgpu.ShaderStage.compute,
-        buffer: wgpu.BufferBindingLayout(type: wgpu.BufferBindingType.storage))
+    {
+      'binding': 0,
+      'visibility': wgpu.ShaderStage.compute,
+      'buffer': {'type': wgpu.BufferBindingType.readOnlyStorage}
+    },
+    {
+      'binding': 1,
+      'visibility': wgpu.ShaderStage.compute,
+      'buffer': {'type': wgpu.BufferBindingType.readOnlyStorage}
+    },
+    {
+      'binding': 2,
+      'visibility': wgpu.ShaderStage.compute,
+      'buffer': {'type': wgpu.BufferBindingType.storage}
+    }
   ]);
 
   final bindGroup = device.createBindGroup(layout: layout, entries: [
-    wgpu.BindGroupEntry(binding: 0, resource: gpuBufferFirstMatrix),
-    wgpu.BindGroupEntry(binding: 1, resource: gpuBufferSecondMatrix),
-    wgpu.BindGroupEntry(binding: 2, resource: resultMatrixBuffer)
+    {'binding': 0, 'resource': gpuBufferFirstMatrix},
+    {'binding': 1, 'resource': gpuBufferSecondMatrix},
+    {'binding': 2, 'resource': resultMatrixBuffer}
   ]);
 
   final shaderModule = device.createShaderModule(code: '''
@@ -106,10 +107,11 @@ void main() async {
 
   final pipelineLayout = device.createPipelineLayout([layout]);
 
-  // TODO: createComputePipelineAsync is triggering a Dawn crash.
-  //final computePipeline = await device.createComputePipelineAsync(
-  final computePipeline = device.createComputePipeline(
-      layout: pipelineLayout, module: shaderModule, entryPoint: "main");
+  final computePipeline = device.createComputePipeline(descriptor: {
+    'layout': pipelineLayout,
+    'module': shaderModule,
+    'entryPoint': 'main'
+  });
 
   // We can't read directly from the writable results storage buffer,
   // so we have to copy the results to a buffer we can read from.
@@ -139,11 +141,15 @@ void main() async {
   // Finalize and execute the commands.
   device.queue.submit(commandEncoder.finish());
 
-  // TODO: mapAsync is triggering a Dawn crash.
-  //await gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
-  //final data = gpuReadBuffer.getMappedRange().as<Float32List>();
-  //print(data);
-
-  adapter.destroy();
-  print('Finished');
+  gpuReadBuffer.mapAsync(mode: wgpu.MapMode.read);
+  // Pump WebGPU commands while the mapAsync is still pending.
+  // This isn't a great solution, still trying to figure out how to get
+  // a better solution with Dart since await causes a crash.
+  while (gpuReadBuffer.mappedState != wgpu.MappedState.mapped) {
+    device.queue.submit();
+  }
+  // The GPU buffer has been mapped to the CPU
+  final data = gpuReadBuffer.getMappedRange().as<Float32List>();
+  print(data);
+  gpuReadBuffer.unmap();
 }

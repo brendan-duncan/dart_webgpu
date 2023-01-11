@@ -34,32 +34,35 @@ void main() async {
       return vec4(1.0, 0.0, 0.0, 1.0);
     }''';
 
-  final pipeline = device.createRenderPipeline(wgpu.RenderPipelineDescriptor(
-    vertex: wgpu.VertexState(
-        module: device.createShaderModule(code: triangleVertWGSL),
-        entryPoint: 'main'),
-    fragment: wgpu.FragmentState(
-      module: device.createShaderModule(code: redFragWGSL),
-      entryPoint: 'main',
-      targets: [
-        wgpu.ColorTargetState(format: presentationFormat),
+  final pipeline = device.createRenderPipeline(descriptor: {
+    'vertex': {
+      'module': device.createShaderModule(code: triangleVertWGSL),
+      'entryPoint': 'main'
+    },
+    'fragment': {
+      'module': device.createShaderModule(code: redFragWGSL),
+      'entryPoint': 'main',
+      'targets': [
+        {'format': presentationFormat},
       ],
-    ),
-    primitive: const wgpu.PrimitiveState(),
-  ));
+    },
+  });
 
   while (!window.shouldQuit) {
     final textureView = context.getCurrentTextureView();
 
     final commandEncoder = device.createCommandEncoder();
 
-    commandEncoder.beginRenderPass(wgpu.RenderPassDescriptor(colorAttachments: [
-      wgpu.RenderPassColorAttachment(
-          view: textureView,
-          clearValue: [0.8, 0.6, 0.2, 1.0],
-          loadOp: wgpu.LoadOp.clear,
-          storeOp: wgpu.StoreOp.store)
-    ]))
+    commandEncoder.beginRenderPass({
+      'colorAttachments': [
+        {
+          'view': textureView,
+          'clearValue': [0.8, 0.6, 0.2, 1.0],
+          'loadOp': wgpu.LoadOp.clear,
+          'storeOp': wgpu.StoreOp.store
+        }
+      ]
+    })
       ..setPipeline(pipeline)
       ..draw(3)
       ..end();

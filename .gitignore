@@ -1,6 +1,7 @@
 libwebgpu/_build
 .dart_tool
 .idea
+.DS_Store
 pubspec.lock
 __pycache__
 libwebgpu/dawn

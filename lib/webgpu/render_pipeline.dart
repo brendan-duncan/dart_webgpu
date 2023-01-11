@@ -8,9 +8,13 @@ class RenderPipeline extends WGpuObjectBase<wgpu.WGpuRenderPipeline> {
   /// The [Device] that created the pipeline.
   final Device device;
 
-  RenderPipeline(this.device, wgpu.WGpuRenderPipeline o) : super(o, device);
+  RenderPipeline(this.device, [wgpu.WGpuRenderPipeline? o]) : super(o, device);
 
   BindGroupLayout getBindGroupLayout(int index) {
+    if (!isValid) {
+      throw Exception(
+          'Attempting to use a RenderPipeline that has not been created');
+    }
     final o = libwebgpu.wgpu_pipeline_get_bind_group_layout(object, index);
     return BindGroupLayout.native(device, o);
   }

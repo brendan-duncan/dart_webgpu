@@ -10,7 +10,8 @@ class ComputePipeline extends WGpuObjectBase<wgpu.WGpuComputePipeline> {
   /// The [Device] that created the pipeline.
   final Device device;
 
-  ComputePipeline(this.device, wgpu.WGpuComputePipeline o) : super(o, device);
+  ComputePipeline(this.device, [wgpu.WGpuComputePipeline? o])
+      : super(o, device);
 
   BindGroupLayout getBindGroupLayout(int index) {
     final o = libwebgpu.wgpu_pipeline_get_bind_group_layout(object, index);

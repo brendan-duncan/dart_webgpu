@@ -1,4 +1,4 @@
-import 'dart:async';
+//import 'dart:async';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -8,14 +8,13 @@ import '../ffi/wgpu_library.dart';
 import 'adapter.dart';
 import 'address_mode.dart';
 import 'bind_group.dart';
-import 'bind_group_entry.dart';
 import 'bind_group_layout.dart';
-import 'bind_group_layout_entry.dart';
 import 'buffer.dart';
 import 'buffer_usage.dart';
 import 'command_encoder.dart';
 import 'compare_function.dart';
 import 'compute_pipeline.dart';
+import 'compute_pipeline_descriptor.dart';
 import 'device_lost_reason.dart';
 import 'error_filter.dart';
 import 'error_type.dart';
@@ -158,8 +157,7 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
           maxAnisotropy: maxAnisotropy);
 
   /// Create a [BindGroupLayout]
-  BindGroupLayout createBindGroupLayout(
-          {required List<Object> entries}) =>
+  BindGroupLayout createBindGroupLayout({required List<Object> entries}) =>
       BindGroupLayout(this, entries: entries);
 
   /// Create a [PipelineLayout]
@@ -176,26 +174,47 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
       ShaderModule(this, code: code);
 
   /// Create a [ComputePipeline] synchronously
-  ComputePipeline createComputePipeline(
-      {required PipelineLayout layout,
-      required ShaderModule module,
-      required String entryPoint,
-      Map<String, num>? constants}) {
-    final entryStr = entryPoint.toNativeUtf8().cast<Char>();
+  ComputePipeline createComputePipeline({required Object descriptor}) {
+    if (descriptor is Map<String, Object>) {
+      descriptor = ComputePipelineDescriptor.fromMap(descriptor);
+    } else if (descriptor is! ComputePipelineDescriptor) {
+      throw Exception('Invalid descriptor for createComputePipeline');
+    }
 
-    final numConstants = constants?.keys.length ?? 0;
-    final constantsBuffer = malloc<wgpu.WGpuPipelineConstant>(numConstants);
+    final desc = descriptor as ComputePipelineDescriptor;
+
+    final entryStr = desc.entryPoint.toNativeUtf8().cast<Char>();
+
+    final numConstants = desc.constants?.keys.length ?? 0;
+    final c = malloc<wgpu.WGpuPipelineConstant>(numConstants);
+
+    if (desc.constants != null) {
+      final constants = desc.constants as Map<String, num>;
+      var i = 0;
+      for (final e in constants.entries) {
+        final name = e.key.toNativeUtf8();
+        final value = e.value.toDouble();
+        c.elementAt(i).ref.name = name.cast<Char>();
+        c.elementAt(i).ref.value = value;
+        i++;
+      }
+    }
 
     final o = libwebgpu.wgpu_device_create_compute_pipeline(object,
-        module.object, entryStr, layout.object, constantsBuffer, numConstants);
+        desc.module.object, entryStr, desc.layout.object, c, numConstants);
+
+    for (var i = 0; i < numConstants; ++i) {
+      malloc.free(c.elementAt(i).ref.name);
+    }
 
     malloc.free(entryStr);
+    calloc.free(c);
 
     return ComputePipeline(this, o);
   }
 
   /// Create a [RenderPipeline] synchronously.
-  RenderPipeline createRenderPipeline(Object descriptor) {
+  RenderPipeline createRenderPipeline({required Object descriptor}) {
     if (descriptor is Map<String, Object>) {
       descriptor = RenderPipelineDescriptor.fromMap(descriptor);
     } else if (descriptor is! RenderPipelineDescriptor) {
@@ -212,52 +231,91 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   }
 
   /// Create a [ComputePipeline] asynchronously
-  Future<ComputePipeline> createComputePipelineAsync(
-      {required PipelineLayout layout,
-      required ShaderModule module,
-      required String entryPoint,
-      List<Map<String, num>>? constants,
-      required ComputePipelineCallback callback}) async {
-    final completer = Completer<ComputePipeline>();
+  /// Dart Future and await does not work yet with how WebGPU async works,
+  /// so use the callback, or check the returned ComputePipeline.isValid
+  /// property to check when the ComputePipeline is ready to be used.
+  //Future<ComputePipeline> createComputePipelineAsync(
+  ComputePipeline createComputePipelineAsync(
+      {required Object descriptor,
+      ComputePipelineCallback? callback}) /*async*/ {
+    if (descriptor is Map<String, Object>) {
+      descriptor = ComputePipelineDescriptor.fromMap(descriptor);
+    } else if (descriptor is! ComputePipelineDescriptor) {
+      throw Exception('Invalid descriptor for createComputePipeline');
+    }
+
+    final desc = descriptor as ComputePipelineDescriptor;
+
+    //final completer = Completer<ComputePipeline>();
 
     final cb = Pointer.fromFunction<
         Void Function(wgpu.WGpuDevice, wgpu.WGpuPipelineBase,
             Pointer<Void>)>(_createComputePipelineCB);
 
-    final entryStr = entryPoint.toNativeUtf8().cast<Char>();
-
-    final sizeofConstant = sizeOf<wgpu.WGpuPipelineConstant>();
-    final numConstants = constants?.length ?? 0;
-    final constantsBuffer =
-        malloc<wgpu.WGpuPipelineConstant>(numConstants * sizeofConstant);
+    final pipeline = ComputePipeline(this);
 
     _callbackData[object.cast<Void>()] =
-        _ComputePipelineCreationData(this, completer, callback);
+        _ComputePipelineCreationData(this, pipeline, callback);
+
+    final entryStr = desc.entryPoint.toNativeUtf8().cast<Char>();
+
+    final numConstants = desc.constants?.keys.length ?? 0;
+    final c = malloc<wgpu.WGpuPipelineConstant>(numConstants);
+
+    if (desc.constants != null) {
+      final constants = desc.constants as Map<String, num>;
+      var i = 0;
+      for (final e in constants.entries) {
+        final name = e.key.toNativeUtf8();
+        final value = e.value.toDouble();
+        c.elementAt(i).ref.name = name.cast<Char>();
+        c.elementAt(i).ref.value = value;
+        i++;
+      }
+    }
 
     libwebgpu.wgpu_device_create_compute_pipeline_async(
         object,
-        module.object,
+        desc.module.object,
         entryStr,
-        layout.object,
-        constantsBuffer,
+        desc.layout.object,
+        c,
         numConstants,
         cb,
         object.cast());
 
+    for (var i = 0; i < numConstants; ++i) {
+      malloc.free(c.elementAt(i).ref.name);
+    }
     malloc.free(entryStr);
+    calloc.free(c);
 
-    return completer.future;
+    return pipeline;
+    //return completer.future;
   }
 
   /// Create a [RenderPipeline] asynchronously.
-  Future<RenderPipeline> createRenderPipelineAsync(
-      RenderPipelineDescriptor descriptor,
-      {required RenderPipelineCallback callback}) async {
-    final completer = Completer<RenderPipeline>();
-    final d = descriptor.toNative();
+  /// Dart Future and await does not work yet with how WebGPU async works,
+  /// so use the callback, or check the returned RenderPipeline.isValid
+  /// property to check when the RenderPipeline is ready to be used.
+  //Future<RenderPipeline> createRenderPipelineAsync(
+  RenderPipeline createRenderPipelineAsync(
+      {required Object descriptor,
+      RenderPipelineCallback? callback}) /*async*/ {
+    if (descriptor is Map<String, Object>) {
+      descriptor = RenderPipelineDescriptor.fromMap(descriptor);
+    } else if (descriptor is! RenderPipelineDescriptor) {
+      throw Exception('Invalid descriptor for createRenderPipelineAsync');
+    }
+
+    final desc = descriptor as RenderPipelineDescriptor;
+
+    //final completer = Completer<RenderPipeline>();
+    final pipeline = RenderPipeline(this);
+    final d = desc.toNative();
 
     _callbackData[object.cast<Void>()] =
-        _RenderPipelineCreationData(this, completer, callback);
+        _RenderPipelineCreationData(this, pipeline, callback);
 
     final cb = Pointer.fromFunction<
         Void Function(wgpu.WGpuDevice, wgpu.WGpuPipelineBase,
@@ -266,8 +324,9 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
     libwebgpu.wgpu_device_create_render_pipeline_async(
         object, d, cb, object.cast());
 
-    descriptor.deleteNative(d);
-    return completer.future;
+    desc.deleteNative(d);
+    return pipeline;
+    //return completer.future;
   }
 
   /// Create a [CommandEncoder].
@@ -298,22 +357,24 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
       wgpu.WGpuPipelineBase pipeline, Pointer<Void> userData) {
     final data = _callbackData[userData] as _ComputePipelineCreationData?;
     _callbackData.remove(userData);
-    final obj = ComputePipeline(data!.device!, pipeline);
+    //final obj = ComputePipeline(data!.device!, pipeline);
+    data!.object.setObject(pipeline);
     if (data.callback != null) {
-      data.callback!(obj);
+      data.callback!(data.object);
     }
-    data.completer.complete(obj);
+    //data.completer.complete(obj);
   }
 
   static void _createRenderPipelineCB(wgpu.WGpuDevice device,
       wgpu.WGpuPipelineBase pipeline, Pointer<Void> userData) {
     final data = _callbackData[userData] as _RenderPipelineCreationData?;
     _callbackData.remove(userData);
-    final obj = RenderPipeline(data!.device!, pipeline);
+    data!.object.setObject(pipeline);
+    //final obj = RenderPipeline(data!.device!, pipeline);
     if (data.callback != null) {
-      data.callback!(obj);
+      data.callback!(data.object);
     }
-    data.completer.complete(obj);
+    //data.completer.complete(obj);
   }
 
   static void _popErrorScopeCB(Pointer<wgpu.WGpuObjectDawn> device, int type,
@@ -375,15 +436,17 @@ class _ErrorScopeData extends _DeviceCallbackData {
 }
 
 class _ComputePipelineCreationData extends _DeviceCallbackData {
-  Completer<ComputePipeline> completer;
+  //Completer<ComputePipeline> completer;
+  ComputePipeline object;
   ComputePipelineCallback? callback;
-  _ComputePipelineCreationData(super.device, this.completer, this.callback);
+  _ComputePipelineCreationData(super.device, this.object, this.callback);
 }
 
 class _RenderPipelineCreationData extends _DeviceCallbackData {
-  Completer<RenderPipeline> completer;
+  //Completer<RenderPipeline> completer;
+  RenderPipeline object;
   RenderPipelineCallback? callback;
-  _RenderPipelineCreationData(super.device, this.completer, this.callback);
+  _RenderPipelineCreationData(super.device, this.object, this.callback);
 }
 
 final _callbackData = <Pointer<Void>, _DeviceCallbackData>{};

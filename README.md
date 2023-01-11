@@ -4,9 +4,14 @@ Dart bindings of the WebGPU graphics API.
 
 ## WARNING: Experimental, Work In Progress
 
-Development is on-going, and not everything works.
-* Async functions like mapAsync currently trigger a crash in Dawn that
-I'm trying to track down. 
+Development is ongoing and there are no guarantees any of it will work properly.
+The API is also in flux, to make it more Dart-centric and reduce boilerplate code.
+
+### Known Issues
+* Async functions like mapAsync don't work with Dart's await/Future.
+Dart will currently crash if you try. The WebGPU async functions, mapAsync, createRenderPipelineAsync,
+and createComputePipelineAsync, take a callback arg that will be called when the async
+promise resolves. The Dart async Future failures will need to be investigated further.
 
 ## Building WebGPU Bindings
 

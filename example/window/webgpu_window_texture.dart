@@ -44,7 +44,7 @@ void main() async {
       return textureSample(myTexture, mySampler, fragUV);
     }''';
 
-  final pipeline = device.createRenderPipeline({
+  final pipeline = device.createRenderPipeline(descriptor: {
     'vertex': {
       'module': device.createShaderModule(code: triangleVertWGSL),
       'entryPoint': 'main'

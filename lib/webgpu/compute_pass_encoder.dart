@@ -27,9 +27,9 @@ class ComputePassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
     final d = calloc<wgpu.WGpuComputePassDescriptor>();
     final numTimestampWrites = desc.timestampWrites?.length ?? 0;
     d.ref.numTimestampWrites = numTimestampWrites;
+    d.ref.timestampWrites =
+        calloc<wgpu.WGpuComputePassTimestampWrite>(numTimestampWrites);
     if (numTimestampWrites > 0) {
-      d.ref.timestampWrites =
-          calloc<wgpu.WGpuComputePassTimestampWrite>(numTimestampWrites);
       for (var i = 0; i < numTimestampWrites; ++i) {
         final tsw = desc.timestampWrites![i];
         d.ref.timestampWrites.elementAt(i).ref
@@ -39,13 +39,13 @@ class ComputePassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
       }
     }
 
-    final o = libwebgpu.wgpu_command_encoder_begin_compute_pass(object, d);
+    final o =
+        libwebgpu.wgpu_command_encoder_begin_compute_pass(encoder.object, d);
     setObject(o);
 
-    if (numTimestampWrites > 0) {
-      calloc.free(d.ref.timestampWrites);
-    }
-    calloc.free(d);
+    calloc
+      ..free(d.ref.timestampWrites)
+      ..free(d);
   }
 
   /// Set the current [ComputePipeline].

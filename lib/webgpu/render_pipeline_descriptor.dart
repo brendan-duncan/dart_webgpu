@@ -53,10 +53,6 @@ class RenderPipelineDescriptor {
 
     if (layout != null) {
       ref.layout = layout!.object;
-    } else {
-      // This is a special case in lib_webgpu
-      /*ref.layout = Pointer<wgpu.WGpuObjectDawn>.fromAddress(
-          wgpu.WGPU_AUTO_LAYOUT_MODE_AUTO);*/
     }
 
     // vertex
@@ -72,6 +68,19 @@ class RenderPipelineDescriptor {
         ..buffers = calloc<wgpu.WGpuVertexBufferLayout>(numBuffers)
         ..numConstants = numConstants
         ..constants = malloc<wgpu.WGpuPipelineConstant>(numConstants);
+
+      if (v.constants != null) {
+        final c = ref.vertex.constants;
+        final constants = v.constants as Map<String, num>;
+        var i = 0;
+        for (final e in constants.entries) {
+          final name = e.key.toNativeUtf8();
+          final value = e.value.toDouble();
+          c.elementAt(i).ref.name = name.cast<Char>();
+          c.elementAt(i).ref.value = value;
+          i++;
+        }
+      }
 
       for (var i = 0; i < numBuffers; ++i) {
         final b = v.buffers![i];
@@ -139,6 +148,19 @@ class RenderPipelineDescriptor {
         ..numConstants = numConstants
         ..constants = malloc<wgpu.WGpuPipelineConstant>(numConstants);
 
+      if (f.constants != null) {
+        final c = ref.fragment.constants;
+        final constants = f.constants as Map<String, num>;
+        var i = 0;
+        for (final e in constants.entries) {
+          final name = e.key.toNativeUtf8();
+          final value = e.value.toDouble();
+          c.elementAt(i).ref.name = name.cast<Char>();
+          c.elementAt(i).ref.value = value;
+          i++;
+        }
+      }
+
       final rt = ref.fragment.targets;
       for (var i = 0; i < numTargets; ++i) {
         final t = f.targets[i];
@@ -159,6 +181,27 @@ class RenderPipelineDescriptor {
 
   void deleteNative(Pointer<wgpu.WGpuRenderPipelineDescriptor> d) {
     malloc.free(d.ref.vertex.entryPoint);
+    for (var i = 0; i < d.ref.vertex.numConstants; ++i) {
+      malloc
+        ..free(d.ref.vertex.constants.elementAt(i).ref.name)
+        ..free(d.ref.vertex.constants.elementAt(i));
+    }
+    for (var i = 0; i < d.ref.vertex.numBuffers; ++i) {
+      malloc
+        ..free(d.ref.vertex.buffers.elementAt(i).ref.attributes)
+        ..free(d.ref.vertex.buffers.elementAt(i));
+    }
+
+    malloc.free(d.ref.fragment.entryPoint);
+    for (var i = 0; i < d.ref.fragment.numTargets; ++i) {
+      malloc.free(d.ref.fragment.targets.elementAt(i));
+    }
+    for (var i = 0; i < d.ref.fragment.numConstants; ++i) {
+      malloc
+        ..free(d.ref.fragment.constants.elementAt(i).ref.name)
+        ..free(d.ref.fragment.constants.elementAt(i));
+    }
+
     calloc.free(d);
   }
 }
