@@ -100,14 +100,14 @@ class RenderPassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
 
   /// Sets the current [BindGroup] for the given index.
   void setBindGroup(int index, BindGroup bindGroup,
-    [List<int>? dynamicOffsets]) {
+      [List<int>? dynamicOffsets]) {
     final numDynamicOffsets = dynamicOffsets?.length ?? 0;
     final p = calloc<Uint32>(numDynamicOffsets);
     for (int i = 0; i < numDynamicOffsets; ++i) {
       p.elementAt(i).value = dynamicOffsets![i];
     }
-    libwebgpu.wgpu_encoder_set_bind_group(object, index, bindGroup.object,
-        p, numDynamicOffsets);
+    libwebgpu.wgpu_encoder_set_bind_group(
+        object, index, bindGroup.object, p, numDynamicOffsets);
     calloc.free(p);
   }
 
@@ -119,26 +119,27 @@ class RenderPassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
   /// Sets the current index buffer.
   void setIndexBuffer(Buffer buffer, IndexFormat indexFormat,
       [int offset = 0, int size = 0]) {
-    libwebgpu.wgpu_render_commands_mixin_set_index_buffer(object, buffer.object,
-        indexFormat.nativeIndex, offset, size);
+    libwebgpu.wgpu_render_commands_mixin_set_index_buffer(
+        object, buffer.object, indexFormat.nativeIndex, offset, size);
   }
 
   /// Sets the current vertex buffer for the given slot.
   void setVertexBuffer(int slot, Buffer buffer,
       [int offset = 0, int size = 0]) {
-    libwebgpu.wgpu_render_commands_mixin_set_vertex_buffer(object, slot,
-        buffer.object, offset, size);
+    libwebgpu.wgpu_render_commands_mixin_set_vertex_buffer(
+        object, slot, buffer.object, offset, size);
   }
 
   /// Draws primitives.
-  void draw(int vertexCount, [int instanceCount = 1,
-      int firstVertex = 0, int firstInstance = 0]) {
-    libwebgpu.wgpu_render_commands_mixin_draw(object, vertexCount,
-        instanceCount, firstVertex, firstInstance);
+  void draw(int vertexCount,
+      [int instanceCount = 1, int firstVertex = 0, int firstInstance = 0]) {
+    libwebgpu.wgpu_render_commands_mixin_draw(
+        object, vertexCount, instanceCount, firstVertex, firstInstance);
   }
 
   /// Draws indexed primitives.
-  void drawIndexed(int indexCount, [int instanceCount = 1,
+  void drawIndexed(int indexCount,
+      [int instanceCount = 1,
       int firstVertex = 0,
       int baseVertex = 0,
       int firstInstance = 0]) {
@@ -148,38 +149,43 @@ class RenderPassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
 
   /// Draws primitives using parameters read from a [Buffer].
   void drawIndirect(Buffer indirectBuffer, int indirectOffset) {
-    libwebgpu.wgpu_render_commands_mixin_draw_indirect(object,
-        indirectBuffer.object, indirectOffset);
+    libwebgpu.wgpu_render_commands_mixin_draw_indirect(
+        object, indirectBuffer.object, indirectOffset);
   }
 
   /// Draws indexed primitives using parameters read from a [Buffer].
   void drawIndexedIndirect(Buffer indirectBuffer, int indirectOffset) {
-    libwebgpu.wgpu_render_commands_mixin_draw_indexed_indirect(object,
-        indirectBuffer.object, indirectOffset);
+    libwebgpu.wgpu_render_commands_mixin_draw_indexed_indirect(
+        object, indirectBuffer.object, indirectOffset);
   }
 
   /// Sets the viewport used during the rasterization stage to linearly map
   /// from normalized device coordinates to viewport coordinates.
-  void setViewport(num x, num y, num width, num height, num minDepth,
-      num maxDepth) {
-    libwebgpu.wgpu_render_pass_encoder_set_viewport(object, x.toDouble(),
-        y.toDouble(), width.toDouble(), height.toDouble(),
-        minDepth.toDouble(), maxDepth.toDouble());
+  void setViewport(
+      num x, num y, num width, num height, num minDepth, num maxDepth) {
+    libwebgpu.wgpu_render_pass_encoder_set_viewport(
+        object,
+        x.toDouble(),
+        y.toDouble(),
+        width.toDouble(),
+        height.toDouble(),
+        minDepth.toDouble(),
+        maxDepth.toDouble());
   }
 
   /// Sets the scissor rectangle used during the rasterization stage. After
   /// transformation into viewport coordinates any fragments which fall outside
   /// the scissor rectangle will be discarded.
   void setScissorRect(int x, int y, int width, int height) {
-    libwebgpu.wgpu_render_pass_encoder_set_scissor_rect(object, x, y,
-        width, height);
+    libwebgpu.wgpu_render_pass_encoder_set_scissor_rect(
+        object, x, y, width, height);
   }
 
   /// Sets the constant blend color and alpha values used with "constant" and
   /// "one-minus-constant" BlendFactors.
   void setBlendConstant(num r, num g, num b, num a) {
-    libwebgpu.wgpu_render_pass_encoder_set_blend_constant(object,
-        r.toDouble(), g.toDouble(), b.toDouble(), a.toDouble());
+    libwebgpu.wgpu_render_pass_encoder_set_blend_constant(
+        object, r.toDouble(), g.toDouble(), b.toDouble(), a.toDouble());
   }
 
   /// Sets the stencilReference value used during stencil tests with the
@@ -189,8 +195,8 @@ class RenderPassEncoder extends WGpuObjectBase<wgpu.WGpuComputePassEncoder> {
   }
 
   void beginOcclusionQuery(int queryIndex) {
-    libwebgpu.wgpu_render_pass_encoder_begin_occlusion_query(object,
-        queryIndex);
+    libwebgpu.wgpu_render_pass_encoder_begin_occlusion_query(
+        object, queryIndex);
   }
 
   void endOcclusionQuery() {

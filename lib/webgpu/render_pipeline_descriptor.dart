@@ -6,30 +6,89 @@ import '../ffi/ffi_webgpu.dart' as wgpu;
 import 'depth_stencil_state.dart';
 import 'fragment_state.dart';
 import 'multisample_state.dart';
+import 'pipeline_layout.dart';
 import 'primitive_state.dart';
 import 'vertex_state.dart';
 
 class RenderPipelineDescriptor {
+  final PipelineLayout? layout;
   final VertexState vertex;
   final PrimitiveState? primitive;
   final DepthStencilState? depthStencil;
-  final MultisampleState multisample;
+  final MultisampleState? multisample;
   final FragmentState? fragment;
 
   const RenderPipelineDescriptor(
       {required this.vertex,
+      this.layout,
       this.primitive,
       this.depthStencil,
-      this.multisample = const MultisampleState(),
+      this.multisample,
       this.fragment});
+
+  factory RenderPipelineDescriptor.fromMap(Map<String, Object> map) {
+    if (!map.containsKey('vertex')) {
+      throw Exception('Invalid data for RenderPipelineDescriptor');
+    }
+
+    final layout = map['layout'] is PipelineLayout
+        ? map['layout'] as PipelineLayout
+        : null;
+
+    final vertex = VertexState.fromMap(map['vertex'] as Map<String, Object>);
+
+    final mf = map['fragment'];
+    final fragment = mf is FragmentState
+        ? mf
+        : mf is Map<String, Object>
+            ? FragmentState.fromMap(mf)
+            : null;
+
+    final mp = map['primitive'];
+    final primitive = mp is PrimitiveState
+        ? mp
+        : mp is Map<String, Object>
+            ? PrimitiveState.fromMap(mp)
+            : null;
+
+    final ds = map['depthStencil'];
+    final depthStencil = ds is DepthStencilState
+        ? ds
+        : ds is Map<String, Object>
+            ? DepthStencilState.fromMap(ds)
+            : null;
+
+    final ms = map['multisample'];
+    final multisample = ms is MultisampleState
+        ? ms
+        : ms is Map<String, Object>
+            ? MultisampleState.fromMap(ms)
+            : null;
+
+    return RenderPipelineDescriptor(
+        layout: layout,
+        vertex: vertex,
+        fragment: fragment,
+        primitive: primitive,
+        depthStencil: depthStencil,
+        multisample: multisample);
+  }
 
   Pointer<wgpu.WGpuRenderPipelineDescriptor> toNative() {
     final d = calloc<wgpu.WGpuRenderPipelineDescriptor>();
 
     final ref = d.ref;
 
+    if (layout != null) {
+      ref.layout = layout!.object;
+    } else {
+      // This is a special case in lib_webgpu
+      /*ref.layout = Pointer<wgpu.WGpuObjectDawn>.fromAddress(
+          wgpu.WGPU_AUTO_LAYOUT_MODE_AUTO);*/
+    }
+
+    // vertex
     {
-      // vertex
       final v = vertex;
       final numBuffers = v.buffers?.length ?? 0;
       final numConstants = v.constants?.length ?? 0;
@@ -60,14 +119,13 @@ class RenderPipelineDescriptor {
       }
     }
 
-    if (primitive != null) {
-      ref.primitive
-        ..topology = primitive!.topology.nativeIndex
-        ..stripIndexFormat = primitive!.stripIndexFormat.nativeIndex
-        ..frontFace = primitive!.frontFace.nativeIndex
-        ..cullMode = primitive!.cullMode.nativeIndex
-        ..unclippedDepth = primitive!.unclippedDepth ? 1 : 0;
-    }
+    final prim = primitive ?? const PrimitiveState();
+    ref.primitive
+      ..topology = prim.topology.nativeIndex
+      ..stripIndexFormat = prim.stripIndexFormat.nativeIndex
+      ..frontFace = prim.frontFace.nativeIndex
+      ..cullMode = prim.cullMode.nativeIndex
+      ..unclippedDepth = prim.unclippedDepth ? 1 : 0;
 
     if (depthStencil != null) {
       final ds = depthStencil!;
@@ -91,7 +149,7 @@ class RenderPipelineDescriptor {
         ..clampDepth = 0;
     }
 
-    final ms = multisample;
+    final ms = multisample ?? const MultisampleState();
     ref.multisample
       ..count = ms.count
       ..mask = ms.mask

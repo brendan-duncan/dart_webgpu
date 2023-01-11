@@ -25,15 +25,15 @@ void main() async {
 
     final commandEncoder = device.createCommandEncoder();
 
-    commandEncoder.beginRenderPass(
-        wgpu.RenderPassDescriptor(colorAttachments: [
+    commandEncoder
+        .beginRenderPass(wgpu.RenderPassDescriptor(colorAttachments: [
           wgpu.RenderPassColorAttachment(
               view: textureView,
               clearValue: [g, g, g, 1.0],
               loadOp: wgpu.LoadOp.clear,
               storeOp: wgpu.StoreOp.store)
         ]))
-    .end(); // Nothing was drawn so immediate end the render pass
+        .end(); // Nothing was drawn so immediate end the render pass
 
     g += 0.01;
     if (g > 1.0) {

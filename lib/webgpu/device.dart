@@ -196,11 +196,19 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
   }
 
   /// Create a [RenderPipeline] synchronously.
-  RenderPipeline createRenderPipeline(RenderPipelineDescriptor descriptor) {
-    final d = descriptor.toNative();
+  RenderPipeline createRenderPipeline(Object descriptor) {
+    if (descriptor is Map<String, Object>) {
+      descriptor = RenderPipelineDescriptor.fromMap(descriptor);
+    } else if (descriptor is! RenderPipelineDescriptor) {
+      throw Exception('Invalid descriptor for createRenderPipeline');
+    }
+
+    final desc = descriptor as RenderPipelineDescriptor;
+
+    final d = desc.toNative();
     final o = libwebgpu.wgpu_device_create_render_pipeline(object, d);
     final pipeline = RenderPipeline(this, o);
-    descriptor.deleteNative(d);
+    desc.deleteNative(d);
     return pipeline;
   }
 
@@ -256,8 +264,8 @@ class Device extends WGpuObjectBase<wgpu.WGpuDevice> {
         Void Function(wgpu.WGpuDevice, wgpu.WGpuPipelineBase,
             Pointer<Void>)>(_createRenderPipelineCB);
 
-    libwebgpu.wgpu_device_create_render_pipeline_async(object,
-        d, cb, object.cast());
+    libwebgpu.wgpu_device_create_render_pipeline_async(
+        object, d, cb, object.cast());
 
     descriptor.deleteNative(d);
     return completer.future;

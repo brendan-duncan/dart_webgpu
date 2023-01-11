@@ -36,9 +36,8 @@ void main() async {
 
   final pipeline = device.createRenderPipeline(wgpu.RenderPipelineDescriptor(
     vertex: wgpu.VertexState(
-      module: device.createShaderModule(code: triangleVertWGSL),
-      entryPoint: 'main'
-    ),
+        module: device.createShaderModule(code: triangleVertWGSL),
+        entryPoint: 'main'),
     fragment: wgpu.FragmentState(
       module: device.createShaderModule(code: redFragWGSL),
       entryPoint: 'main',
@@ -54,17 +53,16 @@ void main() async {
 
     final commandEncoder = device.createCommandEncoder();
 
-    commandEncoder.beginRenderPass(
-        wgpu.RenderPassDescriptor(colorAttachments: [
-          wgpu.RenderPassColorAttachment(
-              view: textureView,
-              clearValue: [0.8, 0.6, 0.2, 1.0],
-              loadOp: wgpu.LoadOp.clear,
-              storeOp: wgpu.StoreOp.store)
-        ]))
-    ..setPipeline(pipeline)
-    ..draw(3)
-    ..end();
+    commandEncoder.beginRenderPass(wgpu.RenderPassDescriptor(colorAttachments: [
+      wgpu.RenderPassColorAttachment(
+          view: textureView,
+          clearValue: [0.8, 0.6, 0.2, 1.0],
+          loadOp: wgpu.LoadOp.clear,
+          storeOp: wgpu.StoreOp.store)
+    ]))
+      ..setPipeline(pipeline)
+      ..draw(3)
+      ..end();
 
     final commandBuffer = commandEncoder.finish();
     device.queue.submit(commandBuffer);

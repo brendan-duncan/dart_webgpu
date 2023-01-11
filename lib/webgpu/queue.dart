@@ -51,9 +51,13 @@ class Queue extends WGpuObjectBase<wgpu.WGpuQueue> {
   }
 
   /// Issues a write operation of the provided data into a Texture.
-  void writeTexture({required ImageCopyTexture destination,
-    required Uint8List data, required ImageDataLayout dataLayout,
-    required int width, int height = 1, int depthOrArrayLayers = 1}) {
+  void writeTexture(
+      {required ImageCopyTexture destination,
+      required Uint8List data,
+      required ImageDataLayout dataLayout,
+      required int width,
+      int height = 1,
+      int depthOrArrayLayers = 1}) {
     final d = calloc<wgpu.WGpuImageCopyTexture>();
     d.ref.texture = destination.texture.object;
     d.ref.mipLevel = destination.mipLevel;
@@ -67,8 +71,14 @@ class Queue extends WGpuObjectBase<wgpu.WGpuQueue> {
     final size = data.length;
     final p = malloc<Uint8>(size)..asTypedList(size).setAll(0, data);
 
-    libwebgpu.wgpu_queue_write_texture(object, d, p.cast(),
-        dataLayout.bytesPerRow, dataLayout.rowsPerImage, width, height,
+    libwebgpu.wgpu_queue_write_texture(
+        object,
+        d,
+        p.cast(),
+        dataLayout.bytesPerRow,
+        dataLayout.rowsPerImage,
+        width,
+        height,
         depthOrArrayLayers);
 
     malloc.free(p);

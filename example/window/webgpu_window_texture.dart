@@ -44,26 +44,26 @@ void main() async {
       return textureSample(myTexture, mySampler, fragUV);
     }''';
 
-  final pipeline = device.createRenderPipeline(wgpu.RenderPipelineDescriptor(
-    vertex: wgpu.VertexState(
-        module: device.createShaderModule(code: triangleVertWGSL),
-        entryPoint: 'main'
-    ),
-    fragment: wgpu.FragmentState(
-      module: device.createShaderModule(code: redFragWGSL),
-      entryPoint: 'main',
-      targets: [
-        wgpu.ColorTargetState(format: presentationFormat),
+  final pipeline = device.createRenderPipeline({
+    'vertex': {
+        'module': device.createShaderModule(code: triangleVertWGSL),
+        'entryPoint': 'main'
+    },
+    'fragment': {
+      'module': device.createShaderModule(code: redFragWGSL),
+      'entryPoint': 'main',
+      'targets': [
+        { 'format': presentationFormat},
       ],
-    ),
-    primitive: const wgpu.PrimitiveState(),
-  ));
-
+    }
+  });
 
   final image = (await img.decodePngFile('example/window/res/buck_24.png'))!
       .convert(format: img.Format.uint8, numChannels: 4);
 
-  final texture = device.createTexture(width: image.width, height: image.height,
+  final texture = device.createTexture(
+      width: image.width,
+      height: image.height,
       format: wgpu.TextureFormat.rgba8unorm,
       usage: wgpu.TextureUsage.textureBinding | wgpu.TextureUsage.copyDst);
 
@@ -72,32 +72,30 @@ void main() async {
       data: image.toUint8List(),
       dataLayout: wgpu.ImageDataLayout(
           bytesPerRow: image.rowStride, rowsPerImage: image.height),
-      width: image.width, height: image.height);
+      width: image.width,
+      height: image.height);
 
   final sampler = device.createSampler(
-      magFilter: wgpu.FilterMode.linear,
-      minFilter: wgpu.FilterMode.linear);
+      magFilter: wgpu.FilterMode.linear, minFilter: wgpu.FilterMode.linear);
 
-  final bindGroup = device.createBindGroup(
-      layout: pipeline.getBindGroupLayout(0),
-      entries: [
-        wgpu.BindGroupEntry(binding: 0, resource: sampler),
-        wgpu.BindGroupEntry(binding: 1, resource: texture.createView()),
-      ]);
+  final bindGroup =
+      device.createBindGroup(layout: pipeline.getBindGroupLayout(0), entries: [
+    wgpu.BindGroupEntry(binding: 0, resource: sampler),
+    wgpu.BindGroupEntry(binding: 1, resource: texture.createView()),
+  ]);
 
   while (!window.shouldQuit) {
     final textureView = context.getCurrentTextureView();
 
     final commandEncoder = device.createCommandEncoder();
 
-    commandEncoder.beginRenderPass(
-        wgpu.RenderPassDescriptor(colorAttachments: [
-          wgpu.RenderPassColorAttachment(
-              view: textureView,
-              clearValue: [0.8, 0.6, 0.2, 1.0],
-              loadOp: wgpu.LoadOp.clear,
-              storeOp: wgpu.StoreOp.store)
-        ]))
+    commandEncoder.beginRenderPass(wgpu.RenderPassDescriptor(colorAttachments: [
+      wgpu.RenderPassColorAttachment(
+          view: textureView,
+          clearValue: [0.8, 0.6, 0.2, 1.0],
+          loadOp: wgpu.LoadOp.clear,
+          storeOp: wgpu.StoreOp.store)
+    ]))
       ..setPipeline(pipeline)
       ..setBindGroup(0, bindGroup)
       ..draw(3)

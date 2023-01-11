@@ -17,7 +17,7 @@ class BindGroupLayout extends WGpuObjectBase<wgpu.WGpuBindGroupLayout> {
   final Device device;
 
   BindGroupLayout.native(this.device, wgpu.WGpuBindGroupLayout o)
-    : super(o, device);
+      : super(o, device);
 
   BindGroupLayout(this.device, {required List<BindGroupLayoutEntry> entries}) {
     device.addDependent(this);

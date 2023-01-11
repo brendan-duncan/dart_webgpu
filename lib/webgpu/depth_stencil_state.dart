@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'compare_function.dart';
 import 'stencil_face_state.dart';
 import 'texture_format.dart';
@@ -56,4 +57,32 @@ class DepthStencilState {
       this.depthBias = 0,
       this.depthBiasSlopeScale = 0,
       this.depthBiasClamp = 0});
+
+  factory DepthStencilState.fromMap(Map<String, Object> map) {
+    final format = getMapValueRequired<TextureFormat>(map, 'format');
+    final depthWriteEnabled = getMapValue(map, 'depthWriteEnabled', false);
+    final depthCompare =
+        getMapValue(map, 'depthCompare', CompareFunction.always);
+    final stencilFront =
+        getMapValue(map, 'stencilFront', const StencilFaceState());
+    final stencilBack =
+        getMapValue(map, 'stencilBack', const StencilFaceState());
+    final stencilReadMask = getMapValue(map, 'stencilReadMask', 0xffffffff);
+    final stencilWriteMask = getMapValue(map, 'stencilWriteMask', 0xffffffff);
+    final depthBias = getMapValue(map, 'depthBias', 0);
+    final depthBiasSlopeScale = getMapValue(map, 'depthBiasSlopeScale', 0);
+    final depthBiasClamp = getMapValue(map, 'depthBiasClamp', 0);
+
+    return DepthStencilState(
+        format: format,
+        depthWriteEnabled: depthWriteEnabled,
+        depthCompare: depthCompare,
+        stencilFront: stencilFront,
+        stencilBack: stencilBack,
+        stencilReadMask: stencilReadMask,
+        stencilWriteMask: stencilWriteMask,
+        depthBias: depthBias,
+        depthBiasSlopeScale: depthBiasSlopeScale,
+        depthBiasClamp: depthBiasClamp);
+  }
 }

@@ -91,8 +91,10 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
   // submit the Queue. Or, perhaps run a pthread from C that calls queue.submit
   // while a buffer is map pending.
   Future<void> mapAsync(
-      {required MapMode mode, int offset = 0, int size = 0,
-        required MapAsyncCallback callback}) async {
+      {required MapMode mode,
+      int offset = 0,
+      int size = 0,
+      required MapAsyncCallback callback}) async {
     if (mappedState != MappedState.unmapped) {
       throw Exception('Cannot call mapAsync on a mapped buffer.');
     }
@@ -102,8 +104,8 @@ class Buffer extends WGpuObjectBase<wgpu.WGpuBuffer> {
     }
 
     final completer = Completer<void>();
-    _callbackData[object.cast<Void>()] = _BufferCallbackData(this, completer,
-        callback);
+    _callbackData[object.cast<Void>()] =
+        _BufferCallbackData(this, completer, callback);
 
     final cb = Pointer.fromFunction<
         Void Function(Pointer<wgpu.WGpuObjectDawn>, Pointer<Void>, Int, Uint64,
