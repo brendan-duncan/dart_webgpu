@@ -9,14 +9,14 @@ import '../webgpu/gpu_object.dart';
 import '../webgpu/gpu_texture_format.dart';
 import '../webgpu/gpu_texture_usage.dart';
 import '../webgpu/gpu_texture_view.dart';
-import 'window.dart';
+import 'gpu_window.dart';
 
-class WindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
-  final Window window;
+class GPUWindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
+  final GPUWindow window;
   final GPUDevice device;
   late final GPUTextureFormat preferredFormat;
 
-  WindowContext(this.window,
+  GPUWindowContext(this.window,
       {required this.device,
       GPUTextureFormat? format,
       GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
@@ -66,8 +66,5 @@ class WindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
 
   void present() {
     libwebgpu.wgpu_canvas_context_present(object);
-    /*libwebgpu
-      ..wgpu_canvas_context_present(object)
-      ..wgpu_window_poll_events();*/
   }
 }

@@ -189,8 +189,9 @@ class GPURenderPipelineDescriptor {
     for (var i = 0; i < d.ref.vertex.numBuffers; ++i) {
       malloc.free(d.ref.vertex.buffers.elementAt(i).ref.attributes);
     }
-    malloc..free(d.ref.vertex.buffers)
-    ..free(d.ref.fragment.entryPoint);
+    malloc
+      ..free(d.ref.vertex.buffers)
+      ..free(d.ref.fragment.entryPoint);
     for (var i = 0; i < d.ref.fragment.numTargets; ++i) {
       malloc.free(d.ref.fragment.targets.elementAt(i));
     }

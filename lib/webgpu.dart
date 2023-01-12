@@ -84,8 +84,8 @@ export 'webgpu/gpu_vertex_format.dart';
 export 'webgpu/gpu_vertex_state.dart';
 export 'webgpu/gpu_vertex_step_mode.dart';
 
-export 'window/window.dart';
-export 'window/window_context.dart';
+export 'window/gpu_window.dart';
+export 'window/gpu_window_context.dart';
 
 /// Ensure the WebGPU library is loaded. This will be automatically
 /// called by Adapter.request, but should be called explicitly if

@@ -7,14 +7,14 @@ import '../ffi/wgpu_library.dart';
 import '../webgpu/gpu_device.dart';
 import '../webgpu/gpu_texture_format.dart';
 import '../webgpu/gpu_texture_usage.dart';
-import 'window_context.dart';
+import 'gpu_window_context.dart';
 
-class Window {
+class GPUWindow {
   late wgpu.WGpuWindow object;
   late int _width;
   late int _height;
 
-  Window(
+  GPUWindow(
       {required int width, required int height, String title = "Dart WebGPU"}) {
     _width = width;
     _height = height;
@@ -30,11 +30,11 @@ class Window {
 
   void pollEvents() => libwebgpu.wgpu_window_poll_events();
 
-  WindowContext createContext(GPUDevice device,
+  GPUWindowContext createContext(GPUDevice device,
           {GPUTextureFormat? format,
           GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
           List<GPUTextureFormat>? viewFormats}) =>
-      WindowContext(this,
+      GPUWindowContext(this,
           device: device,
           format: format,
           usage: usage,

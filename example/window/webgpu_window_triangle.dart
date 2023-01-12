@@ -8,7 +8,7 @@ void main() async {
     print('ERROR: $message');
   });
 
-  final window = Window(width: 800, height: 600);
+  final window = GPUWindow(width: 800, height: 600);
   final context = window.createContext(device);
   final presentationFormat = context.preferredFormat;
 
