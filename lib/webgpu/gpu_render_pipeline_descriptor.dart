@@ -11,15 +11,15 @@ import 'gpu_pipeline_layout.dart';
 import 'gpu_primitive_state.dart';
 import 'gpu_vertex_state.dart';
 
-class GpuRenderPipelineDescriptor {
-  final GpuPipelineLayout? layout;
-  final GpuVertexState vertex;
-  final GpuPrimitiveState? primitive;
-  final GpuDepthStencilState? depthStencil;
-  final GpuMultisampleState? multisample;
-  final GpuFragmentState? fragment;
+class GPURenderPipelineDescriptor {
+  final GPUPipelineLayout? layout;
+  final GPUVertexState vertex;
+  final GPUPrimitiveState? primitive;
+  final GPUDepthStencilState? depthStencil;
+  final GPUMultisampleState? multisample;
+  final GPUFragmentState? fragment;
 
-  const GpuRenderPipelineDescriptor(
+  const GPURenderPipelineDescriptor(
       {required this.vertex,
       this.layout,
       this.primitive,
@@ -27,17 +27,17 @@ class GpuRenderPipelineDescriptor {
       this.multisample,
       this.fragment});
 
-  factory GpuRenderPipelineDescriptor.fromMap(Map<String, Object> map) {
-    final layout = getMapValue<GpuPipelineLayout?>(map['layout'], null);
-    final vertex = getMapObject<GpuVertexState>(map['vertex']);
-    final fragment = getMapObjectNullable<GpuFragmentState>(map['fragment']);
-    final primitive = getMapObjectNullable<GpuPrimitiveState>(map['primitive']);
+  factory GPURenderPipelineDescriptor.fromMap(Map<String, Object> map) {
+    final layout = getMapValue<GPUPipelineLayout?>(map['layout'], null);
+    final vertex = getMapObject<GPUVertexState>(map['vertex']);
+    final fragment = getMapObjectNullable<GPUFragmentState>(map['fragment']);
+    final primitive = getMapObjectNullable<GPUPrimitiveState>(map['primitive']);
     final depthStencil =
-        getMapObjectNullable<GpuDepthStencilState>(map['depthStencil']);
+        getMapObjectNullable<GPUDepthStencilState>(map['depthStencil']);
     final multisample =
-        getMapObjectNullable<GpuMultisampleState>(map['multisample']);
+        getMapObjectNullable<GPUMultisampleState>(map['multisample']);
 
-    return GpuRenderPipelineDescriptor(
+    return GPURenderPipelineDescriptor(
         layout: layout,
         vertex: vertex,
         fragment: fragment,
@@ -100,7 +100,7 @@ class GpuRenderPipelineDescriptor {
       }
     }
 
-    final prim = primitive ?? const GpuPrimitiveState();
+    final prim = primitive ?? const GPUPrimitiveState();
     ref.primitive
       ..topology = prim.topology.nativeIndex
       ..stripIndexFormat = prim.stripIndexFormat.nativeIndex
@@ -130,7 +130,7 @@ class GpuRenderPipelineDescriptor {
         ..clampDepth = 0;
     }
 
-    final ms = multisample ?? const GpuMultisampleState();
+    final ms = multisample ?? const GPUMultisampleState();
     ref.multisample
       ..count = ms.count
       ..mask = ms.mask
@@ -189,9 +189,8 @@ class GpuRenderPipelineDescriptor {
     for (var i = 0; i < d.ref.vertex.numBuffers; ++i) {
       malloc.free(d.ref.vertex.buffers.elementAt(i).ref.attributes);
     }
-    malloc.free(d.ref.vertex.buffers);
-
-    malloc.free(d.ref.fragment.entryPoint);
+    malloc..free(d.ref.vertex.buffers)
+    ..free(d.ref.fragment.entryPoint);
     for (var i = 0; i < d.ref.fragment.numTargets; ++i) {
       malloc.free(d.ref.fragment.targets.elementAt(i));
     }

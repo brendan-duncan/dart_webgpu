@@ -1,7 +1,7 @@
 import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  final adapter = await GpuAdapter.request();
+  final adapter = await GPUAdapter.request();
   final device = await adapter.requestDevice();
 
   device.lost.add((device, type, message) {
@@ -22,15 +22,16 @@ void main() async {
 
     final commandEncoder = device.createCommandEncoder();
 
-    commandEncoder
-        .beginRenderPass(GpuRenderPassDescriptor(colorAttachments: [
-          GpuRenderPassColorAttachment(
-              view: textureView,
-              clearValue: [g, g, g, 1.0],
-              loadOp: GpuLoadOp.clear,
-              storeOp: StoreOp.store)
-        ]))
-        .end(); // Nothing was drawn so immediate end the render pass
+    commandEncoder.beginRenderPass({
+      'colorAttachments': [
+        {
+          'view': textureView,
+          'clearValue': [g, g, g, 1.0],
+          'loadOp': 'clear',
+          'storeOp': 'store'
+        }
+      ]
+    }).end(); // Nothing was drawn so immediate end the render pass
 
     g += 0.01;
     if (g > 1.0) {

@@ -30,10 +30,10 @@ class Window {
 
   void pollEvents() => libwebgpu.wgpu_window_poll_events();
 
-  WindowContext createContext(GpuDevice device,
-          {GpuTextureFormat? format,
-          GpuTextureUsage usage = GpuTextureUsage.renderAttachment,
-          List<GpuTextureFormat>? viewFormats}) =>
+  WindowContext createContext(GPUDevice device,
+          {GPUTextureFormat? format,
+          GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
+          List<GPUTextureFormat>? viewFormats}) =>
       WindowContext(this,
           device: device,
           format: format,

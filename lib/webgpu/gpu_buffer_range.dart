@@ -3,14 +3,14 @@ import 'dart:typed_data';
 
 import 'gpu_buffer.dart';
 
-class GpuBufferRange {
-  final GpuBuffer buffer;
+class GPUBufferRange {
+  final GPUBuffer buffer;
   final int offset;
   final int size;
   final Pointer<Uint8> data;
   final Uint8List _byteBuffer;
 
-  GpuBufferRange(this.buffer, this.offset, this.size, this.data)
+  GPUBufferRange(this.buffer, this.offset, this.size, this.data)
       : _byteBuffer = data.asTypedList(size);
 
   T as<T extends TypedData>() {

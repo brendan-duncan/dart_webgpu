@@ -5,10 +5,10 @@ import 'gpu_texture_format.dart';
 
 /// Describe how a GPURenderPipeline will affect a render pass’s
 /// depthStencilAttachment.
-class GpuDepthStencilState {
+class GPUDepthStencilState {
   /// The format of depthStencilAttachment this RenderPipeline will be
   /// compatible with.
-  final GpuTextureFormat format;
+  final GPUTextureFormat format;
 
   /// Indicates if this RenderPipeline can modify depthStencilAttachment depth
   /// values.
@@ -16,15 +16,15 @@ class GpuDepthStencilState {
 
   /// The comparison operation used to test fragment depths against
   /// depthStencilAttachment depth values.
-  final GpuCompareFunction depthCompare;
+  final GPUCompareFunction depthCompare;
 
   /// Defines how stencil comparisons and operations are performed for
   /// front-facing primitives.
-  final GpuStencilFaceState stencilFront;
+  final GPUStencilFaceState stencilFront;
 
   /// Defines how stencil comparisons and operations are performed for
   /// back-facing primitives.
-  final GpuStencilFaceState stencilBack;
+  final GPUStencilFaceState stencilBack;
 
   /// Bitmask controlling which depthStencilAttachment stencil value bits are
   /// read when performing stencil comparison tests.
@@ -46,39 +46,39 @@ class GpuDepthStencilState {
   /// details.
   final num depthBiasClamp;
 
-  const GpuDepthStencilState(
+  const GPUDepthStencilState(
       {required this.format,
       this.depthWriteEnabled = false,
-      this.depthCompare = GpuCompareFunction.always,
-      this.stencilFront = const GpuStencilFaceState(),
-      this.stencilBack = const GpuStencilFaceState(),
+      this.depthCompare = GPUCompareFunction.always,
+      this.stencilFront = const GPUStencilFaceState(),
+      this.stencilBack = const GPUStencilFaceState(),
       this.stencilReadMask = 0xffffffff,
       this.stencilWriteMask = 0xffffffff,
       this.depthBias = 0,
       this.depthBiasSlopeScale = 0,
       this.depthBiasClamp = 0});
 
-  factory GpuDepthStencilState.fromMap(Map<String, Object> map) {
-    final format = getMapValueRequired<GpuTextureFormat>(map['format']);
+  factory GPUDepthStencilState.fromMap(Map<String, Object> map) {
+    final format = getMapValueRequired<GPUTextureFormat>(map['format']);
     final depthWriteEnabled = getMapValue(map['depthWriteEnabled'], false);
     final depthCompare =
-        getMapValue(map['depthCompare'], GpuCompareFunction.always);
+        getMapValue(map['depthCompare'], GPUCompareFunction.always);
     final stencilFront =
-        getMapObjectNullable<GpuStencilFaceState>(map['stencilFront']);
+        getMapObjectNullable<GPUStencilFaceState>(map['stencilFront']);
     final stencilBack =
-        getMapObjectNullable<GpuStencilFaceState>(map['stencilBack']);
+        getMapObjectNullable<GPUStencilFaceState>(map['stencilBack']);
     final stencilReadMask = getMapValue(map['stencilReadMask'], 0xffffffff);
     final stencilWriteMask = getMapValue(map['stencilWriteMask'], 0xffffffff);
     final depthBias = getMapValue(map['depthBias'], 0);
     final depthBiasSlopeScale = getMapValue(map['depthBiasSlopeScale'], 0);
     final depthBiasClamp = getMapValue(map['depthBiasClamp'], 0);
 
-    return GpuDepthStencilState(
+    return GPUDepthStencilState(
         format: format,
         depthWriteEnabled: depthWriteEnabled,
         depthCompare: depthCompare,
-        stencilFront: stencilFront ?? const GpuStencilFaceState(),
-        stencilBack: stencilBack ?? const GpuStencilFaceState(),
+        stencilFront: stencilFront ?? const GPUStencilFaceState(),
+        stencilBack: stencilBack ?? const GPUStencilFaceState(),
         stencilReadMask: stencilReadMask,
         stencilWriteMask: stencilWriteMask,
         depthBias: depthBias,

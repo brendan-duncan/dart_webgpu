@@ -19,24 +19,24 @@ typedef MapAsyncCallback = void Function();
 /// can be addressed by its offset from the start of the Buffer, subject to
 /// alignment restrictions depending on the operation. Some Buffers can be
 /// mapped which makes the block of memory accessible via a ByteBuffer.
-class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
+class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
   /// The Device that owns this Buffer.
-  final GpuDevice device;
+  final GPUDevice device;
 
   /// The size in bytes of the Buffer.
   final int size;
 
   /// How the Buffer is intended to be used.
-  final GpuBufferUsage usage;
+  final GPUBufferUsage usage;
 
   /// If mappedState is MappedState.mapped, the Buffer memory is accessible
   /// from the getMappedRange method. If it is MappedState.unmapped, the
   /// Buffer memory is only accessible from the GPU. Mapping is asynchronous,
   /// and if the mapping state was changed but has not been completed yet,
   /// it will be MappedState.pending.
-  late GpuMappedState mappedState;
+  late GPUMappedState mappedState;
 
-  GpuBuffer(this.device,
+  GPUBuffer(this.device,
       {required this.size,
       required this.usage,
       bool mappedAtCreation = false}) {
@@ -51,17 +51,17 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
     device.addDependent(this);
 
     if (obj != nullptr && mappedAtCreation) {
-      mappedState = GpuMappedState.mapped;
+      mappedState = GPUMappedState.mapped;
     } else {
-      mappedState = GpuMappedState.unmapped;
+      mappedState = GPUMappedState.unmapped;
     }
 
     calloc.free(p);
   }
 
-  GpuBufferRange getMappedRange({int startOffset = 0, int size = 0}) {
-    if (mappedState == GpuMappedState.unmapped ||
-        mappedState == GpuMappedState.pending) {
+  GPUBufferRange getMappedRange({int startOffset = 0, int size = 0}) {
+    if (mappedState == GPUMappedState.unmapped ||
+        mappedState == GPUMappedState.pending) {
       throw Exception('Cannot call getMappedRange on an unmapped buffer.');
     }
     if (size == 0) {
@@ -75,7 +75,7 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
       throw Exception('Unable to get mapped range from buffer.');
     }
 
-    return GpuBufferRange(this, startOffset, size, p.cast<Uint8>());
+    return GPUBufferRange(this, startOffset, size, p.cast<Uint8>());
   }
 
   /// Asynchronously map a buffer for read/write.
@@ -91,11 +91,11 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
   // submit the Queue. Or, perhaps run a pthread from C that calls queue.submit
   // while a buffer is map pending.
   Future<void> mapAsync(
-      {required GpuMapMode mode,
+      {required GPUMapMode mode,
       int offset = 0,
       int size = 0,
       MapAsyncCallback? callback}) async {
-    if (mappedState != GpuMappedState.unmapped) {
+    if (mappedState != GPUMappedState.unmapped) {
       throw Exception('Cannot call mapAsync on a mapped buffer.');
     }
 
@@ -111,7 +111,7 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
         Void Function(Pointer<wgpu.WGpuObjectDawn>, Pointer<Void>, Int, Uint64,
             Uint64)>(_mapBufferCB);
 
-    mappedState = GpuMappedState.pending;
+    mappedState = GPUMappedState.pending;
 
     libwebgpu.wgpu_buffer_map_async(
         object, cb, object.cast(), mode.value, offset, size);
@@ -120,9 +120,9 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
   }
 
   void unmap() {
-    if (mappedState == GpuMappedState.mapped) {
+    if (mappedState == GPUMappedState.mapped) {
       libwebgpu.wgpu_buffer_unmap(object);
-      mappedState = GpuMappedState.unmapped;
+      mappedState = GPUMappedState.unmapped;
     }
   }
 
@@ -134,7 +134,7 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
       Pointer<Void> userData, int mode, int offset, int size) {
     final data = _callbackData[userData];
     _callbackData.remove(userData);
-    data?.buffer?.mappedState = GpuMappedState.mapped;
+    data?.buffer?.mappedState = GPUMappedState.mapped;
     data?.completer.complete();
     if (data?.callback != null) {
       data!.callback!();
@@ -143,7 +143,7 @@ class GpuBuffer extends GpuObjectBase<wgpu.WGpuBuffer> {
 }
 
 class _BufferCallbackData {
-  GpuBuffer? buffer;
+  GPUBuffer? buffer;
   Completer<void> completer;
   MapAsyncCallback? callback;
 

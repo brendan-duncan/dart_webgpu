@@ -13,10 +13,10 @@ import 'gpu_image_copy_texture.dart';
 import 'gpu_image_data_layout.dart';
 import 'gpu_object.dart';
 
-class GpuQueue extends GpuObjectBase<wgpu.WGpuQueue> {
-  final GpuDevice device;
+class GPUQueue extends GPUObjectBase<wgpu.WGpuQueue> {
+  final GPUDevice device;
 
-  GpuQueue(this.device, wgpu.WGpuQueue o) : super(o, device);
+  GPUQueue(this.device, wgpu.WGpuQueue o) : super(o, device);
 
   /// Schedules the execution of the command buffers by the GPU on this queue.
   /// Submitted command buffers cannot be used again.
@@ -25,10 +25,10 @@ class GpuQueue extends GpuObjectBase<wgpu.WGpuQueue> {
     // commands.
     if (commandBufferOrList == null) {
       libwebgpu.wgpu_queue_submit_multiple(object, nullptr, 0);
-    } else if (commandBufferOrList is GpuCommandBuffer) {
+    } else if (commandBufferOrList is GPUCommandBuffer) {
       libwebgpu.wgpu_queue_submit_one(object, commandBufferOrList.object);
       commandBufferOrList.destroy();
-    } else if (commandBufferOrList is List<GpuCommandBuffer>) {
+    } else if (commandBufferOrList is List<GPUCommandBuffer>) {
       for (final cb in commandBufferOrList) {
         libwebgpu.wgpu_queue_submit_one(object, cb.object);
         cb.destroy();
@@ -39,7 +39,7 @@ class GpuQueue extends GpuObjectBase<wgpu.WGpuQueue> {
   }
 
   /// Issues a write operation of the provided data into a Buffer.
-  void writeBuffer(GpuBuffer buffer, int bufferOffset, Uint8List data) {
+  void writeBuffer(GPUBuffer buffer, int bufferOffset, Uint8List data) {
     // Uint8List is managed data and we need to convert it to native data.
     final size = min(data.length, buffer.size);
     final p = malloc<Uint8>(size)..asTypedList(size).setAll(0, data);
@@ -59,9 +59,9 @@ class GpuQueue extends GpuObjectBase<wgpu.WGpuQueue> {
       int height = 1,
       int depthOrArrayLayers = 1}) {
     if (destination is Map<String, Object>) {
-      destination = GpuImageCopyTexture.fromMap(destination);
+      destination = GPUImageCopyTexture.fromMap(destination);
     }
-    if (destination is! GpuImageCopyTexture) {
+    if (destination is! GPUImageCopyTexture) {
       throw Exception('Invalid ImageCopyTexture for writeTexture');
     }
     final d = calloc<wgpu.WGpuImageCopyTexture>();
@@ -78,9 +78,9 @@ class GpuQueue extends GpuObjectBase<wgpu.WGpuQueue> {
     final p = malloc<Uint8>(size)..asTypedList(size).setAll(0, data);
 
     if (dataLayout is Map<String, Object>) {
-      dataLayout = GpuImageDataLayout.fromMap(dataLayout);
+      dataLayout = GPUImageDataLayout.fromMap(dataLayout);
     }
-    if (dataLayout is! GpuImageDataLayout) {
+    if (dataLayout is! GPUImageDataLayout) {
       throw Exception('Invalid data for writeTexture datalayout');
     }
 

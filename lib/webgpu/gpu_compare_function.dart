@@ -2,7 +2,7 @@
 /// used in a shader, an input value is compared to the sampled texture value,
 /// and the result of this comparison test (0.0f for pass, or 1.0f for fail) is
 /// used in the filtering operation.
-enum GpuCompareFunction {
+enum GPUCompareFunction {
   /// Not a comparison sampler.
   undefined,
 
@@ -35,6 +35,28 @@ enum GpuCompareFunction {
 
   /// Comparison tests always pass.
   always;
+
+  static GPUCompareFunction fromString(String s) {
+    switch (s) {
+      case "never":
+        return GPUCompareFunction.never;
+      case "less":
+        return GPUCompareFunction.less;
+      case "equal":
+        return GPUCompareFunction.equal;
+      case "less-equal":
+        return GPUCompareFunction.lessEqual;
+      case "greater":
+        return GPUCompareFunction.greater;
+      case "not-equal":
+        return GPUCompareFunction.notEqual;
+      case "greater-equal":
+        return GPUCompareFunction.greaterEqual;
+      case "always":
+        return GPUCompareFunction.always;
+    }
+    throw Exception('Invalid value for GPUCompareFunction');
+  }
 
   int get nativeIndex => index;
 }

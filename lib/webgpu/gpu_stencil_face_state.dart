@@ -2,26 +2,26 @@ import '_map_util.dart';
 import 'gpu_compare_function.dart';
 import 'gpu_stencil_operation.dart';
 
-class GpuStencilFaceState {
-  final GpuCompareFunction compare;
-  final GpuStencilOperation failOp;
-  final GpuStencilOperation depthFailOp;
-  final GpuStencilOperation passOp;
+class GPUStencilFaceState {
+  final GPUCompareFunction compare;
+  final GPUStencilOperation failOp;
+  final GPUStencilOperation depthFailOp;
+  final GPUStencilOperation passOp;
 
-  const GpuStencilFaceState(
-      {this.compare = GpuCompareFunction.always,
-      this.failOp = GpuStencilOperation.keep,
-      this.depthFailOp = GpuStencilOperation.keep,
-      this.passOp = GpuStencilOperation.keep});
+  const GPUStencilFaceState(
+      {this.compare = GPUCompareFunction.always,
+      this.failOp = GPUStencilOperation.keep,
+      this.depthFailOp = GPUStencilOperation.keep,
+      this.passOp = GPUStencilOperation.keep});
 
-  factory GpuStencilFaceState.fromMap(Map<String, Object> map) {
-    final compare = getMapValue<GpuCompareFunction>(
-        map['compare'], GpuCompareFunction.always);
-    final failOp = getMapValue(map['failOp'], GpuStencilOperation.keep);
+  factory GPUStencilFaceState.fromMap(Map<String, Object> map) {
+    final compare = getMapValue<GPUCompareFunction>(
+        map['compare'], GPUCompareFunction.always);
+    final failOp = getMapValue(map['failOp'], GPUStencilOperation.keep);
     final depthFailOp =
-        getMapValue(map['depthFailOp'], GpuStencilOperation.keep);
-    final passOp = getMapValue(map['passOp'], GpuStencilOperation.keep);
-    return GpuStencilFaceState(
+        getMapValue(map['depthFailOp'], GPUStencilOperation.keep);
+    final passOp = getMapValue(map['passOp'], GPUStencilOperation.keep);
+    return GPUStencilFaceState(
         compare: compare,
         failOp: failOp,
         depthFailOp: depthFailOp,

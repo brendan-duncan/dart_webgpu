@@ -2,29 +2,29 @@ import '_map_util.dart';
 import 'gpu_blend_factor.dart';
 import 'gpu_blend_operation.dart';
 
-class GpuBlendComponent {
-  /// Defines the [GpuBlendOperation] used to calculate the values written to the
-  /// target attachment components.
-  final GpuBlendOperation operation;
+class GPUBlendComponent {
+  /// Defines the [GPUBlendOperation] used to calculate the values written to
+  /// the target attachment components.
+  final GPUBlendOperation operation;
 
-  /// Defines the [GpuBlendFactor] operation to be performed on values from the
+  /// Defines the [GPUBlendFactor] operation to be performed on values from the
   /// fragment shader.
-  final GpuBlendFactor srcFactor;
+  final GPUBlendFactor srcFactor;
 
-  /// Defines the [GpuBlendFactor] operation to be performed on values from the
+  /// Defines the [GPUBlendFactor] operation to be performed on values from the
   /// target attachment.
-  final GpuBlendFactor dstFactor;
+  final GPUBlendFactor dstFactor;
 
-  const GpuBlendComponent(
-      {this.operation = GpuBlendOperation.add,
-      this.srcFactor = GpuBlendFactor.one,
-      this.dstFactor = GpuBlendFactor.zero});
+  const GPUBlendComponent(
+      {this.operation = GPUBlendOperation.add,
+      this.srcFactor = GPUBlendFactor.one,
+      this.dstFactor = GPUBlendFactor.zero});
 
-  factory GpuBlendComponent.fromMap(Map<String, Object> map) {
-    final operation = getMapValue(map['operation'], GpuBlendOperation.add);
-    final srcFactor = getMapValue(map['srcFactor'], GpuBlendFactor.one);
-    final dstFactor = getMapValue(map['dstFactor'], GpuBlendFactor.zero);
-    return GpuBlendComponent(
+  factory GPUBlendComponent.fromMap(Map<String, Object> map) {
+    final operation = getMapValue(map['operation'], GPUBlendOperation.add);
+    final srcFactor = getMapValue(map['srcFactor'], GPUBlendFactor.one);
+    final dstFactor = getMapValue(map['dstFactor'], GPUBlendFactor.zero);
+    return GPUBlendComponent(
         operation: operation, srcFactor: srcFactor, dstFactor: dstFactor);
   }
 }

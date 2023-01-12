@@ -1,4 +1,4 @@
-enum GpuTextureDimension {
+enum GPUTextureDimension {
   /// Specifies a texture that has one dimension, width.
   texture1d,
 
@@ -9,6 +9,18 @@ enum GpuTextureDimension {
 
   /// Specifies a texture that has a width, height, and depth.
   texture3d;
+
+  static GPUTextureDimension fromString(String s) {
+    switch (s) {
+      case '1d':
+        return GPUTextureDimension.texture1d;
+      case '2d':
+        return GPUTextureDimension.texture2d;
+      case '3d':
+        return GPUTextureDimension.texture3d;
+    }
+    throw Exception('Invalid value for GPUTextureDimension');
+  }
 
   int get nativeIndex => index + 1;
 }

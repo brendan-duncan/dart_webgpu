@@ -1,14 +1,14 @@
 import 'gpu_shader_module.dart';
 import 'gpu_vertex_buffer_layout.dart';
 
-class GpuVertexState {
-  final GpuShaderModule module;
+class GPUVertexState {
+  final GPUShaderModule module;
   final String entryPoint;
   final Map<String, num>? constants;
-  final List<GpuVertexBufferLayout>? buffers;
+  final List<GPUVertexBufferLayout>? buffers;
 
-  factory GpuVertexState.fromMap(Map<String, Object> map) {
-    if (map['module'] is! GpuShaderModule || map['entryPoint'] is! String) {
+  factory GPUVertexState.fromMap(Map<String, Object> map) {
+    if (map['module'] is! GPUShaderModule || map['entryPoint'] is! String) {
       throw Exception('Invalid Data for VertexState');
     }
 
@@ -17,21 +17,21 @@ class GpuVertexState {
         : null;
 
     final mb = map['buffers'];
-    final buffers = mb is List<GpuVertexBufferLayout>
+    final buffers = mb is List<GPUVertexBufferLayout>
         ? mb
         : mb is List<Map<String, Object>>
-            ? List<GpuVertexBufferLayout>.generate(
-                mb.length, (index) => GpuVertexBufferLayout.fromMap(mb[index]))
+            ? List<GPUVertexBufferLayout>.generate(
+                mb.length, (index) => GPUVertexBufferLayout.fromMap(mb[index]))
             : null;
 
-    return GpuVertexState(
-        module: map['module'] as GpuShaderModule,
+    return GPUVertexState(
+        module: map['module'] as GPUShaderModule,
         entryPoint: map['entryPoint'] as String,
         constants: constants,
         buffers: buffers);
   }
 
-  const GpuVertexState(
+  const GPUVertexState(
       {required this.module,
       required this.entryPoint,
       this.constants,

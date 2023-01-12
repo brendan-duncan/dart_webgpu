@@ -1,16 +1,16 @@
-class GpuMapMode {
-  static const read = GpuMapMode(0x1);
-  static const write = GpuMapMode(0x2);
-  static const readWrite = GpuMapMode(0x3);
+class GPUMapMode {
+  static const read = GPUMapMode(0x1);
+  static const write = GPUMapMode(0x2);
+  static const readWrite = GPUMapMode(0x3);
 
   final int value;
-  const GpuMapMode(this.value);
+  const GPUMapMode(this.value);
 
-  GpuMapMode operator |(GpuMapMode other) => GpuMapMode(value | other.value);
+  GPUMapMode operator |(GPUMapMode other) => GPUMapMode(value | other.value);
 
   @override
   bool operator ==(Object other) =>
-      other is GpuMapMode && value == other.value ||
+      other is GPUMapMode && value == other.value ||
       other is int && value == other;
 
   @override

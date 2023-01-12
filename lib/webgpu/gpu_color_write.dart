@@ -1,19 +1,19 @@
-class GpuColorWrite {
-  static const red = GpuColorWrite(0x1);
-  static const green = GpuColorWrite(0x2);
-  static const blue = GpuColorWrite(0x4);
-  static const alpha = GpuColorWrite(0x8);
-  static const all = GpuColorWrite(0xf);
+class GPUColorWrite {
+  static const red = GPUColorWrite(0x1);
+  static const green = GPUColorWrite(0x2);
+  static const blue = GPUColorWrite(0x4);
+  static const alpha = GPUColorWrite(0x8);
+  static const all = GPUColorWrite(0xf);
 
   final int value;
-  const GpuColorWrite(this.value);
+  const GPUColorWrite(this.value);
 
-  GpuColorWrite operator |(GpuColorWrite other) =>
-      GpuColorWrite(value | other.value);
+  GPUColorWrite operator |(GPUColorWrite other) =>
+      GPUColorWrite(value | other.value);
 
   @override
   bool operator ==(Object other) =>
-      other is GpuColorWrite && value == other.value ||
+      other is GPUColorWrite && value == other.value ||
       other is int && value == other;
 
   @override

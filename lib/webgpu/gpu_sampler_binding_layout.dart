@@ -2,14 +2,14 @@ import '_binding_layout_type.dart';
 import '_map_util.dart';
 import 'gpu_sampler_binding_type.dart';
 
-class GpuSamplerBindingLayout extends GpuBindingLayoutType {
-  final GpuSamplerBindingType type;
+class GPUSamplerBindingLayout extends GpuBindingLayoutType {
+  final GPUSamplerBindingType type;
 
-  const GpuSamplerBindingLayout({this.type = GpuSamplerBindingType.filtering});
+  const GPUSamplerBindingLayout({this.type = GPUSamplerBindingType.filtering});
 
-  factory GpuSamplerBindingLayout.fromMap(Map<String, Object> map) {
-    final type = getMapValue<GpuSamplerBindingType>(
-        map['type'], GpuSamplerBindingType.filtering);
-    return GpuSamplerBindingLayout(type: type);
+  factory GPUSamplerBindingLayout.fromMap(Map<String, Object> map) {
+    final type = getMapValue<GPUSamplerBindingType>(
+        map['type'], GPUSamplerBindingType.filtering);
+    return GPUSamplerBindingLayout(type: type);
   }
 }

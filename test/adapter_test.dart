@@ -5,7 +5,7 @@ void main() async {
   await initialize();
   group('adapter', () {
     test('request', () async {
-      final a = await GpuAdapter.request();
+      final a = await GPUAdapter.request();
       expect(a.isValid, isTrue);
       expect(a.limits.maxBindGroups, greaterThanOrEqualTo(4));
 

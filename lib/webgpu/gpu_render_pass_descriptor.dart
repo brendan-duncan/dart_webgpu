@@ -4,25 +4,25 @@ import 'gpu_render_pass_color_attachment.dart';
 import 'gpu_render_pass_depth_stencil_attachment.dart';
 import 'gpu_timestamp_write.dart';
 
-class GpuRenderPassDescriptor {
-  /// The set of [GpuRenderPassColorAttachment] values in this sequence defines
+class GPURenderPassDescriptor {
+  /// The set of [GPURenderPassColorAttachment] values in this sequence defines
   /// which color attachments will be output to when executing this render pass.
   ///
   /// Due to usage compatibility, no color attachment may alias another
   /// attachment or any resource used inside the render pass.
-  final List<GpuRenderPassColorAttachment> colorAttachments;
+  final List<GPURenderPassColorAttachment> colorAttachments;
 
-  /// The [GpuRenderPassDepthStencilAttachment] value that defines the
+  /// The [GPURenderPassDepthStencilAttachment] value that defines the
   /// depth/stencil attachment that will be output to and tested against when
   /// executing this render pass.
   ///
   /// Due to usage compatibility, no writable depth/stencil attachment may alias
   /// another attachment or any resource used inside the render pass.
-  final GpuRenderPassDepthStencilAttachment? depthStencilAttachment;
+  final GPURenderPassDepthStencilAttachment? depthStencilAttachment;
 
-  /// The [GpuQuerySet] value defines where the occlusion query results will be
+  /// The [GPUQuerySet] value defines where the occlusion query results will be
   /// stored for this pass.
-  final GpuQuerySet? occlusionQuerySet;
+  final GPUQuerySet? occlusionQuerySet;
 
   /// The maximum number of draw calls that will be done in the render pass.
   /// Used by some implementations to size work injected before the render pass.
@@ -30,30 +30,30 @@ class GpuRenderPassDescriptor {
   /// draw calls will be done.
   final int maxDrawCount;
 
-  /// A sequence of [GpuTimestampWrite] values defines where and when
+  /// A sequence of [GPUTimestampWrite] values defines where and when
   /// timestamp values will be written for this pass.
-  final List<GpuTimestampWrite>? timestampWrites;
+  final List<GPUTimestampWrite>? timestampWrites;
 
-  const GpuRenderPassDescriptor(
+  const GPURenderPassDescriptor(
       {required this.colorAttachments,
       this.depthStencilAttachment,
       this.occlusionQuerySet,
       this.maxDrawCount = 50000000,
       this.timestampWrites});
 
-  factory GpuRenderPassDescriptor.fromMap(Map<String, Object> map) {
+  factory GPURenderPassDescriptor.fromMap(Map<String, Object> map) {
     final colorAttachments =
-        getMapList<GpuRenderPassColorAttachment>(map['colorAttachments']);
+        getMapList<GPURenderPassColorAttachment>(map['colorAttachments']);
     final depthStencilAttachment =
-        getMapObjectNullable<GpuRenderPassDepthStencilAttachment>(
+        getMapObjectNullable<GPURenderPassDepthStencilAttachment>(
             map['depthStencilAttachment']);
     final occlusionQuerySet =
-        getMapValue<GpuQuerySet?>(map['occlusionQuerySet'], null);
+        getMapValue<GPUQuerySet?>(map['occlusionQuerySet'], null);
     final maxDrawCount = getMapValue<int>(map['maxDrawCount'], 50000000);
     final timestampWrites =
-        getMapListNullable<GpuTimestampWrite>(map['timestampWrites']);
+        getMapListNullable<GPUTimestampWrite>(map['timestampWrites']);
 
-    return GpuRenderPassDescriptor(
+    return GPURenderPassDescriptor(
         colorAttachments: colorAttachments,
         depthStencilAttachment: depthStencilAttachment,
         occlusionQuerySet: occlusionQuerySet,

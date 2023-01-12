@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 
-class GpuLimits {
+class GPULimits {
   int maxUniformBufferBindingSize = 0;
   int maxStorageBufferBindingSize = 0;
   int maxBufferSize = 0;
@@ -34,7 +34,7 @@ class GpuLimits {
   int maxComputeWorkgroupSizeY = 0;
   int maxComputeWorkgroupSizeZ = 0;
 
-  GpuLimits.fromWgpu(Pointer<wgpu.WGpuSupportedLimits> l) {
+  GPULimits.fromWgpu(Pointer<wgpu.WGpuSupportedLimits> l) {
     setFrom(l);
   }
 

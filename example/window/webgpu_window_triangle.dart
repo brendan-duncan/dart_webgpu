@@ -1,14 +1,14 @@
-import 'package:webgpu/webgpu.dart' as wgpu;
+import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  final adapter = await wgpu.GpuAdapter.request();
+  final adapter = await GPUAdapter.request();
   final device = await adapter.requestDevice();
 
   device.uncapturedError.add((device, type, message) {
     print('ERROR: $message');
   });
 
-  final window = wgpu.Window(width: 800, height: 600);
+  final window = Window(width: 800, height: 600);
   final context = window.createContext(device);
   final presentationFormat = context.preferredFormat;
 
@@ -55,8 +55,8 @@ void main() async {
         {
           'view': textureView,
           'clearValue': [0.8, 0.6, 0.2, 1.0],
-          'loadOp': wgpu.GpuLoadOp.clear,
-          'storeOp': wgpu.StoreOp.store
+          'loadOp': 'clear',
+          'storeOp': 'store'
         }
       ]
     })

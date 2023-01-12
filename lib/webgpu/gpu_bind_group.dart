@@ -13,16 +13,16 @@ import 'gpu_object.dart';
 /// how the resources are used in shader stages.
 ///
 /// BindGroups are created from Device.createBindGroup().
-class GpuBindGroup extends GpuObjectBase<wgpu.WGpuBindGroup> {
-  final GpuDevice device;
+class GPUBindGroup extends GPUObjectBase<wgpu.WGpuBindGroup> {
+  final GPUDevice device;
 
   /// Create a BindGroup from the given [device].
   /// [layout] is the BindGroupLayout the entries of this bind group will
   /// conform to.
   /// [entries] is the list of entries describing the resources to expose to
   /// the shader for each binding described by the layout.
-  GpuBindGroup(this.device,
-      {required GpuBindGroupLayout layout, required List<Object> entries}) {
+  GPUBindGroup(this.device,
+      {required GPUBindGroupLayout layout, required List<Object> entries}) {
     device.addDependent(this);
 
     final sizeofEntry = sizeOf<wgpu.WGpuBindGroupEntry>();
@@ -32,9 +32,9 @@ class GpuBindGroup extends GpuObjectBase<wgpu.WGpuBindGroup> {
     for (var i = 0; i < numEntries; ++i) {
       var e = entries[i];
       if (e is Map<String, Object>) {
-        e = GpuBindGroupEntry.fromMap(e);
+        e = GPUBindGroupEntry.fromMap(e);
       }
-      if (e is! GpuBindGroupEntry) {
+      if (e is! GPUBindGroupEntry) {
         throw Exception('Invalid data for BindGroup entries.');
       }
       final binding = e.binding;

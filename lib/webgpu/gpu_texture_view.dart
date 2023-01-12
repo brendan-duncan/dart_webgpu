@@ -11,20 +11,20 @@ import 'gpu_texture_format.dart';
 import 'gpu_texture_view_dimension.dart';
 
 /// A view onto some subset of the texture subresources defined by a particular
-/// [GpuTexture].
-class GpuTextureView extends GpuObjectBase<wgpu.WGpuTextureView> {
-  /// The [GpuTexture] into which this is a view.
-  final GpuTexture? texture;
+/// [GPUTexture].
+class GPUTextureView extends GPUObjectBase<wgpu.WGpuTextureView> {
+  /// The [GPUTexture] into which this is a view.
+  final GPUTexture? texture;
 
   /// The format of the texture view. Must be either the format of the texture
   /// or one of the viewFormats specified during its creation.
-  late final GpuTextureFormat format;
+  late final GPUTextureFormat format;
 
   /// The dimension to view the texture as.
-  final GpuTextureViewDimension dimension;
+  final GPUTextureViewDimension dimension;
 
   /// Which aspect(s) of the texture are accessible to the texture view.
-  final GpuTextureAspect aspect;
+  final GPUTextureAspect aspect;
 
   /// The first (most detailed) mipmap level accessible to the texture view.
   final int baseMipLevel;
@@ -40,11 +40,11 @@ class GpuTextureView extends GpuObjectBase<wgpu.WGpuTextureView> {
   /// texture view.
   final int arrayLayerCount;
 
-  GpuTextureView.native(wgpu.WGpuTextureView o)
+  GPUTextureView.native(wgpu.WGpuTextureView o)
       : texture = null,
-        format = GpuTextureFormat.bgra8unorm,
-        dimension = GpuTextureViewDimension.textureView2d,
-        aspect = GpuTextureAspect.all,
+        format = GPUTextureFormat.bgra8unorm,
+        dimension = GPUTextureViewDimension.textureView2d,
+        aspect = GPUTextureAspect.all,
         baseMipLevel = 0,
         mipLevelCount = 1,
         baseArrayLayer = 0,
@@ -52,10 +52,10 @@ class GpuTextureView extends GpuObjectBase<wgpu.WGpuTextureView> {
     setObject(o);
   }
 
-  GpuTextureView(GpuTexture this.texture,
+  GPUTextureView(GPUTexture this.texture,
       {required this.dimension,
-      GpuTextureFormat? format,
-      this.aspect = GpuTextureAspect.all,
+      GPUTextureFormat? format,
+      this.aspect = GPUTextureAspect.all,
       this.baseMipLevel = 0,
       this.mipLevelCount = 1,
       this.baseArrayLayer = 0,

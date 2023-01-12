@@ -1,66 +1,66 @@
 /// Determines how a Buffer may be used after its creation.
-class GpuBufferUsage {
+class GPUBufferUsage {
   /// The buffer can be mapped for reading. (Example: calling mapAsync() with
   /// MapMode.read). May only be combined with copyDst.
-  static const mapRead = GpuBufferUsage(0x001);
+  static const mapRead = GPUBufferUsage(0x001);
 
   /// The buffer can be mapped for writing. (Example: calling mapAsync() with
   /// MapMode.write). May only be combined with copySrc.
-  static const mapWrite = GpuBufferUsage(0x0002);
+  static const mapWrite = GPUBufferUsage(0x0002);
 
   /// The buffer can be used as the source of a copy operation. (Examples: as
   /// the source argument of a copyBufferToBuffer() or copyBufferToTexture()
   /// call.)
-  static const copySrc = GpuBufferUsage(0x0004);
+  static const copySrc = GPUBufferUsage(0x0004);
 
   /// The buffer can be used as the destination of a copy or write operation.
   /// (Examples: as the destination argument of a copyBufferToBuffer() or
   /// copyTextureToBuffer() call, or as the target of a writeBuffer() call.)
-  static const copyDst = GpuBufferUsage(0x0008);
+  static const copyDst = GPUBufferUsage(0x0008);
 
   /// The buffer can be used as an index buffer. (Example: passed to
   /// setIndexBuffer().)
-  static const index = GpuBufferUsage(0x0010);
+  static const index = GPUBufferUsage(0x0010);
 
   /// The buffer can be used as a vertex buffer. (Example: passed to
   /// setVertexBuffer().)
-  static const vertex = GpuBufferUsage(0x0020);
+  static const vertex = GPUBufferUsage(0x0020);
 
   /// The buffer can be used as a uniform buffer. (Example: as a bind group
   /// entry for a BufferBindingLayout with a buffer.type of "uniform".)
-  static const uniform = GpuBufferUsage(0x0040);
+  static const uniform = GPUBufferUsage(0x0040);
 
   /// The buffer can be used as a storage buffer. (Example: as a bind group
   /// entry for a GPUBufferBindingLayout with a buffer.type of "storage" or
   /// "read-only-storage".)
-  static const storage = GpuBufferUsage(0x0080);
+  static const storage = GPUBufferUsage(0x0080);
 
   /// The buffer can be used as to store indirect command arguments.
   /// (Examples: as the indirectBuffer argument of a drawIndirect() or
   /// dispatchWorkgroupsIndirect() call.)
-  static const indirect = GpuBufferUsage(0x0100);
+  static const indirect = GPUBufferUsage(0x0100);
 
   /// The buffer can be used to capture query results. (Example: as the
   /// destination argument of a resolveQuerySet() call.)
-  static const queryResolve = GpuBufferUsage(0x0200);
+  static const queryResolve = GPUBufferUsage(0x0200);
 
   final int value;
-  const GpuBufferUsage([this.value = 0]);
+  const GPUBufferUsage([this.value = 0]);
 
-  bool supports(GpuBufferUsage features) => (value & features.value) != 0;
+  bool supports(GPUBufferUsage features) => (value & features.value) != 0;
 
   @override
   bool operator ==(Object other) =>
-      other is GpuBufferUsage && value == other.value ||
+      other is GPUBufferUsage && value == other.value ||
       other is int && value == other;
 
   @override
   int get hashCode => value;
 
-  GpuBufferUsage operator |(GpuBufferUsage rhs) =>
-      GpuBufferUsage(value | rhs.value);
+  GPUBufferUsage operator |(GPUBufferUsage rhs) =>
+      GPUBufferUsage(value | rhs.value);
 
-  GpuBufferUsage remove(GpuBufferUsage f) => GpuBufferUsage(value & ~f.value);
+  GPUBufferUsage remove(GPUBufferUsage f) => GPUBufferUsage(value & ~f.value);
 
   /// Certain combination of usage flags are not allowed. Returns true if
   /// the usage flags are valid.

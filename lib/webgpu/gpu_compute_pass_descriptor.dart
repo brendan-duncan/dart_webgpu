@@ -1,17 +1,17 @@
 import '_map_util.dart';
 import 'gpu_timestamp_write.dart';
 
-class GpuComputePassDescriptor {
-  /// A sequence of [GpuTimestampWrite] values defines where and when
+class GPUComputePassDescriptor {
+  /// A sequence of [GPUTimestampWrite] values defines where and when
   /// timestamp values will be written for this pass.
-  final List<GpuTimestampWrite>? timestampWrites;
+  final List<GPUTimestampWrite>? timestampWrites;
 
-  const GpuComputePassDescriptor({this.timestampWrites});
+  const GPUComputePassDescriptor({this.timestampWrites});
 
-  factory GpuComputePassDescriptor.fromMap(Map<String, Object> map) {
+  factory GPUComputePassDescriptor.fromMap(Map<String, Object> map) {
     final timestampWrites =
-        getMapListNullable<GpuTimestampWrite>(map['timestampWrites']);
+        getMapListNullable<GPUTimestampWrite>(map['timestampWrites']);
 
-    return GpuComputePassDescriptor(timestampWrites: timestampWrites);
+    return GPUComputePassDescriptor(timestampWrites: timestampWrites);
   }
 }

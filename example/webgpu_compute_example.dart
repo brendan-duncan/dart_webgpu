@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  final adapter = await GpuAdapter.request();
+  final adapter = await GPUAdapter.request();
   final device = await adapter.requestDevice();
 
   device.lost.add((device, type, message) {
@@ -22,7 +22,7 @@ void main() async {
   final gpuBufferFirstMatrix = device.createBuffer(
       mappedAtCreation: true,
       size: firstMatrix.lengthInBytes,
-      usage: GpuBufferUsage.storage)
+      usage: GPUBufferUsage.storage)
     ..getMappedRange().as<Float32List>().setAll(0, firstMatrix)
     ..unmap();
 
@@ -32,7 +32,7 @@ void main() async {
   final gpuBufferSecondMatrix = device.createBuffer(
       mappedAtCreation: true,
       size: secondMatrix.lengthInBytes,
-      usage: GpuBufferUsage.storage)
+      usage: GPUBufferUsage.storage)
     ..getMappedRange().as<Float32List>().setAll(0, secondMatrix)
     ..unmap();
 
@@ -43,23 +43,23 @@ void main() async {
 
   final resultMatrixBuffer = device.createBuffer(
       size: resultMatrixBufferSize,
-      usage: GpuBufferUsage.storage | GpuBufferUsage.copySrc);
+      usage: GPUBufferUsage.storage | GPUBufferUsage.copySrc);
 
   final layout = device.createBindGroupLayout(entries: [
     {
       'binding': 0,
-      'visibility': GpuShaderStage.compute,
-      'buffer': {'type': GpuBufferBindingType.readOnlyStorage}
+      'visibility': GPUShaderStage.compute,
+      'buffer': {'type': GPUBufferBindingType.readOnlyStorage}
     },
     {
       'binding': 1,
-      'visibility': GpuShaderStage.compute,
-      'buffer': {'type': GpuBufferBindingType.readOnlyStorage}
+      'visibility': GPUShaderStage.compute,
+      'buffer': {'type': GPUBufferBindingType.readOnlyStorage}
     },
     {
       'binding': 2,
-      'visibility': GpuShaderStage.compute,
-      'buffer': {'type': GpuBufferBindingType.storage}
+      'visibility': GPUShaderStage.compute,
+      'buffer': {'type': GPUBufferBindingType.storage}
     }
   ]);
 
@@ -114,7 +114,7 @@ void main() async {
   // so we have to copy the results to a buffer we can read from.
   final gpuReadBuffer = device.createBuffer(
       size: resultMatrixBufferSize,
-      usage: GpuBufferUsage.copyDst | GpuBufferUsage.mapRead);
+      usage: GPUBufferUsage.copyDst | GPUBufferUsage.mapRead);
 
   // Create and execute a CommandBuffer to execute the compute shader and
   // copy the results to gpuReadBuffer.
@@ -138,11 +138,11 @@ void main() async {
   // Finalize and execute the commands.
   device.queue.submit(commandEncoder.finish());
 
-  gpuReadBuffer.mapAsync(mode: GpuMapMode.read);
+  gpuReadBuffer.mapAsync(mode: GPUMapMode.read);
   // Pump WebGPU commands while the mapAsync is still pending.
   // This isn't a great solution, still trying to figure out how to get
   // a better solution with Dart since await causes a crash.
-  while (gpuReadBuffer.mappedState != GpuMappedState.mapped) {
+  while (gpuReadBuffer.mappedState != GPUMappedState.mapped) {
     device.queue.submit();
   }
   // The GPU buffer has been mapped to the CPU

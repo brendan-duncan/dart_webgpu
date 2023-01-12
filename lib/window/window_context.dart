@@ -5,31 +5,31 @@ import 'package:ffi/ffi.dart';
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
 import '../webgpu/gpu_device.dart';
+import '../webgpu/gpu_object.dart';
 import '../webgpu/gpu_texture_format.dart';
 import '../webgpu/gpu_texture_usage.dart';
 import '../webgpu/gpu_texture_view.dart';
-import '../webgpu/gpu_object.dart';
 import 'window.dart';
 
-class WindowContext extends GpuObjectBase<wgpu.WGpuCanvasContext> {
+class WindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
   final Window window;
-  final GpuDevice device;
-  late final GpuTextureFormat preferredFormat;
+  final GPUDevice device;
+  late final GPUTextureFormat preferredFormat;
 
   WindowContext(this.window,
       {required this.device,
-      GpuTextureFormat? format,
-      GpuTextureUsage usage = GpuTextureUsage.renderAttachment,
-      List<GpuTextureFormat>? viewFormats}) {
+      GPUTextureFormat? format,
+      GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
+      List<GPUTextureFormat>? viewFormats}) {
     final f = libwebgpu.navigator_gpu_get_preferred_canvas_format();
-    preferredFormat = GpuTextureFormat.values[f - 1];
+    preferredFormat = GPUTextureFormat.values[f - 1];
     configure(format: format, usage: usage, viewFormats: viewFormats);
   }
 
   void configure(
-      {GpuTextureFormat? format,
-      GpuTextureUsage usage = GpuTextureUsage.renderAttachment,
-      List<GpuTextureFormat>? viewFormats}) {
+      {GPUTextureFormat? format,
+      GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
+      List<GPUTextureFormat>? viewFormats}) {
     final o = libwebgpu.wgpu_window_get_webgpu_context(window.object);
     setObject(o);
 
@@ -59,9 +59,9 @@ class WindowContext extends GpuObjectBase<wgpu.WGpuCanvasContext> {
     calloc.free(c);
   }
 
-  GpuTextureView getCurrentTextureView() {
+  GPUTextureView getCurrentTextureView() {
     final view = libwebgpu.wgpu_canvas_context_get_current_texture_view(object);
-    return GpuTextureView.native(view);
+    return GPUTextureView.native(view);
   }
 
   void present() {

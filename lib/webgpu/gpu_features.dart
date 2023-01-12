@@ -1,23 +1,23 @@
-class GpuFeatures {
-  static const depthClipControl = GpuFeatures(0x01);
-  static const depth32FloatStencil8 = GpuFeatures(0x02);
-  static const textureCompressionBC = GpuFeatures(0x04);
-  static const textureCompressionEtc2 = GpuFeatures(0x08);
-  static const textureCompressionAstc = GpuFeatures(0x10);
-  static const timestampQuery = GpuFeatures(0x20);
-  static const indirectFirstInstance = GpuFeatures(0x40);
-  static const shaderF16 = GpuFeatures(0x80);
-  static const bgra8UnormStorage = GpuFeatures(0x100);
-  static const rg11b10UfloatRenderable = GpuFeatures(0x200);
+class GPUFeatures {
+  static const depthClipControl = GPUFeatures(0x01);
+  static const depth32FloatStencil8 = GPUFeatures(0x02);
+  static const textureCompressionBC = GPUFeatures(0x04);
+  static const textureCompressionEtc2 = GPUFeatures(0x08);
+  static const textureCompressionAstc = GPUFeatures(0x10);
+  static const timestampQuery = GPUFeatures(0x20);
+  static const indirectFirstInstance = GPUFeatures(0x40);
+  static const shaderF16 = GPUFeatures(0x80);
+  static const bgra8UnormStorage = GPUFeatures(0x100);
+  static const rg11b10UfloatRenderable = GPUFeatures(0x200);
 
   final int value;
-  const GpuFeatures([this.value = 0]);
+  const GPUFeatures([this.value = 0]);
 
-  bool supports(GpuFeatures features) => (value & features.value) != 0;
+  bool supports(GPUFeatures features) => (value & features.value) != 0;
 
-  GpuFeatures operator |(GpuFeatures rhs) => GpuFeatures(value | rhs.value);
+  GPUFeatures operator |(GPUFeatures rhs) => GPUFeatures(value | rhs.value);
 
-  GpuFeatures remove(GpuFeatures f) => GpuFeatures(value & ~f.value);
+  GPUFeatures remove(GPUFeatures f) => GPUFeatures(value & ~f.value);
 
   @override
   String toString() {

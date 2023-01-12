@@ -12,18 +12,18 @@ import 'gpu_object.dart';
 import 'gpu_render_pass_descriptor.dart';
 import 'gpu_render_pipeline.dart';
 
-/// Encodes commands for a render pass in a [GpuCommandEncoder].
+/// Encodes commands for a render pass in a [GPUCommandEncoder].
 /// Created from CommandEncoder.beginRenderPass.
-class GpuRenderPassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
-  final GpuCommandEncoder encoder;
+class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
+  final GPUCommandEncoder encoder;
 
-  GpuRenderPassEncoder(this.encoder, {required Object descriptor}) {
+  GPURenderPassEncoder(this.encoder, {required Object descriptor}) {
     encoder.addDependent(this);
 
     if (descriptor is Map<String, Object>) {
-      descriptor = GpuRenderPassDescriptor.fromMap(descriptor);
+      descriptor = GPURenderPassDescriptor.fromMap(descriptor);
     }
-    if (descriptor is! GpuRenderPassDescriptor) {
+    if (descriptor is! GPURenderPassDescriptor) {
       throw Exception('Invalid descriptor for RenderPassEncoder');
     }
 
@@ -105,8 +105,8 @@ class GpuRenderPassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
     calloc.free(d);
   }
 
-  /// Sets the current [GpuBindGroup] for the given index.
-  void setBindGroup(int index, GpuBindGroup bindGroup,
+  /// Sets the current [GPUBindGroup] for the given index.
+  void setBindGroup(int index, GPUBindGroup bindGroup,
       [List<int>? dynamicOffsets]) {
     final numDynamicOffsets = dynamicOffsets?.length ?? 0;
     final p = calloc<Uint32>(numDynamicOffsets);
@@ -119,19 +119,19 @@ class GpuRenderPassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
   }
 
   /// Sets the current GPURenderPipeline.
-  void setPipeline(GpuRenderPipeline pipeline) {
+  void setPipeline(GPURenderPipeline pipeline) {
     libwebgpu.wgpu_encoder_set_pipeline(object, pipeline.object);
   }
 
   /// Sets the current index buffer.
-  void setIndexBuffer(GpuBuffer buffer, GpuIndexFormat indexFormat,
+  void setIndexBuffer(GPUBuffer buffer, GPUIndexFormat indexFormat,
       [int offset = 0, int size = 0]) {
     libwebgpu.wgpu_render_commands_mixin_set_index_buffer(
         object, buffer.object, indexFormat.nativeIndex, offset, size);
   }
 
   /// Sets the current vertex buffer for the given slot.
-  void setVertexBuffer(int slot, GpuBuffer buffer,
+  void setVertexBuffer(int slot, GPUBuffer buffer,
       [int offset = 0, int size = 0]) {
     libwebgpu.wgpu_render_commands_mixin_set_vertex_buffer(
         object, slot, buffer.object, offset, size);
@@ -154,14 +154,14 @@ class GpuRenderPassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
         instanceCount, firstVertex, baseVertex, firstInstance);
   }
 
-  /// Draws primitives using parameters read from a [GpuBuffer].
-  void drawIndirect(GpuBuffer indirectBuffer, int indirectOffset) {
+  /// Draws primitives using parameters read from a [GPUBuffer].
+  void drawIndirect(GPUBuffer indirectBuffer, int indirectOffset) {
     libwebgpu.wgpu_render_commands_mixin_draw_indirect(
         object, indirectBuffer.object, indirectOffset);
   }
 
-  /// Draws indexed primitives using parameters read from a [GpuBuffer].
-  void drawIndexedIndirect(GpuBuffer indirectBuffer, int indirectOffset) {
+  /// Draws indexed primitives using parameters read from a [GPUBuffer].
+  void drawIndexedIndirect(GPUBuffer indirectBuffer, int indirectOffset) {
     libwebgpu.wgpu_render_commands_mixin_draw_indexed_indirect(
         object, indirectBuffer.object, indirectOffset);
   }

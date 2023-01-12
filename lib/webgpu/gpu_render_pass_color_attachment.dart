@@ -3,14 +3,14 @@ import 'gpu_load_op.dart';
 import 'gpu_store_op.dart';
 import 'gpu_texture_view.dart';
 
-class GpuRenderPassColorAttachment {
+class GPURenderPassColorAttachment {
   /// A TextureView describing the texture subresource that will be output to
   /// for this color attachment.
-  final GpuTextureView view;
+  final GPUTextureView view;
 
   /// A TextureView describing the texture subresource that will receive the
   /// resolved output for this color attachment if view is multisampled.
-  final GpuTextureView? resolveTarget;
+  final GPUTextureView? resolveTarget;
 
   /// Indicates the value to clear view to prior to executing the render pass.
   /// If not provided, defaults to {r: 0, g: 0, b: 0, a: 0}. Ignored if loadOp
@@ -21,28 +21,28 @@ class GpuRenderPassColorAttachment {
 
   /// Indicates the load operation to perform on view prior to executing the
   /// render pass.
-  final GpuLoadOp loadOp;
+  final GPULoadOp loadOp;
 
   /// The store operation to perform on view after executing the render pass.
-  final StoreOp storeOp;
+  final GPUStoreOp storeOp;
 
-  const GpuRenderPassColorAttachment(
+  const GPURenderPassColorAttachment(
       {required this.view,
       this.resolveTarget,
       this.clearValue = const [0.0, 0.0, 0.0, 0.0],
       required this.loadOp,
       required this.storeOp});
 
-  factory GpuRenderPassColorAttachment.fromMap(Map<String, Object> map) {
-    final view = getMapValueRequired<GpuTextureView>(map['view']);
+  factory GPURenderPassColorAttachment.fromMap(Map<String, Object> map) {
+    final view = getMapValueRequired<GPUTextureView>(map['view']);
     final resolveTarget =
-        getMapValue<GpuTextureView?>(map['resolveTarget'], null);
+        getMapValue<GPUTextureView?>(map['resolveTarget'], null);
     final clearValue =
         getMapValue<List<num>>(map['clearValue'], [0.0, 0.0, 0.0, 0.0]);
-    final loadOp = getMapValueRequired<GpuLoadOp>(map['loadOp']);
-    final storeOp = getMapValueRequired<StoreOp>(map['storeOp']);
+    final loadOp = getMapValueRequired<GPULoadOp>(map['loadOp']);
+    final storeOp = getMapValueRequired<GPUStoreOp>(map['storeOp']);
 
-    return GpuRenderPassColorAttachment(
+    return GPURenderPassColorAttachment(
         view: view,
         loadOp: loadOp,
         storeOp: storeOp,

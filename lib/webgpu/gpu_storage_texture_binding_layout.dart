@@ -4,29 +4,29 @@ import 'gpu_storage_texture_access.dart';
 import 'gpu_texture_format.dart';
 import 'gpu_texture_view_dimension.dart';
 
-class GpuStorageTextureBindingLayout extends GpuBindingLayoutType {
+class GPUStorageTextureBindingLayout extends GpuBindingLayoutType {
   /// Indicates whether TextureViews bound to this binding will be bound for
   /// readOnly or writeOnly access.
-  final GpuStorageTextureAccess access;
+  final GPUStorageTextureAccess access;
 
   /// The required format of TextureViews bound to this binding.
-  final GpuTextureFormat format;
+  final GPUTextureFormat format;
 
   /// Indicates the required dimension for TextureViews bound to this binding.
-  final GpuTextureViewDimension viewDimension;
+  final GPUTextureViewDimension viewDimension;
 
-  const GpuStorageTextureBindingLayout(
-      {this.access = GpuStorageTextureAccess.writeOnly,
+  const GPUStorageTextureBindingLayout(
+      {this.access = GPUStorageTextureAccess.writeOnly,
       required this.format,
-      this.viewDimension = GpuTextureViewDimension.textureView2d});
+      this.viewDimension = GPUTextureViewDimension.textureView2d});
 
-  factory GpuStorageTextureBindingLayout.fromMap(Map<String, Object> map) {
+  factory GPUStorageTextureBindingLayout.fromMap(Map<String, Object> map) {
     final access =
-        getMapValue(map['access'], GpuStorageTextureAccess.writeOnly);
-    final format = getMapValueRequired<GpuTextureFormat>(map['format']);
+        getMapValue(map['access'], GPUStorageTextureAccess.writeOnly);
+    final format = getMapValueRequired<GPUTextureFormat>(map['format']);
     final viewDimension = getMapValue(
-        map['viewDimension'], GpuTextureViewDimension.textureView2d);
-    return GpuStorageTextureBindingLayout(
+        map['viewDimension'], GPUTextureViewDimension.textureView2d);
+    return GPUStorageTextureBindingLayout(
         format: format, access: access, viewDimension: viewDimension);
   }
 }

@@ -1,4 +1,4 @@
-enum GpuQueryType {
+enum GPUQueryType {
   /// Occlusion query is only available on render passes, to query the number of
   /// fragment samples that pass all the per-fragment tests for a set of drawing
   /// commands, including scissor, sample mask, alpha to coverage, stencil, and
@@ -22,6 +22,16 @@ enum GpuQueryType {
   ///
   /// Timestamp query requires "timestamp-query" to be enabled for the device.
   timestamp;
+
+  static GPUQueryType fromString(String s) {
+    switch (s) {
+      case 'occlusion':
+        return GPUQueryType.occlusion;
+      case 'timestamp':
+        return GPUQueryType.timestamp;
+    }
+    throw Exception('Invalid value for GPUQueryType');
+  }
 
   int get nativeIndex => index + 1;
 }

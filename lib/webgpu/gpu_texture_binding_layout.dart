@@ -4,29 +4,29 @@ import 'gpu_texture_sample_type.dart';
 import 'gpu_texture_view_dimension.dart';
 
 /// Texture entry for a BindGroupLayoutEntry
-class GpuTextureBindingLayout extends GpuBindingLayoutType {
+class GPUTextureBindingLayout extends GpuBindingLayoutType {
   /// Indicates the type required for texture views bound to this binding.
-  final GpuTextureSampleType sampleType;
+  final GPUTextureSampleType sampleType;
 
   /// Indicates the required dimension for texture views bound to this binding.
-  final GpuTextureViewDimension viewDimension;
+  final GPUTextureViewDimension viewDimension;
 
   /// Indicates whether or not texture views bound to this binding must be
   /// multisampled.
   final bool multisampled;
 
-  const GpuTextureBindingLayout(
-      {this.sampleType = GpuTextureSampleType.float,
-      this.viewDimension = GpuTextureViewDimension.textureView2d,
+  const GPUTextureBindingLayout(
+      {this.sampleType = GPUTextureSampleType.float,
+      this.viewDimension = GPUTextureViewDimension.textureView2d,
       this.multisampled = false});
 
-  factory GpuTextureBindingLayout.fromMap(Map<String, Object> map) {
-    final sampleType = getMapValue<GpuTextureSampleType>(
-        map['sampleType'], GpuTextureSampleType.float);
-    final viewDimension = getMapValue<GpuTextureViewDimension>(
-        map['viewDimension'], GpuTextureViewDimension.textureView2d);
+  factory GPUTextureBindingLayout.fromMap(Map<String, Object> map) {
+    final sampleType = getMapValue<GPUTextureSampleType>(
+        map['sampleType'], GPUTextureSampleType.float);
+    final viewDimension = getMapValue<GPUTextureViewDimension>(
+        map['viewDimension'], GPUTextureViewDimension.textureView2d);
     final multisampled = getMapValue<bool>(map['multisampled'], false);
-    return GpuTextureBindingLayout(
+    return GPUTextureBindingLayout(
         sampleType: sampleType,
         viewDimension: viewDimension,
         multisampled: multisampled);

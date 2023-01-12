@@ -2,16 +2,16 @@ import '_map_util.dart';
 import 'gpu_blend_component.dart';
 
 /// Describe how the color or alpha components of a fragment are blended.
-class GpuBlendState {
-  final GpuBlendComponent color;
-  final GpuBlendComponent alpha;
+class GPUBlendState {
+  final GPUBlendComponent color;
+  final GPUBlendComponent alpha;
 
-  const GpuBlendState({required this.color, required this.alpha});
+  const GPUBlendState({required this.color, required this.alpha});
 
-  factory GpuBlendState.fromMap(Map<String, Object> map) {
-    final color = getMapObject<GpuBlendComponent>(map['color']);
-    final alpha = getMapObject<GpuBlendComponent>(map['alpha']);
+  factory GPUBlendState.fromMap(Map<String, Object> map) {
+    final color = getMapObject<GPUBlendComponent>(map['color']);
+    final alpha = getMapObject<GPUBlendComponent>(map['alpha']);
 
-    return GpuBlendState(color: color, alpha: alpha);
+    return GPUBlendState(color: color, alpha: alpha);
   }
 }

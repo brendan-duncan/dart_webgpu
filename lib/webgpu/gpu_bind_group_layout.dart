@@ -13,13 +13,13 @@ import 'gpu_object.dart';
 ///
 /// BindGroupLayouts are created from a Device through the
 /// Device.createBindGroupLayout method.
-class GpuBindGroupLayout extends GpuObjectBase<wgpu.WGpuBindGroupLayout> {
-  final GpuDevice device;
+class GPUBindGroupLayout extends GPUObjectBase<wgpu.WGpuBindGroupLayout> {
+  final GPUDevice device;
 
-  GpuBindGroupLayout.native(this.device, wgpu.WGpuBindGroupLayout o)
+  GPUBindGroupLayout.native(this.device, wgpu.WGpuBindGroupLayout o)
       : super(o, device);
 
-  GpuBindGroupLayout(this.device, {required List<Object> entries}) {
+  GPUBindGroupLayout(this.device, {required List<Object> entries}) {
     device.addDependent(this);
 
     final sizeofEntry = sizeOf<wgpu.WGpuBindGroupLayoutEntry>();
@@ -31,9 +31,9 @@ class GpuBindGroupLayout extends GpuObjectBase<wgpu.WGpuBindGroupLayout> {
     for (var i = 0; i < numEntries; ++i) {
       var e = entries[i];
       if (e is Map<String, Object>) {
-        e = GpuBindGroupLayoutEntry.fromMap(e);
+        e = GPUBindGroupLayoutEntry.fromMap(e);
       }
-      if (e is! GpuBindGroupLayoutEntry) {
+      if (e is! GPUBindGroupLayoutEntry) {
         throw Exception('Invalid data for BindGroupLayout entries.');
       }
 
@@ -63,7 +63,6 @@ class GpuBindGroupLayout extends GpuObjectBase<wgpu.WGpuBindGroupLayout> {
         ref.layout.storageTexture.format = t.format.nativeIndex;
         ref.layout.storageTexture.access = t.access.nativeIndex;
       } else if (e.externalTexture != null) {
-        final t = e.externalTexture;
         ref.type = wgpu.WGPU_BIND_GROUP_LAYOUT_TYPE_EXTERNAL_TEXTURE;
       }
     }

@@ -1,7 +1,7 @@
 import '_map_util.dart';
 import 'gpu_buffer.dart';
 
-class GpuImageCopyBuffer {
+class GPUImageCopyBuffer {
   /// The offset, in bytes, from the beginning of the image data source
   /// (such as a ImageCopyBuffer.buffer) to the start of the image data within
   /// that source.
@@ -24,21 +24,21 @@ class GpuImageCopyBuffer {
 
   /// A buffer which either contains image data to be copied or will store the
   /// image data being copied, depending on the method it is being passed to.
-  final GpuBuffer buffer;
+  final GPUBuffer buffer;
 
-  const GpuImageCopyBuffer(
+  const GPUImageCopyBuffer(
       {this.offset = 0,
       this.bytesPerRow = 0,
       this.rowsPerImage = 0,
       required this.buffer});
 
-  factory GpuImageCopyBuffer.fromMap(Map<String, Object> map) {
+  factory GPUImageCopyBuffer.fromMap(Map<String, Object> map) {
     final offset = getMapValue<int>(map['offset'], 0);
     final bytesPerRow = getMapValue<int>(map['bytesPerRow'], 0);
     final rowsPerImage = getMapValue<int>(map['rowsPerImage'], 0);
-    final buffer = getMapValueRequired<GpuBuffer>(map['buffer']);
+    final buffer = getMapValueRequired<GPUBuffer>(map['buffer']);
 
-    return GpuImageCopyBuffer(
+    return GPUImageCopyBuffer(
         buffer: buffer,
         offset: offset,
         bytesPerRow: bytesPerRow,

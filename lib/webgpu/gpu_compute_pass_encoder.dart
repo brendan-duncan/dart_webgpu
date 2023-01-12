@@ -11,15 +11,15 @@ import 'gpu_compute_pass_descriptor.dart';
 import 'gpu_compute_pipeline.dart';
 import 'gpu_object.dart';
 
-/// Encodes commands for a compute pass in a [GpuCommandEncoder].
+/// Encodes commands for a compute pass in a [GPUCommandEncoder].
 /// Created from CommandEncoder.beginComputePass.
-class GpuComputePassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
-  final GpuCommandEncoder encoder;
-  late final GpuComputePassDescriptor descriptor;
+class GPUComputePassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
+  final GPUCommandEncoder encoder;
+  late final GPUComputePassDescriptor descriptor;
 
-  GpuComputePassEncoder(this.encoder,
-      {GpuComputePassDescriptor descriptor =
-          const GpuComputePassDescriptor()}) {
+  GPUComputePassEncoder(this.encoder,
+      {GPUComputePassDescriptor descriptor =
+          const GPUComputePassDescriptor()}) {
     encoder.addDependent(this);
 
     final desc = descriptor;
@@ -49,12 +49,12 @@ class GpuComputePassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
       ..free(d);
   }
 
-  /// Set the current [GpuComputePipeline].
-  void setPipeline(GpuComputePipeline pipeline) {
+  /// Set the current [GPUComputePipeline].
+  void setPipeline(GPUComputePipeline pipeline) {
     libwebgpu.wgpu_encoder_set_pipeline(object, pipeline.object);
   }
 
-  void setBindGroup(int index, GpuBindGroup bindGroup,
+  void setBindGroup(int index, GPUBindGroup bindGroup,
       {List<int>? dynamicOffsets}) {
     final numDynamicOffsets = dynamicOffsets?.length ?? 0;
     final dynamicOffsetsPtr = calloc<Uint32>(numDynamicOffsets);
@@ -76,9 +76,9 @@ class GpuComputePassEncoder extends GpuObjectBase<wgpu.WGpuComputePassEncoder> {
   }
 
   /// Dispatch work to be performed with the current ComputePipeline using
-  /// parameters read from a [GpuBuffer].
+  /// parameters read from a [GPUBuffer].
   void dispatchWorkgroupsIndirect(
-      GpuBuffer indirectBuffer, int indirectOffset) {
+      GPUBuffer indirectBuffer, int indirectOffset) {
     libwebgpu.wgpu_compute_pass_encoder_dispatch_workgroups_indirect(
         object, indirectBuffer.object, indirectOffset);
   }

@@ -8,17 +8,17 @@ import 'gpu_device.dart';
 import 'gpu_object.dart';
 import 'gpu_query_type.dart';
 
-class GpuQuerySet extends GpuObjectBase<wgpu.WGpuQuerySet> {
-  /// The [Device] that created this QuerySet.
-  final GpuDevice device;
+class GPUQuerySet extends GPUObjectBase<wgpu.WGpuQuerySet> {
+  /// The [GPUDevice] that created this QuerySet.
+  final GPUDevice device;
 
   /// The type of queries managed by QuerySet.
-  final GpuQueryType type;
+  final GPUQueryType type;
 
   /// The number of queries managed by QuerySet.
   final int count;
 
-  GpuQuerySet(this.device, {required this.type, required this.count}) {
+  GPUQuerySet(this.device, {required this.type, required this.count}) {
     device.addDependent(this);
     final d = calloc<wgpu.WGpuQuerySetDescriptor>();
     d.ref.type = type.nativeIndex;

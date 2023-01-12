@@ -4,18 +4,18 @@ import 'gpu_color_write.dart';
 import 'gpu_texture_format.dart';
 
 class GpuColorTargetState {
-  final GpuTextureFormat format;
-  final GpuBlendState? blend;
-  final GpuColorWrite writeMask;
+  final GPUTextureFormat format;
+  final GPUBlendState? blend;
+  final GPUColorWrite writeMask;
 
   const GpuColorTargetState(
-      {required this.format, this.blend, this.writeMask = GpuColorWrite.all});
+      {required this.format, this.blend, this.writeMask = GPUColorWrite.all});
 
   factory GpuColorTargetState.fromMap(Map<String, Object> map) {
-    final format = getMapValueRequired<GpuTextureFormat>(map['format']);
-    final blend = getMapObjectNullable<GpuBlendState>(map['blend']);
+    final format = getMapValueRequired<GPUTextureFormat>(map['format']);
+    final blend = getMapObjectNullable<GPUBlendState>(map['blend']);
     final writeMask =
-        getMapValue<GpuColorWrite>(map['writeMask'], GpuColorWrite.all);
+        getMapValue<GPUColorWrite>(map['writeMask'], GPUColorWrite.all);
 
     return GpuColorTargetState(
         format: format, blend: blend, writeMask: writeMask);

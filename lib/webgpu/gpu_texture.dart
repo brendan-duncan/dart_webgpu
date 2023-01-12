@@ -39,8 +39,8 @@ import 'gpu_texture_view_dimension.dart';
 /// A "3d" texture may have multiple slices, each being the two-dimensional
 /// image at a particular z value in the texture. Slices are not separate
 /// subresources.
-class GpuTexture extends GpuObjectBase<wgpu.WGpuTexture> {
-  final GpuDevice device;
+class GPUTexture extends GPUObjectBase<wgpu.WGpuTexture> {
+  final GPUDevice device;
 
   /// The width of this Texture.
   final int width;
@@ -52,10 +52,10 @@ class GpuTexture extends GpuObjectBase<wgpu.WGpuTexture> {
   final int depthOrArrayLayers;
 
   /// The format of this Texture.
-  final GpuTextureFormat format;
+  final GPUTextureFormat format;
 
   /// The allowed usages for this Texture.
-  final GpuTextureUsage usage;
+  final GPUTextureUsage usage;
 
   /// The number of mip levels of this Texture.
   final int mipLevelCount;
@@ -64,13 +64,13 @@ class GpuTexture extends GpuObjectBase<wgpu.WGpuTexture> {
   final int sampleCount;
 
   /// The dimension of the set of texel for each of this Texture's subresources.
-  final GpuTextureDimension dimension;
+  final GPUTextureDimension dimension;
 
   /// Specifies what view format values will be allowed when calling
   /// createView() on this texture (in addition to the texture’s actual format).
-  final List<GpuTextureFormat>? viewFormats;
+  final List<GPUTextureFormat>? viewFormats;
 
-  GpuTexture(this.device,
+  GPUTexture(this.device,
       {required this.width,
       this.height = 1,
       this.depthOrArrayLayers = 1,
@@ -78,7 +78,7 @@ class GpuTexture extends GpuObjectBase<wgpu.WGpuTexture> {
       required this.usage,
       this.mipLevelCount = 1,
       this.sampleCount = 1,
-      this.dimension = GpuTextureDimension.texture2d,
+      this.dimension = GPUTextureDimension.texture2d,
       this.viewFormats}) {
     device.addDependent(this);
     final d = calloc<wgpu.WGpuTextureDescriptor>();
@@ -96,25 +96,25 @@ class GpuTexture extends GpuObjectBase<wgpu.WGpuTexture> {
     calloc.free(d);
   }
 
-  /// Create a [GpuTextureView].
-  GpuTextureView createView(
-      {GpuTextureFormat? format,
-      GpuTextureViewDimension? dimension,
-      GpuTextureAspect aspect = GpuTextureAspect.all,
+  /// Create a [GPUTextureView].
+  GPUTextureView createView(
+      {GPUTextureFormat? format,
+      GPUTextureViewDimension? dimension,
+      GPUTextureAspect aspect = GPUTextureAspect.all,
       int baseMipLevel = 0,
       int mipLevelCount = 1,
       int baseArrayLayer = 0,
       int arrayLayerCount = 1}) {
     format ??= this.format;
-    dimension ??= this.dimension == GpuTextureDimension.texture1d
-        ? GpuTextureViewDimension.textureView1d
-        : this.dimension == GpuTextureDimension.texture2d
+    dimension ??= this.dimension == GPUTextureDimension.texture1d
+        ? GPUTextureViewDimension.textureView1d
+        : this.dimension == GPUTextureDimension.texture2d
             ? depthOrArrayLayers > 1
-                ? GpuTextureViewDimension.textureView2dArray
-                : GpuTextureViewDimension.textureView2d
-            : GpuTextureViewDimension.textureView3d;
+                ? GPUTextureViewDimension.textureView2dArray
+                : GPUTextureViewDimension.textureView2d
+            : GPUTextureViewDimension.textureView3d;
 
-    return GpuTextureView(this,
+    return GPUTextureView(this,
         dimension: dimension,
         aspect: aspect,
         format: format,

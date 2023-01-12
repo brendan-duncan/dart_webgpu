@@ -2,25 +2,25 @@ import '_map_util.dart';
 import 'gpu_pipeline_layout.dart';
 import 'gpu_shader_module.dart';
 
-class GpuComputePipelineDescriptor {
-  final GpuPipelineLayout layout;
-  final GpuShaderModule module;
+class GPUComputePipelineDescriptor {
+  final GPUPipelineLayout layout;
+  final GPUShaderModule module;
   final String entryPoint;
   final Map<String, num>? constants;
 
-  const GpuComputePipelineDescriptor(
+  const GPUComputePipelineDescriptor(
       {required this.layout,
       required this.module,
       required this.entryPoint,
       this.constants});
 
-  factory GpuComputePipelineDescriptor.fromMap(Map<String, Object> map) {
-    final layout = getMapValueRequired<GpuPipelineLayout>(map['layout']);
-    final module = getMapValueRequired<GpuShaderModule>(map['module']);
+  factory GPUComputePipelineDescriptor.fromMap(Map<String, Object> map) {
+    final layout = getMapValueRequired<GPUPipelineLayout>(map['layout']);
+    final module = getMapValueRequired<GPUShaderModule>(map['module']);
     final entryPoint = getMapValueRequired<String>(map['entryPoint']);
     final constants = getMapValue<Map<String, num>?>(map['constants'], null);
 
-    return GpuComputePipelineDescriptor(
+    return GPUComputePipelineDescriptor(
         layout: layout,
         module: module,
         entryPoint: entryPoint,

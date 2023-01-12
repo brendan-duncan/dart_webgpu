@@ -5,16 +5,16 @@ import '../ffi/wgpu_library.dart';
 
 /// Base class for WebGPU objects. The methods of this class are considered
 /// @internal.
-abstract class GpuObject implements Finalizable {
+abstract class GPUObject implements Finalizable {
   /// The pointer to the native WebGPU object.
   Pointer objectPtr = nullptr;
-  GpuObject? _parent;
+  GPUObject? _parent;
 
   /// The list of WebGPU objects this object created. When this object is
   /// destroyed, it will also destroy any objects that it has created.
-  final dependents = <GpuObject>[];
+  final dependents = <GPUObject>[];
 
-  GpuObject([Pointer? object, GpuObject? parent]) {
+  GPUObject([Pointer? object, GPUObject? parent]) {
     if (object != null) {
       setObject(object);
     }
@@ -24,19 +24,19 @@ abstract class GpuObject implements Finalizable {
   }
 
   /// The WebGPU object that created this object.
-  GpuObject? get parent => _parent;
+  GPUObject? get parent => _parent;
 
   /// True if this object is alive, and false if it has been destroyed.
   bool get isValid => objectPtr != nullptr;
 
   /// Add a dependent to this object.
-  void addDependent(GpuObject o) {
+  void addDependent(GPUObject o) {
     o._parent = this;
     dependents.add(o);
   }
 
   /// Remove a dependent from this object, because it's been destroyed.
-  void removeDependent(GpuObject o) {
+  void removeDependent(GPUObject o) {
     o._parent = null;
     dependents.remove(o);
   }
@@ -64,7 +64,7 @@ abstract class GpuObject implements Finalizable {
   /// Destroy all of the objects this object has created.
   void destroyDependents() {
     // The dependents list will be modified from destroying the child
-    final dep = List<GpuObject>.from(dependents, growable: false);
+    final dep = List<GPUObject>.from(dependents, growable: false);
     for (final d in dep) {
       d.destroy();
     }
@@ -72,8 +72,8 @@ abstract class GpuObject implements Finalizable {
   }
 }
 
-class GpuObjectBase<T> extends GpuObject {
-  GpuObjectBase([Pointer? object, GpuObject? parent]) : super(object, parent);
+class GPUObjectBase<T> extends GPUObject {
+  GPUObjectBase([Pointer? object, GPUObject? parent]) : super(object, parent);
 
   T get object => objectPtr as T;
 }

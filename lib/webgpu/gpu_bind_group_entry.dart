@@ -1,25 +1,25 @@
 import '_map_util.dart';
 import 'gpu_object.dart';
 
-class GpuBindGroupEntry {
+class GPUBindGroupEntry {
   final int binding;
-  final GpuObject resource;
+  final GPUObject resource;
   final int bufferOffset;
   final int bufferSize;
 
-  const GpuBindGroupEntry(
+  const GPUBindGroupEntry(
       {required this.binding,
       required this.resource,
       this.bufferOffset = 0,
       this.bufferSize = 0});
 
-  factory GpuBindGroupEntry.fromMap(Map<String, Object> map) {
+  factory GPUBindGroupEntry.fromMap(Map<String, Object> map) {
     final binding = getMapValueRequired<int>(map['binding']);
-    final resource = getMapValueRequired<GpuObject>(map['resource']);
+    final resource = getMapValueRequired<GPUObject>(map['resource']);
     final bufferOffset = getMapValue(map['bufferOffset'], 0);
     final bufferSize = getMapValue(map['bufferSize'], 0);
 
-    return GpuBindGroupEntry(
+    return GPUBindGroupEntry(
         binding: binding,
         resource: resource,
         bufferOffset: bufferOffset,

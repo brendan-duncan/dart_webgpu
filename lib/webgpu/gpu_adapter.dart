@@ -13,7 +13,7 @@ import 'gpu_power_preference.dart';
 
 /// An Adapter is the primary starting point of WebGPU. To use WebGPU, you
 /// must request an Adapter with `final adapter = await Adapter.request();`
-/// and then request a [GpuDevice] from the Adapter with
+/// and then request a [GPUDevice] from the Adapter with
 /// `final device = await adapter.requestDevice()`. The Device is then the
 /// central point for creating WebGPU objects.
 ///
@@ -41,16 +41,16 @@ import 'gpu_power_preference.dart';
 /// performance caveats in exchange for some combination of wider compatibility,
 /// more predictable behavior, or improved privacy. It is not required that a
 /// fallback adapter is available on every system.
-class GpuAdapter extends GpuObjectBase<wgpu.WGpuAdapter> {
+class GPUAdapter extends GPUObjectBase<wgpu.WGpuAdapter> {
   /// A feature is a set of optional WebGPU functionality that is not supported
   /// on all implementations, typically due to hardware or system software
   /// constraints. The Adapter features lets you know what features are
   /// available on the system, from which you can include in the list of
-  /// features you need when requesting a [GpuDevice].
-  late final GpuFeatures features;
+  /// features you need when requesting a [GPUDevice].
+  late final GPUFeatures features;
 
   /// Limits tell you the maximum value for various resources in the Adapter.
-  late final GpuLimits limits;
+  late final GPULimits limits;
 
   /// Requests an adapter from the platform. The user agent chooses whether to
   /// return an Adapter, and, if so, chooses according to the provided options.
@@ -64,15 +64,15 @@ class GpuAdapter extends GpuObjectBase<wgpu.WGpuAdapter> {
   /// adapter if it has significant performance caveats in exchange for some
   /// combination of wider compatibility, more predictable behavior, or improved
   /// privacy.
-  static Future<GpuAdapter> request(
-      {GpuPowerPreference powerPreference = GpuPowerPreference.highPerformance,
+  static Future<GPUAdapter> request(
+      {GPUPowerPreference powerPreference = GPUPowerPreference.highPerformance,
       bool forceFallbackAdapter = false}) async {
     await WGpuLibrary.get().initialize();
     final o = calloc<wgpu.WGpuRequestAdapterOptions>();
     o.ref.powerPreference = powerPreference.nativeIndex;
     o.ref.forceFallbackAdapter = forceFallbackAdapter ? 1 : 0;
 
-    final completer = Completer<GpuAdapter>();
+    final completer = Completer<GPUAdapter>();
     _callbackData[o.cast<Void>()] = _AdapterCallbackData(null, completer);
 
     final cbp =
@@ -85,17 +85,17 @@ class GpuAdapter extends GpuObjectBase<wgpu.WGpuAdapter> {
   }
 
   /// An Adapter must be created with Adapter.request.
-  GpuAdapter._(Pointer o) : super(o) {
+  GPUAdapter._(Pointer o) : super(o) {
     features =
-        GpuFeatures(libwebgpu.wgpu_adapter_or_device_get_features(object))
-            .remove(GpuFeatures.shaderF16);
+        GPUFeatures(libwebgpu.wgpu_adapter_or_device_get_features(object))
+            .remove(GPUFeatures.shaderF16);
     final l = calloc<wgpu.WGpuSupportedLimits>();
     libwebgpu.wgpu_adapter_or_device_get_limits(object, l);
-    limits = GpuLimits.fromWgpu(l);
+    limits = GPULimits.fromWgpu(l);
     calloc.free(l);
   }
 
-  /// Asynchronously request a [GpuDevice] from this Adapter.
+  /// Asynchronously request a [GPUDevice] from this Adapter.
   /// [requiredFeatures] specifies the features that are required by the device
   /// request. The request will fail if the adapter cannot provide these
   /// features.
@@ -106,11 +106,11 @@ class GpuAdapter extends GpuObjectBase<wgpu.WGpuAdapter> {
   /// worse, will be allowed in validation of API calls on the resulting device.
   /// [defaultQueue] is an optional descriptor to use for the default Queue
   /// object created by the Device.
-  Future<GpuDevice> requestDevice(
-      {GpuFeatures? requiredFeatures,
-      GpuLimits? requiredLimits,
+  Future<GPUDevice> requestDevice(
+      {GPUFeatures? requiredFeatures,
+      GPULimits? requiredLimits,
       String? defaultQueue}) async {
-    final completer = Completer<GpuDevice>();
+    final completer = Completer<GPUDevice>();
 
     final o = calloc<wgpu.WGpuDeviceDescriptor>();
     o.ref.requiredFeatures = requiredFeatures?.value ?? 0;
@@ -134,7 +134,7 @@ class GpuAdapter extends GpuObjectBase<wgpu.WGpuAdapter> {
   }
 
   /// Returns true if the Adapter supports the given set of features.
-  bool supportsFeature(GpuFeatures features) => features.supports(features);
+  bool supportsFeature(GPUFeatures features) => features.supports(features);
 
   /// Is true if this adapter is a fallback adapter.
   bool get isFallbackAdapter =>
@@ -144,7 +144,7 @@ class GpuAdapter extends GpuObjectBase<wgpu.WGpuAdapter> {
     final data = _callbackData[userData];
     _callbackData.remove(userData);
     calloc.free(userData);
-    data?.completer.complete(GpuDevice(data.adapter!, device));
+    data?.completer.complete(GPUDevice(data.adapter!, device));
   }
 }
 
@@ -153,13 +153,13 @@ void _requestAdapterCB(wgpu.WGpuAdapter adapter, Pointer<Void> userData) {
   _callbackData.remove(userData);
   calloc.free(userData);
   if (data?.completer != null) {
-    data!.completer.complete(GpuAdapter._(adapter));
+    data!.completer.complete(GPUAdapter._(adapter));
   }
 }
 
 class _AdapterCallbackData {
-  GpuAdapter? adapter;
-  Completer<GpuObjectBase<wgpu.WGpuObjectBase>> completer;
+  GPUAdapter? adapter;
+  Completer<GPUObjectBase<wgpu.WGpuObjectBase>> completer;
 
   _AdapterCallbackData(this.adapter, this.completer);
 }
