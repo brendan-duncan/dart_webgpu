@@ -1,3 +1,4 @@
+import '_map_util.dart';
 import 'gpu_vertex_format.dart';
 
 class GPUVertexAttribute {
@@ -10,15 +11,9 @@ class GPUVertexAttribute {
       required this.offset,
       required this.shaderLocation});
 
-  factory GPUVertexAttribute.fromMap(Map<String, Object> map) {
-    if (map['format'] is! GPUVertexFormat ||
-        map['offset'] is! int ||
-        map['shaderLocation'] is! int) {
-      throw Exception('Invalid data for VertexAttribute.');
-    }
-    return GPUVertexAttribute(
-        format: map['format'] as GPUVertexFormat,
-        offset: map['offset'] as int,
-        shaderLocation: map['shaderLocation'] as int);
-  }
+  factory GPUVertexAttribute.fromMap(Map<String, Object> map) =>
+      GPUVertexAttribute(
+          format: getMapValueRequired<GPUVertexFormat>(map['format']),
+          offset: getMapValueRequired<int>(map['offset']),
+          shaderLocation: getMapValueRequired<int>(map['shaderLocation']));
 }

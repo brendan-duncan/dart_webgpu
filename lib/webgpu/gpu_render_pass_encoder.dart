@@ -126,6 +126,9 @@ class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
   /// Sets the current index buffer.
   void setIndexBuffer(GPUBuffer buffer, GPUIndexFormat indexFormat,
       [int offset = 0, int size = 0]) {
+    if (size == 0) {
+      size = buffer.size;
+    }
     libwebgpu.wgpu_render_commands_mixin_set_index_buffer(
         object, buffer.object, indexFormat.nativeIndex, offset, size);
   }
@@ -133,6 +136,9 @@ class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
   /// Sets the current vertex buffer for the given slot.
   void setVertexBuffer(int slot, GPUBuffer buffer,
       [int offset = 0, int size = 0]) {
+    if (size == 0) {
+      size = buffer.size;
+    }
     libwebgpu.wgpu_render_commands_mixin_set_vertex_buffer(
         object, slot, buffer.object, offset, size);
   }
