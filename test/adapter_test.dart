@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  await initialize();
+  await initializeWebGPU();
   group('adapter', () {
     test('request', () async {
       final a = await GPUAdapter.request();
