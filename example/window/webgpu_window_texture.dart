@@ -1,15 +1,15 @@
 import 'package:image/image.dart' as img;
-import 'package:webgpu/webgpu.dart' as wgpu;
+import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  final adapter = await wgpu.Adapter.request();
+  final adapter = await GpuAdapter.request();
   final device = await adapter.requestDevice();
 
   device.uncapturedError.add((device, type, message) {
     print('ERROR: $message');
   });
 
-  final window = wgpu.Window(width: 800, height: 600);
+  final window = Window(width: 800, height: 600);
   final context = window.createContext(device);
   final presentationFormat = context.preferredFormat;
 
@@ -61,8 +61,8 @@ void main() async {
   final texture = device.createTexture(
       width: image.width,
       height: image.height,
-      format: wgpu.TextureFormat.rgba8unorm,
-      usage: wgpu.TextureUsage.textureBinding | wgpu.TextureUsage.copyDst);
+      format: GpuTextureFormat.rgba8unorm,
+      usage: GpuTextureUsage.textureBinding | GpuTextureUsage.copyDst);
 
   device.queue.writeTexture(
       destination: {'texture': texture},
@@ -75,7 +75,7 @@ void main() async {
       height: image.height);
 
   final sampler = device.createSampler(
-      magFilter: wgpu.FilterMode.linear, minFilter: wgpu.FilterMode.linear);
+      magFilter: GpuFilterMode.linear, minFilter: GpuFilterMode.linear);
 
   final bindGroup =
       device.createBindGroup(layout: pipeline.getBindGroupLayout(0), entries: [
@@ -93,8 +93,8 @@ void main() async {
         {
           'view': textureView,
           'clearValue': [0.8, 0.6, 0.2, 1.0],
-          'loadOp': wgpu.LoadOp.clear,
-          'storeOp': wgpu.StoreOp.store
+          'loadOp': GpuLoadOp.clear,
+          'storeOp': StoreOp.store
         }
       ]
     })

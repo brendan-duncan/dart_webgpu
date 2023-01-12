@@ -456,6 +456,11 @@ def build():
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu.h'), os.path.join(includes_path, 'lib_webgpu.h'))
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_fwd.h'), os.path.join(includes_path, 'lib_webgpu_fwd.h'))
 
+            pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-Release')
+            release_lib_path = os.path.join('..', 'lib', f'{os_name()}-Release')
+            mkdir_p(pub_path)
+            shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
+
             # Generate the ffi wrapper with ffigen. The configuration is defined in pubspec.yaml.
             fixHeadersForFFIGen(includes_path)
 

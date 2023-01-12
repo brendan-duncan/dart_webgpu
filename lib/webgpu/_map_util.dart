@@ -1,30 +1,30 @@
-import 'bind_group_entry.dart';
-import 'bind_group_layout_entry.dart';
-import 'blend_component.dart';
-import 'blend_state.dart';
-import 'buffer_binding_layout.dart';
-import 'color_target_state.dart';
-import 'compute_pass_descriptor.dart';
-import 'compute_pipeline_descriptor.dart';
-import 'depth_stencil_state.dart';
-import 'fragment_state.dart';
-import 'image_copy_buffer.dart';
-import 'image_copy_texture.dart';
-import 'image_data_layout.dart';
-import 'multisample_state.dart';
-import 'primitive_state.dart';
-import 'render_pass_color_attachment.dart';
-import 'render_pass_depth_stencil_attachment.dart';
-import 'render_pass_descriptor.dart';
-import 'render_pipeline_descriptor.dart';
-import 'sampler_binding_layout.dart';
-import 'stencil_face_state.dart';
-import 'storage_texture_binding_layout.dart';
-import 'texture_binding_layout.dart';
-import 'timestamp_write.dart';
-import 'vertex_attribute.dart';
-import 'vertex_buffer_layout.dart';
-import 'vertex_state.dart';
+import 'gpu_bind_group_entry.dart';
+import 'gpu_bind_group_layout_entry.dart';
+import 'gpu_blend_component.dart';
+import 'gpu_blend_state.dart';
+import 'gpu_buffer_binding_layout.dart';
+import 'gpu_color_target_state.dart';
+import 'gpu_compute_pass_descriptor.dart';
+import 'gpu_compute_pipeline_descriptor.dart';
+import 'gpu_depth_stencil_state.dart';
+import 'gpu_fragment_state.dart';
+import 'gpu_image_copy_buffer.dart';
+import 'gpu_image_copy_texture.dart';
+import 'gpu_image_data_layout.dart';
+import 'gpu_multisample_state.dart';
+import 'gpu_primitive_state.dart';
+import 'gpu_render_pass_color_attachment.dart';
+import 'gpu_render_pass_depth_stencil_attachment.dart';
+import 'gpu_render_pass_descriptor.dart';
+import 'gpu_render_pipeline_descriptor.dart';
+import 'gpu_sampler_binding_layout.dart';
+import 'gpu_stencil_face_state.dart';
+import 'gpu_storage_texture_binding_layout.dart';
+import 'gpu_texture_binding_layout.dart';
+import 'gpu_timestamp_write.dart';
+import 'gpu_vertex_attribute.dart';
+import 'gpu_vertex_buffer_layout.dart';
+import 'gpu_vertex_state.dart';
 
 T getMapValue<T>(Object? object, T defaultValue) {
   if (object == null) {
@@ -54,86 +54,86 @@ T? getMapObjectNullable<T>(Object? object) {
     return object as T;
   }
   if (object is Map<String, Object>) {
-    if (T == BindGroupEntry) {
-      return BindGroupEntry.fromMap(object) as T;
+    if (T == GpuBindGroupEntry) {
+      return GpuBindGroupEntry.fromMap(object) as T;
     }
-    if (T == BindGroupLayoutEntry) {
-      return BindGroupLayoutEntry.fromMap(object) as T;
+    if (T == GpuBindGroupLayoutEntry) {
+      return GpuBindGroupLayoutEntry.fromMap(object) as T;
     }
-    if (T == BlendComponent) {
-      return BlendComponent.fromMap(object) as T;
+    if (T == GpuBlendComponent) {
+      return GpuBlendComponent.fromMap(object) as T;
     }
-    if (T == BlendState) {
-      return BlendState.fromMap(object) as T;
+    if (T == GpuBlendState) {
+      return GpuBlendState.fromMap(object) as T;
     }
-    if (T == BufferBindingLayout) {
-      return BufferBindingLayout.fromMap(object) as T;
+    if (T == GpuBufferBindingLayout) {
+      return GpuBufferBindingLayout.fromMap(object) as T;
     }
-    if (T == ColorTargetState) {
-      return ColorTargetState.fromMap(object) as T;
+    if (T == GpuColorTargetState) {
+      return GpuColorTargetState.fromMap(object) as T;
     }
-    if (T == ComputePassDescriptor) {
-      return ComputePassDescriptor.fromMap(object) as T;
+    if (T == GpuComputePassDescriptor) {
+      return GpuComputePassDescriptor.fromMap(object) as T;
     }
-    if (T == ComputePipelineDescriptor) {
-      return ComputePipelineDescriptor.fromMap(object) as T;
+    if (T == GpuComputePipelineDescriptor) {
+      return GpuComputePipelineDescriptor.fromMap(object) as T;
     }
-    if (T == DepthStencilState) {
-      return DepthStencilState.fromMap(object) as T;
+    if (T == GpuDepthStencilState) {
+      return GpuDepthStencilState.fromMap(object) as T;
     }
-    if (T == FragmentState) {
-      return FragmentState.fromMap(object) as T;
+    if (T == GpuFragmentState) {
+      return GpuFragmentState.fromMap(object) as T;
     }
-    if (T == ImageCopyBuffer) {
-      return ImageCopyBuffer.fromMap(object) as T;
+    if (T == GpuImageCopyBuffer) {
+      return GpuImageCopyBuffer.fromMap(object) as T;
     }
-    if (T == ImageCopyTexture) {
-      return ImageCopyTexture.fromMap(object) as T;
+    if (T == GpuImageCopyTexture) {
+      return GpuImageCopyTexture.fromMap(object) as T;
     }
-    if (T == ImageDataLayout) {
-      return ImageDataLayout.fromMap(object) as T;
+    if (T == GpuImageDataLayout) {
+      return GpuImageDataLayout.fromMap(object) as T;
     }
-    if (T == MultisampleState) {
-      return MultisampleState.fromMap(object) as T;
+    if (T == GpuMultisampleState) {
+      return GpuMultisampleState.fromMap(object) as T;
     }
-    if (T == PrimitiveState) {
-      return PrimitiveState.fromMap(object) as T;
+    if (T == GpuPrimitiveState) {
+      return GpuPrimitiveState.fromMap(object) as T;
     }
-    if (T == RenderPassColorAttachment) {
-      return RenderPassColorAttachment.fromMap(object) as T;
+    if (T == GpuRenderPassColorAttachment) {
+      return GpuRenderPassColorAttachment.fromMap(object) as T;
     }
-    if (T == RenderPassDepthStencilAttachment) {
-      return RenderPassDepthStencilAttachment.fromMap(object) as T;
+    if (T == GpuRenderPassDepthStencilAttachment) {
+      return GpuRenderPassDepthStencilAttachment.fromMap(object) as T;
     }
-    if (T == RenderPassDescriptor) {
-      return RenderPassDescriptor.fromMap(object) as T;
+    if (T == GpuRenderPassDescriptor) {
+      return GpuRenderPassDescriptor.fromMap(object) as T;
     }
-    if (T == RenderPipelineDescriptor) {
-      return RenderPipelineDescriptor.fromMap(object) as T;
+    if (T == GpuRenderPipelineDescriptor) {
+      return GpuRenderPipelineDescriptor.fromMap(object) as T;
     }
-    if (T == SamplerBindingLayout) {
-      return SamplerBindingLayout.fromMap(object) as T;
+    if (T == GpuSamplerBindingLayout) {
+      return GpuSamplerBindingLayout.fromMap(object) as T;
     }
-    if (T == StencilFaceState) {
-      return StencilFaceState.fromMap(object) as T;
+    if (T == GpuStencilFaceState) {
+      return GpuStencilFaceState.fromMap(object) as T;
     }
-    if (T == StorageTextureBindingLayout) {
-      return StorageTextureBindingLayout.fromMap(object) as T;
+    if (T == GpuStorageTextureBindingLayout) {
+      return GpuStorageTextureBindingLayout.fromMap(object) as T;
     }
-    if (T == TextureBindingLayout) {
-      return TextureBindingLayout.fromMap(object) as T;
+    if (T == GpuTextureBindingLayout) {
+      return GpuTextureBindingLayout.fromMap(object) as T;
     }
-    if (T == TimestampWrite) {
-      return TimestampWrite.fromMap(object) as T;
+    if (T == GpuTimestampWrite) {
+      return GpuTimestampWrite.fromMap(object) as T;
     }
-    if (T == VertexAttribute) {
-      return VertexAttribute.fromMap(object) as T;
+    if (T == GpuVertexAttribute) {
+      return GpuVertexAttribute.fromMap(object) as T;
     }
-    if (T == VertexBufferLayout) {
-      return VertexBufferLayout.fromMap(object) as T;
+    if (T == GpuVertexBufferLayout) {
+      return GpuVertexBufferLayout.fromMap(object) as T;
     }
-    if (T == VertexState) {
-      return VertexState.fromMap(object) as T;
+    if (T == GpuVertexState) {
+      return GpuVertexState.fromMap(object) as T;
     }
   }
   throw Exception('Invalid data for $T.');

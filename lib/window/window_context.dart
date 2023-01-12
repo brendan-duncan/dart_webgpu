@@ -4,32 +4,32 @@ import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
-import '../webgpu/device.dart';
-import '../webgpu/texture_format.dart';
-import '../webgpu/texture_usage.dart';
-import '../webgpu/texture_view.dart';
-import '../webgpu/wgpu_object.dart';
+import '../webgpu/gpu_device.dart';
+import '../webgpu/gpu_texture_format.dart';
+import '../webgpu/gpu_texture_usage.dart';
+import '../webgpu/gpu_texture_view.dart';
+import '../webgpu/gpu_object.dart';
 import 'window.dart';
 
-class WindowContext extends WGpuObjectBase<wgpu.WGpuCanvasContext> {
+class WindowContext extends GpuObjectBase<wgpu.WGpuCanvasContext> {
   final Window window;
-  final Device device;
-  late final TextureFormat preferredFormat;
+  final GpuDevice device;
+  late final GpuTextureFormat preferredFormat;
 
   WindowContext(this.window,
       {required this.device,
-      TextureFormat? format,
-      TextureUsage usage = TextureUsage.renderAttachment,
-      List<TextureFormat>? viewFormats}) {
+      GpuTextureFormat? format,
+      GpuTextureUsage usage = GpuTextureUsage.renderAttachment,
+      List<GpuTextureFormat>? viewFormats}) {
     final f = libwebgpu.navigator_gpu_get_preferred_canvas_format();
-    preferredFormat = TextureFormat.values[f - 1];
+    preferredFormat = GpuTextureFormat.values[f - 1];
     configure(format: format, usage: usage, viewFormats: viewFormats);
   }
 
   void configure(
-      {TextureFormat? format,
-      TextureUsage usage = TextureUsage.renderAttachment,
-      List<TextureFormat>? viewFormats}) {
+      {GpuTextureFormat? format,
+      GpuTextureUsage usage = GpuTextureUsage.renderAttachment,
+      List<GpuTextureFormat>? viewFormats}) {
     final o = libwebgpu.wgpu_window_get_webgpu_context(window.object);
     setObject(o);
 
@@ -59,9 +59,9 @@ class WindowContext extends WGpuObjectBase<wgpu.WGpuCanvasContext> {
     calloc.free(c);
   }
 
-  TextureView getCurrentTextureView() {
+  GpuTextureView getCurrentTextureView() {
     final view = libwebgpu.wgpu_canvas_context_get_current_texture_view(object);
-    return TextureView.native(view);
+    return GpuTextureView.native(view);
   }
 
   void present() {

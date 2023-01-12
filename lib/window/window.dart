@@ -4,9 +4,9 @@ import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
-import '../webgpu/device.dart';
-import '../webgpu/texture_format.dart';
-import '../webgpu/texture_usage.dart';
+import '../webgpu/gpu_device.dart';
+import '../webgpu/gpu_texture_format.dart';
+import '../webgpu/gpu_texture_usage.dart';
 import 'window_context.dart';
 
 class Window {
@@ -30,10 +30,10 @@ class Window {
 
   void pollEvents() => libwebgpu.wgpu_window_poll_events();
 
-  WindowContext createContext(Device device,
-          {TextureFormat? format,
-          TextureUsage usage = TextureUsage.renderAttachment,
-          List<TextureFormat>? viewFormats}) =>
+  WindowContext createContext(GpuDevice device,
+          {GpuTextureFormat? format,
+          GpuTextureUsage usage = GpuTextureUsage.renderAttachment,
+          List<GpuTextureFormat>? viewFormats}) =>
       WindowContext(this,
           device: device,
           format: format,

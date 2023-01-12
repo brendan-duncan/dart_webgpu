@@ -1,0 +1,16 @@
+/// defines how either a source or destination blend factors is calculated
+enum GpuBlendFactor {
+  zero,
+  one,
+  src,
+  oneMinusSrc,
+  dst,
+  oneMinusDst,
+  dstAlpha,
+  oneMinusDstAlpha,
+  srcAlphaSaturated,
+  constant,
+  oneMinusConstant;
+
+  int get nativeIndex => index + 1;
+}

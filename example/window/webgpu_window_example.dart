@@ -1,7 +1,7 @@
-import 'package:webgpu/webgpu.dart' as wgpu;
+import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  final adapter = await wgpu.Adapter.request();
+  final adapter = await GpuAdapter.request();
   final device = await adapter.requestDevice();
 
   device.lost.add((device, type, message) {
@@ -12,7 +12,7 @@ void main() async {
     print('ERROR: $message');
   });
 
-  final window = wgpu.Window(width: 800, height: 600);
+  final window = Window(width: 800, height: 600);
   final context = window.createContext(device);
 
   var g = 0.0;
@@ -23,12 +23,12 @@ void main() async {
     final commandEncoder = device.createCommandEncoder();
 
     commandEncoder
-        .beginRenderPass(wgpu.RenderPassDescriptor(colorAttachments: [
-          wgpu.RenderPassColorAttachment(
+        .beginRenderPass(GpuRenderPassDescriptor(colorAttachments: [
+          GpuRenderPassColorAttachment(
               view: textureView,
               clearValue: [g, g, g, 1.0],
-              loadOp: wgpu.LoadOp.clear,
-              storeOp: wgpu.StoreOp.store)
+              loadOp: GpuLoadOp.clear,
+              storeOp: StoreOp.store)
         ]))
         .end(); // Nothing was drawn so immediate end the render pass
 

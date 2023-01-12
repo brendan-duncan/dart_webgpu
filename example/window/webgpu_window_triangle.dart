@@ -1,7 +1,7 @@
 import 'package:webgpu/webgpu.dart' as wgpu;
 
 void main() async {
-  final adapter = await wgpu.Adapter.request();
+  final adapter = await wgpu.GpuAdapter.request();
   final device = await adapter.requestDevice();
 
   device.uncapturedError.add((device, type, message) {
@@ -55,7 +55,7 @@ void main() async {
         {
           'view': textureView,
           'clearValue': [0.8, 0.6, 0.2, 1.0],
-          'loadOp': wgpu.LoadOp.clear,
+          'loadOp': wgpu.GpuLoadOp.clear,
           'storeOp': wgpu.StoreOp.store
         }
       ]
