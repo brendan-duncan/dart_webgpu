@@ -39,13 +39,19 @@ class GPUQueue extends GPUObjectBase<wgpu.WGpuQueue> {
   }
 
   /// Issues a write operation of the provided data into a Buffer.
-  void writeBuffer(GPUBuffer buffer, int bufferOffset, Uint8List data) {
-    // Uint8List is managed data and we need to convert it to native data.
-    final size = min(data.length, buffer.size);
-    final p = malloc<Uint8>(size)..asTypedList(size).setAll(0, data);
+  void writeBuffer(GPUBuffer buffer, int bufferOffset, ByteBuffer dataBuffer,
+        [int dataOffsetInBytes = 0, int dataLengthInBytes = 0]) {
+    if (dataLengthInBytes == 0) {
+      dataLengthInBytes = dataBuffer.lengthInBytes;
+    }
+
+    // ByteBuffer is managed data and we need to convert it to native data.
+    final p = malloc<Uint8>(dataLengthInBytes)
+      ..asTypedList(dataLengthInBytes)
+          .setAll(dataOffsetInBytes, dataBuffer.asUint8List());
 
     libwebgpu.wgpu_queue_write_buffer(
-        object, buffer.object, bufferOffset, p.cast(), size);
+        object, buffer.object, bufferOffset, p.cast(), dataLengthInBytes);
 
     malloc.free(p);
   }
