@@ -47,6 +47,24 @@ class BindGroupLayout extends WGpuObjectBase<wgpu.WGpuBindGroupLayout> {
         ref.layout.buffer.type = b.type.nativeIndex;
         ref.layout.buffer.hasDynamicOffset = b.hasDynamicOffset ? 1 : 0;
         ref.layout.buffer.minBindingSize = b.minBindingSize;
+      } else if (e.sampler != null) {
+        final s = e.sampler!;
+        ref.type = wgpu.WGPU_BIND_GROUP_LAYOUT_TYPE_SAMPLER;
+        ref.layout.sampler.type = s.type.nativeIndex;
+      } else if (e.texture != null) {
+        final t = e.texture!;
+        ref.type = wgpu.WGPU_BIND_GROUP_LAYOUT_TYPE_TEXTURE;
+        ref.layout.texture.viewDimension = t.viewDimension.nativeIndex;
+        ref.layout.texture.sampleType = t.sampleType.nativeIndex;
+      } else if (e.storageTexture != null) {
+        final t = e.storageTexture!;
+        ref.type = wgpu.WGPU_BIND_GROUP_LAYOUT_TYPE_STORAGE_TEXTURE;
+        ref.layout.storageTexture.viewDimension = t.viewDimension.nativeIndex;
+        ref.layout.storageTexture.format = t.format.nativeIndex;
+        ref.layout.storageTexture.access = t.access.nativeIndex;
+      } else if (e.externalTexture != null) {
+        final t = e.externalTexture;
+        ref.type = wgpu.WGPU_BIND_GROUP_LAYOUT_TYPE_EXTERNAL_TEXTURE;
       }
     }
 

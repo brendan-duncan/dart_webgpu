@@ -31,7 +31,7 @@ class Queue extends WGpuObjectBase<wgpu.WGpuQueue> {
     } else if (commandBufferOrList is List<CommandBuffer>) {
       for (final cb in commandBufferOrList) {
         libwebgpu.wgpu_queue_submit_one(object, cb.object);
-        //cb.destroy();
+        cb.destroy();
       }
     } else {
       throw Exception('Invalid CommandBuffer for Queue.submit.');

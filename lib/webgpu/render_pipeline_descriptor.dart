@@ -67,7 +67,7 @@ class RenderPipelineDescriptor {
         ..numBuffers = numBuffers
         ..buffers = calloc<wgpu.WGpuVertexBufferLayout>(numBuffers)
         ..numConstants = numConstants
-        ..constants = malloc<wgpu.WGpuPipelineConstant>(numConstants);
+        ..constants = calloc<wgpu.WGpuPipelineConstant>(numConstants);
 
       if (v.constants != null) {
         final c = ref.vertex.constants;
@@ -187,10 +187,9 @@ class RenderPipelineDescriptor {
         ..free(d.ref.vertex.constants.elementAt(i));
     }
     for (var i = 0; i < d.ref.vertex.numBuffers; ++i) {
-      malloc
-        ..free(d.ref.vertex.buffers.elementAt(i).ref.attributes)
-        ..free(d.ref.vertex.buffers.elementAt(i));
+      malloc.free(d.ref.vertex.buffers.elementAt(i).ref.attributes);
     }
+    malloc.free(d.ref.vertex.buffers);
 
     malloc.free(d.ref.fragment.entryPoint);
     for (var i = 0; i < d.ref.fragment.numTargets; ++i) {

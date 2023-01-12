@@ -17,6 +17,7 @@ import 'render_pass_color_attachment.dart';
 import 'render_pass_depth_stencil_attachment.dart';
 import 'render_pass_descriptor.dart';
 import 'render_pipeline_descriptor.dart';
+import 'sampler_binding_layout.dart';
 import 'stencil_face_state.dart';
 import 'storage_texture_binding_layout.dart';
 import 'texture_binding_layout.dart';
@@ -110,6 +111,9 @@ T? getMapObjectNullable<T>(Object? object) {
     if (T == RenderPipelineDescriptor) {
       return RenderPipelineDescriptor.fromMap(object) as T;
     }
+    if (T == SamplerBindingLayout) {
+      return SamplerBindingLayout.fromMap(object) as T;
+    }
     if (T == StencilFaceState) {
       return StencilFaceState.fromMap(object) as T;
     }
@@ -132,7 +136,7 @@ T? getMapObjectNullable<T>(Object? object) {
       return VertexState.fromMap(object) as T;
     }
   }
-  throw Exception('Invalid data for $T. ${T == BindGroupEntry}');
+  throw Exception('Invalid data for $T.');
 }
 
 T getMapObject<T>(Object? object) {

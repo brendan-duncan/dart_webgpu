@@ -61,9 +61,11 @@ class WGpuLibrary {
     }
 
     const configs = ['Debug', 'Release'];
-    final platform = Platform.isWindows ? 'win' :
-        Platform.isMacOS ? 'mac-arm64' :
-            'linux';
+    final platform = Platform.isWindows
+        ? 'win'
+        : Platform.isMacOS
+            ? 'mac-arm64'
+            : 'linux';
 
     for (final config in configs) {
       final path = '$libPath/$platform-$config';
@@ -87,7 +89,6 @@ class WGpuLibrary {
 
   Future<DynamicLibrary> _dlopen() async {
     final path = await _getLibraryPath();
-    print('#### LOADING $path');
     return DynamicLibrary.open(path);
   }
 }

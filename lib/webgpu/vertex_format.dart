@@ -1,8 +1,11 @@
+import '../ffi/ffi_webgpu.dart' as wgpu;
+
 /// The VertexFormat of a vertex attribute indicates how data from a vertex
 /// buffer will be interpreted and exposed to the shader. The name of the format
 /// specifies the order of components, bits per component, and vertex data type
 /// for the component.
 enum VertexFormat {
+  undefined,
   uint8x2,
   uint8x4,
   sint8x2,
@@ -34,5 +37,7 @@ enum VertexFormat {
   sint32x3,
   sint32x4;
 
-  int get nativeIndex => index + 1;
+  int get nativeIndex => index == 0 ? 0 :
+    // lib_webgpu vertexFormat enum starts at 95
+    index + wgpu.WGPU_VERTEX_FORMAT_UINT8X2 - 1;
 }
