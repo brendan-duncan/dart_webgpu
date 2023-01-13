@@ -58,8 +58,7 @@ class GPUWindow {
     _mouseButton = libwebgpu.wgpu_window_mouse_button();
   }
 
-  bool isKeyPressed(int key) =>
-    libwebgpu.wgpu_window_get_key(object, key) != 0;
+  bool isKeyPressed(int key) => libwebgpu.wgpu_window_get_key(object, key) != 0;
 
   GPUWindowContext createContext(GPUDevice device,
           {GPUTextureFormat? format,

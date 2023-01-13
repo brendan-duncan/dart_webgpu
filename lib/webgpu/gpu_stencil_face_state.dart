@@ -15,11 +15,10 @@ class GPUStencilFaceState {
       this.passOp = GPUStencilOperation.keep});
 
   factory GPUStencilFaceState.fromMap(Map<String, Object> map) {
-    final compare = mapValue<GPUCompareFunction>(
-        map['compare'], GPUCompareFunction.always);
+    final compare =
+        mapValue<GPUCompareFunction>(map['compare'], GPUCompareFunction.always);
     final failOp = mapValue(map['failOp'], GPUStencilOperation.keep);
-    final depthFailOp =
-        mapValue(map['depthFailOp'], GPUStencilOperation.keep);
+    final depthFailOp = mapValue(map['depthFailOp'], GPUStencilOperation.keep);
     final passOp = mapValue(map['passOp'], GPUStencilOperation.keep);
     return GPUStencilFaceState(
         compare: compare,

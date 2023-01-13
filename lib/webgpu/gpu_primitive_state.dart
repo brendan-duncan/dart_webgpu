@@ -25,8 +25,7 @@ class GPUPrimitiveState {
         map['stripIndexFormat'], GPUIndexFormat.undefined);
     final frontFace =
         mapValue<GPUFrontFace>(map['frontFace'], GPUFrontFace.ccw);
-    final cullMode =
-        mapValue<GPUCullMode>(map['cullMode'], GPUCullMode.none);
+    final cullMode = mapValue<GPUCullMode>(map['cullMode'], GPUCullMode.none);
     final unclippedDepth = mapValue<bool>(map['unclippedDepth'], false);
 
     return GPUPrimitiveState(

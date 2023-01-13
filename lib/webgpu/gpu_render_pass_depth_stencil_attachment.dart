@@ -36,8 +36,7 @@ class GPURenderPassDepthStencilAttachment {
 
     final stencilClearValue = mapValue<int>(map['stencilClearValue'], 0);
     final stencilLoadOp = mapValueNullable<GPULoadOp>(map['stencilLoadOp']);
-    final stencilStoreOp =
-        mapValueNullable<GPUStoreOp>(map['stencilStoreOp']);
+    final stencilStoreOp = mapValueNullable<GPUStoreOp>(map['stencilStoreOp']);
     final stencilReadOnly = mapValue<bool>(map['stencilReadOnly'], false);
     return GPURenderPassDepthStencilAttachment(
         view: view,

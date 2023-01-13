@@ -48,7 +48,7 @@ class GPURenderPassDescriptor {
         mapObjectNullable<GPURenderPassDepthStencilAttachment>(
             map['depthStencilAttachment']);
     final occlusionQuerySet =
-      mapValueNullable<GPUQuerySet>(map['occlusionQuerySet']);
+        mapValueNullable<GPUQuerySet>(map['occlusionQuerySet']);
     final maxDrawCount = mapValue<int>(map['maxDrawCount'], 50000000);
     final timestampWrites =
         mapListNullable<GPUTimestampWrite>(map['timestampWrites']);

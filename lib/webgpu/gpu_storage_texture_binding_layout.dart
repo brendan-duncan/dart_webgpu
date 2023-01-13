@@ -21,11 +21,10 @@ class GPUStorageTextureBindingLayout extends GpuBindingLayoutType {
       this.viewDimension = GPUTextureViewDimension.textureView2d});
 
   factory GPUStorageTextureBindingLayout.fromMap(Map<String, Object> map) {
-    final access =
-        mapValue(map['access'], GPUStorageTextureAccess.writeOnly);
+    final access = mapValue(map['access'], GPUStorageTextureAccess.writeOnly);
     final format = mapValueRequired<GPUTextureFormat>(map['format']);
-    final viewDimension = mapValue(
-        map['viewDimension'], GPUTextureViewDimension.textureView2d);
+    final viewDimension =
+        mapValue(map['viewDimension'], GPUTextureViewDimension.textureView2d);
     return GPUStorageTextureBindingLayout(
         format: format, access: access, viewDimension: viewDimension);
   }

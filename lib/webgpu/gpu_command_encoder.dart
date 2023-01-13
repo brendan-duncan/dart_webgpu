@@ -5,6 +5,7 @@ import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
+import '../webgpu.dart';
 import 'gpu_buffer.dart';
 import 'gpu_command_buffer.dart';
 import 'gpu_compute_pass_descriptor.dart';
@@ -26,10 +27,11 @@ class GPUCommandEncoder extends GPUObjectBase<wgpu.WGpuCommandEncoder> {
     final o =
         libwebgpu.wgpu_device_create_command_encoder_simple(device.object);
     setObject(o);
-    //device.addDependent(this);
+    // CommandEncoder is considered transitory so don't track its
+    // dependency.
   }
 
-  /// Begins encoding a render pass described by descriptor.
+  /// Begins encoding a render pass described by [GPURenderPassDescriptor].
   GPURenderPassEncoder beginRenderPass(Object descriptor) =>
       GPURenderPassEncoder(this, descriptor: descriptor);
 

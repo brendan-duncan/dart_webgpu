@@ -52,15 +52,12 @@ class GPUBindGroupLayoutEntry {
     final binding = mapValueRequired<int>(map['binding']);
     final visibility = mapValueRequired<GPUShaderStage>(map['visibility']);
     final buffer = mapObjectNullable<GPUBufferBindingLayout>(map['buffer']);
-    final sampler =
-        mapObjectNullable<GPUSamplerBindingLayout>(map['sampler']);
-    final texture =
-        mapObjectNullable<GPUTextureBindingLayout>(map['texture']);
+    final sampler = mapObjectNullable<GPUSamplerBindingLayout>(map['sampler']);
+    final texture = mapObjectNullable<GPUTextureBindingLayout>(map['texture']);
     final storageTexture = mapObjectNullable<GPUStorageTextureBindingLayout>(
         map['storageTexture']);
-    final externalTexture =
-        mapObjectNullable<GPUExternalTextureBindingLayout>(
-            map['externalTexture']);
+    final externalTexture = mapObjectNullable<GPUExternalTextureBindingLayout>(
+        map['externalTexture']);
 
     return GPUBindGroupLayoutEntry(
         binding: binding,

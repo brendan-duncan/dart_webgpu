@@ -16,5 +16,6 @@ class GPUCommandBuffer extends GPUObjectBase<wgpu.WGpuCommandBuffer> {
   /// The [GPUCommandEncoder] that owns this CommandBuffer.
   final GPUCommandEncoder encoder;
 
-  GPUCommandBuffer(this.encoder, wgpu.WGpuCommandBuffer o) : super(o);
+  GPUCommandBuffer(this.encoder, wgpu.WGpuCommandBuffer o)
+      : super(o, encoder);
 }

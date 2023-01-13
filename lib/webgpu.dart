@@ -90,6 +90,6 @@ export 'window/gpu_window_context.dart';
 /// Ensure the WebGPU library is loaded. This will be automatically
 /// called by Adapter.request, but should be called explicitly if
 /// you create a Window before an Adapter, as in `await webgpu.initialize();`.
-Future<void> initializeWebGPU() async {
-  await WGpuLibrary.get().initialize();
+Future<void> initializeWebGPU({bool debug = false}) async {
+  await WGpuLibrary.get().initialize(debug: debug);
 }

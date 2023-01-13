@@ -13,9 +13,9 @@ class WGpuLibrary {
 
   WGpuLibrary._();
 
-  Future<void> initialize() async {
+  Future<void> initialize({bool debug = false}) async {
     if (_library == null) {
-      _library = await _dlopen();
+      _library = await _dlopen(debug: debug);
       _wgpu = lib.libwebgpu(_library!);
     }
   }
@@ -42,7 +42,7 @@ class WGpuLibrary {
 
   late final _finalizer = NativeFinalizer(_wgpuObjectDestroy.cast());
 
-  Future<String> _getLibraryPath() async {
+  Future<String> _getLibraryPath({bool debug = false}) async {
     final packagePath = Directory.current.path;
     String libPath;
     if (Directory('$packagePath/libwebgpu/lib').existsSync()) {
@@ -60,7 +60,7 @@ class WGpuLibrary {
       libPath = dir.path;
     }
 
-    const configs = ['Debug', 'Release'];
+    final configs = debug ? ['Debug', 'Release'] : ['Release'];
     final platform = Platform.isWindows
         ? 'win'
         : Platform.isMacOS
@@ -87,8 +87,8 @@ class WGpuLibrary {
     throw Exception('Could not find native webgpu library');
   }
 
-  Future<DynamicLibrary> _dlopen() async {
-    final path = await _getLibraryPath();
+  Future<DynamicLibrary> _dlopen({bool debug = false}) async {
+    final path = await _getLibraryPath(debug: debug);
     return DynamicLibrary.open(path);
   }
 }

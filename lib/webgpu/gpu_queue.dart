@@ -1,5 +1,4 @@
 import 'dart:ffi';
-import 'dart:math' show min;
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
@@ -40,7 +39,7 @@ class GPUQueue extends GPUObjectBase<wgpu.WGpuQueue> {
 
   /// Issues a write operation of the provided data into a Buffer.
   void writeBuffer(GPUBuffer buffer, int bufferOffset, ByteBuffer dataBuffer,
-        [int dataOffsetInBytes = 0, int dataLengthInBytes = 0]) {
+      [int dataOffsetInBytes = 0, int dataLengthInBytes = 0]) {
     if (dataLengthInBytes == 0) {
       dataLengthInBytes = dataBuffer.lengthInBytes;
     }
