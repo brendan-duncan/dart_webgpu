@@ -1,11 +1,14 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Avoid pulling in stdint.h and define the types used explicitly.
+#ifndef int32_t
 typedef int int32_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
-
-#ifdef __cplusplus
-extern "C" {
 #endif
 
 // The type 'double_int53_t' shall be an integer-like
@@ -37,8 +40,7 @@ typedef uint64_t double_int53_t;
 #ifdef __EMSCRIPTEN__
 typedef int WGpuObjectBase;
 #else
-struct WGpuObjectDawn { int type; void* dawnObject; };
-typedef struct WGpuObjectDawn *WGpuObjectBase;
+typedef struct WGpuDawnObject *WGpuObjectBase;
 #endif
 
 typedef struct WGpuObjectDescriptorBase WGpuObjectDescriptorBase;

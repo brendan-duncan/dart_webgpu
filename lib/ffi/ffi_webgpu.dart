@@ -871,7 +871,7 @@ class libwebgpu {
   late final _wgpu_buffer_map_sync = _wgpu_buffer_map_syncPtr
       .asFunction<void Function(WGpuBuffer, int, int, int)>();
 
-  int wgpu_buffer_get_mapped_range(
+  WGpuBufferRange wgpu_buffer_get_mapped_range(
     WGpuBuffer buffer,
     int startOffset,
     int size,
@@ -885,14 +885,14 @@ class libwebgpu {
 
   late final _wgpu_buffer_get_mapped_rangePtr = _lookup<
       ffi.NativeFunction<
-          double_int53_t Function(WGpuBuffer, double_int53_t,
+          WGpuBufferRange Function(WGpuBuffer, double_int53_t,
               double_int53_t)>>('wgpu_buffer_get_mapped_range');
   late final _wgpu_buffer_get_mapped_range = _wgpu_buffer_get_mapped_rangePtr
-      .asFunction<int Function(WGpuBuffer, int, int)>();
+      .asFunction<WGpuBufferRange Function(WGpuBuffer, int, int)>();
 
   void wgpu_buffer_read_mapped_range(
     WGpuBuffer buffer,
-    int startOffset,
+    WGpuBufferRange startOffset,
     int subOffset,
     ffi.Pointer<ffi.Void> dst,
     int size,
@@ -910,17 +910,18 @@ class libwebgpu {
       ffi.NativeFunction<
           ffi.Void Function(
               WGpuBuffer,
-              double_int53_t,
+              WGpuBufferRange,
               double_int53_t,
               ffi.Pointer<ffi.Void>,
               double_int53_t)>>('wgpu_buffer_read_mapped_range');
   late final _wgpu_buffer_read_mapped_range =
       _wgpu_buffer_read_mapped_rangePtr.asFunction<
-          void Function(WGpuBuffer, int, int, ffi.Pointer<ffi.Void>, int)>();
+          void Function(
+              WGpuBuffer, WGpuBufferRange, int, ffi.Pointer<ffi.Void>, int)>();
 
   void wgpu_buffer_write_mapped_range(
     WGpuBuffer buffer,
-    int startOffset,
+    WGpuBufferRange startOffset,
     int subOffset,
     ffi.Pointer<ffi.Void> src,
     int size,
@@ -938,13 +939,14 @@ class libwebgpu {
       ffi.NativeFunction<
           ffi.Void Function(
               WGpuBuffer,
-              double_int53_t,
+              WGpuBufferRange,
               double_int53_t,
               ffi.Pointer<ffi.Void>,
               double_int53_t)>>('wgpu_buffer_write_mapped_range');
   late final _wgpu_buffer_write_mapped_range =
       _wgpu_buffer_write_mapped_rangePtr.asFunction<
-          void Function(WGpuBuffer, int, int, ffi.Pointer<ffi.Void>, int)>();
+          void Function(
+              WGpuBuffer, WGpuBufferRange, int, ffi.Pointer<ffi.Void>, int)>();
 
   void wgpu_buffer_unmap(
     WGpuBuffer buffer,
@@ -2846,26 +2848,6 @@ class libwebgpu {
           void Function(ffi.Pointer<ffi.Char>, int, WGpuLoadImageBitmapCallback,
               ffi.Pointer<ffi.Void>)>();
 
-  ffi.Pointer<ffi.Void> wgpu_buffer_get_mapped_range_dart(
-    WGpuBuffer buffer,
-    int startOffset,
-    int size,
-  ) {
-    return _wgpu_buffer_get_mapped_range_dart(
-      buffer,
-      startOffset,
-      size,
-    );
-  }
-
-  late final _wgpu_buffer_get_mapped_range_dartPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Void> Function(WGpuBuffer, double_int53_t,
-              double_int53_t)>>('wgpu_buffer_get_mapped_range_dart');
-  late final _wgpu_buffer_get_mapped_range_dart =
-      _wgpu_buffer_get_mapped_range_dartPtr
-          .asFunction<ffi.Pointer<ffi.Void> Function(WGpuBuffer, int, int)>();
-
   void wgpu_object_finalize_dart(
     WGpuObjectBase wgpuObject,
   ) {
@@ -2989,8 +2971,34 @@ class libwebgpu {
           .asFunction<WGpuCanvasContext Function(WGpuWindow)>();
 }
 
-class WGpuObjectDawn extends ffi.Struct {
-  @ffi.Int()
+abstract class WgpuObjectType {
+  static const int kWebGPUInvalidObject = 0;
+  static const int kWebGPUAdapter = 1;
+  static const int kWebGPUDevice = 2;
+  static const int kWebGPUBindGroupLayout = 3;
+  static const int kWebGPUBuffer = 4;
+  static const int kWebGPUTexture = 5;
+  static const int kWebGPUTextureView = 6;
+  static const int kWebGPUExternalTexture = 7;
+  static const int kWebGPUSampler = 8;
+  static const int kWebGPUBindGroup = 9;
+  static const int kWebGPUPipelineLayout = 10;
+  static const int kWebGPUShaderModule = 11;
+  static const int kWebGPUComputePipeline = 12;
+  static const int kWebGPURenderPipeline = 13;
+  static const int kWebGPUCommandBuffer = 14;
+  static const int kWebGPUCommandEncoder = 15;
+  static const int kWebGPUComputePassEncoder = 16;
+  static const int kWebGPURenderPassEncoder = 17;
+  static const int kWebGPURenderBundle = 18;
+  static const int kWebGPURenderBundleEncoder = 19;
+  static const int kWebGPUQueue = 20;
+  static const int kWebGPUQuerySet = 21;
+  static const int kWebGPUCanvasContext = 22;
+}
+
+class WGpuDawnObject extends ffi.Struct {
+  @ffi.Int32()
   external int type;
 
   external ffi.Pointer<ffi.Void> dawnObject;
@@ -3222,7 +3230,7 @@ class WGpuExternalTextureDescriptor extends ffi.Struct {
   external int colorSpace;
 }
 
-typedef WGpuObjectBase = ffi.Pointer<WGpuObjectDawn>;
+typedef WGpuObjectBase = ffi.Pointer<WGpuDawnObject>;
 typedef HTML_PREDEFINED_COLOR_SPACE = ffi.Int;
 
 class WGpuSamplerDescriptor extends ffi.Struct {
@@ -3899,6 +3907,7 @@ typedef WGpuBufferMapCallback = ffi.Pointer<
         ffi.Void Function(WGpuBuffer, ffi.Pointer<ffi.Void>,
             WGPU_MAP_MODE_FLAGS, double_int53_t, double_int53_t)>>;
 typedef WGPU_MAP_MODE_FLAGS = ffi.Int;
+typedef WGpuBufferRange = ffi.Pointer<ffi.Void>;
 typedef WGPU_BUFFER_MAP_STATE = ffi.Int;
 typedef WGpuGetCompilationInfoCallback = ffi.Pointer<
     ffi.NativeFunction<

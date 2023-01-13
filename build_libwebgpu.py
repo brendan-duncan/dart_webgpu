@@ -300,7 +300,7 @@ def buildDawn():
         print("#### PREPARING Dawn FOR BUILD")
         prepareDawnForBuild(env, depot_tools_path)
 
-        configs = ['Debug', 'Release']
+        configs = ['Debug', 'Release', 'RelWithDebInfo']
         for config in configs:
             out_dir = f'out-{config}'
             mkdir_p(out_dir)
@@ -309,8 +309,16 @@ def buildDawn():
             with cwd(out_path):
                 print("#### RUNNING CMake in", os.getcwd(), 'for', config)
 
-                config_cmd = [cmake(), '-Wno-dev', '-Wno-poison-system-directories',
-                              '-DTINT_BUILD_SPV_READER=1', '-DTINT_BUILD_WGSL_WRITER=1', f'-DCMAKE_BUILD_TYPE={config}']
+                config_cmd = [cmake(), '-Wno-dev', '-Wno-poison-system-directories']
+                config_cmd.append(f'-DCMAKE_BUILD_TYPE={config}')
+                config_cmd.append('-DTINT_BUILD_SPV_READER=1')
+                config_cmd.append('-DTINT_BUILD_WGSL_WRITER=1')
+                config_cmd.append('-DTINT_BUILD_TESTS=0')
+                config_cmd.append('-DTINT_BUILD_DOCS=0')
+                config_cmd.append('-DTINT_BUILD_DOCS=0')
+                config_cmd.append('-DTINT_BUILD_SAMPLES=0')
+                config_cmd.append('-DDAWN_BUILD_SAMPLES=0')
+                config_cmd.append('-DBUILD_SAMPLES=0')
 
                 if OSX:
                     if arch == 'arm64':
@@ -389,35 +397,11 @@ def buildDawn():
 
 
 def fixHeadersForFFIGen(includes_path):
-    lib_webgpu_fwd = os.path.join(includes_path, 'lib_webgpu_fwd.h')
-
-    fp = open(lib_webgpu_fwd, 'rt')
-    txt = fp.read()
-    fp.close()
-
-    # Remove stdint.h to avoid generating bindings for it
-    txt = txt.replace('#include <stdint.h>\n',
-                      'typedef int int32_t;\ntypedef unsigned int uint32_t;\ntypedef unsigned long '
-                      'long uint64_t;\n')
-
-    # Add a definition for the extern struct WGpuObjectDawn
-    txt = txt.replace('typedef struct _WGpuObject *WGpuObjectBase;\n',
-                      'struct WGpuObjectDawn { int type; void* dawnObject; };\n'
-                      'typedef struct WGpuObjectDawn *WGpuObjectBase;\n')
-
-    fp = open(lib_webgpu_fwd, 'wt')
-    fp.write(txt)
-    fp.close()
-
     lib_webgpu = os.path.join(includes_path, 'lib_webgpu.h')
     print('#### FIXING', lib_webgpu)
     fp = open(lib_webgpu, 'rt')
     txt = fp.read()
     fp.close()
-
-    # Remove math.h to avoid genearing bindings for it
-    txt = txt.replace('#include <math.h>\n#define WGPU_INFINITY ((double)INFINITY)\n',
-                      '#define WGPU_INFINITY (double)0x7ff0000000000000\n')
 
     # FFIGen doesn't like unbounded array definitions.
     txt = txt.replace('WGpuCompilationMessage messages[];\n',
@@ -438,10 +422,20 @@ def build():
 
         lib_webgpu_url = 'https://github.com/brendan-duncan/wasm_webgpu'
         lib_webgpu_path = os.path.join(build_path, 'lib_webgpu')
-        git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
+        #git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
 
         with cwd(build_path):
-            configs = ['Debug', 'Release']
+            configs = ['Debug', 'Release', 'RelWithDebInfo']
+
+            # Copy the lib_webgpu headers to the binding generation folder. This is done before building the DLL
+            # so lib_webgpu_dawn.h can be found by lib_webgpu_dart.cpp.
+            includes_path = os.path.join('..', 'lib')
+            lib_path = os.path.join(lib_webgpu_path, 'lib')
+            shutil.copyfile(os.path.join(lib_path, 'lib_webgpu.h'), os.path.join(includes_path, 'lib_webgpu.h'))
+            shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_fwd.h'), os.path.join(includes_path, 'lib_webgpu_fwd.h'))
+            shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_dawn.h'),
+                            os.path.join(includes_path, 'lib_webgpu_dawn.h'))
+
             for config in configs:
                 mkdir_p(config)
                 with cwd(config):
@@ -451,13 +445,21 @@ def build():
                     mkdir_p(out_path)
                     shutil.copyfile(os.path.join(config, 'webgpu.dll'), os.path.join(out_path, 'webgpu.dll'))
 
-            includes_path = os.path.join('..', 'lib')
-            lib_path = os.path.join(lib_webgpu_path, 'lib')
-            shutil.copyfile(os.path.join(lib_path, 'lib_webgpu.h'), os.path.join(includes_path, 'lib_webgpu.h'))
-            shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_fwd.h'), os.path.join(includes_path, 'lib_webgpu_fwd.h'))
+
+            # Copy the libs into the pub lib folder for distribution
 
             pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-Release')
             release_lib_path = os.path.join('..', 'lib', f'{os_name()}-Release')
+            mkdir_p(pub_path)
+            shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
+
+            pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-Debug')
+            release_lib_path = os.path.join('..', 'lib', f'{os_name()}-Debug')
+            mkdir_p(pub_path)
+            shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
+
+            pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-RelWithDebInfo')
+            release_lib_path = os.path.join('..', 'lib', f'{os_name()}-RelWithDebInfo')
             mkdir_p(pub_path)
             shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
 

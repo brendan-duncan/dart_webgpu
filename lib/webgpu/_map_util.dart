@@ -5,6 +5,7 @@ import 'gpu_blend_component.dart';
 import 'gpu_blend_factor.dart';
 import 'gpu_blend_operation.dart';
 import 'gpu_blend_state.dart';
+import 'gpu_buffer_binding.dart';
 import 'gpu_buffer_binding_layout.dart';
 import 'gpu_buffer_binding_type.dart';
 import 'gpu_color_target_state.dart';
@@ -187,6 +188,9 @@ T? mapObjectNullable<T>(Object? object) {
     }
     if (T == GPUBlendState) {
       return GPUBlendState.fromMap(object) as T;
+    }
+    if (T == GPUBufferBinding) {
+      return GPUBufferBinding.fromMap(object) as T;
     }
     if (T == GPUBufferBindingLayout) {
       return GPUBufferBindingLayout.fromMap(object) as T;

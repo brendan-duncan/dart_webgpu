@@ -1,3 +1,4 @@
+import '../webgpu.dart';
 import '_map_util.dart';
 import 'gpu_object.dart';
 
@@ -15,7 +16,21 @@ class GPUBindGroupEntry {
 
   factory GPUBindGroupEntry.fromMap(Map<String, Object> map) {
     final binding = mapValueRequired<int>(map['binding']);
-    final resource = mapValueRequired<GPUObject>(map['resource']);
+
+    final r = map['resource'];
+    if (r == null) {
+      throw Exception('Invalid resource for GPUBindGroupEntry');
+    }
+
+    GPUObject resource;
+    if (r is GPUBufferBinding) {
+      resource = r;
+    } else if (r is Map<String, Object>) {
+      resource = mapObject<GPUBufferBinding>(r);
+    } else {
+      resource = mapValueRequired<GPUObject>(r);
+    }
+
     final bufferOffset = mapValue(map['bufferOffset'], 0);
     final bufferSize = mapValue(map['bufferSize'], 0);
 

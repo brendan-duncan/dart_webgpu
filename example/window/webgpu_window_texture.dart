@@ -2,12 +2,10 @@ import 'package:image/image.dart' as img;
 import 'package:webgpu/webgpu.dart';
 
 void main() async {
+  await initializeWebGPU(config: WGpuConfig.releaseDebug);
+
   final adapter = await GPUAdapter.request();
   final device = await adapter.requestDevice();
-
-  device.uncapturedError.add((device, type, message) {
-    print('ERROR: $message');
-  });
 
   final window = GPUWindow(width: 800, height: 600);
   final context = window.createContext(device);
@@ -49,9 +47,7 @@ void main() async {
     'fragment': {
       'module': device.createShaderModule(code: redFragWGSL),
       'entryPoint': 'main',
-      'targets': [
-        {'format': presentationFormat},
-      ],
+      'targets': [{'format': presentationFormat}],
     }
   });
 

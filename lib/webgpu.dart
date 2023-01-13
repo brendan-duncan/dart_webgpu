@@ -1,5 +1,7 @@
+import 'ffi/wgpu_config.dart';
 import 'ffi/wgpu_library.dart';
 
+export 'ffi/wgpu_config.dart';
 export 'webgpu/gpu_adapter.dart';
 export 'webgpu/gpu_address_mode.dart';
 export 'webgpu/gpu_bind_group.dart';
@@ -11,6 +13,7 @@ export 'webgpu/gpu_blend_factor.dart';
 export 'webgpu/gpu_blend_operation.dart';
 export 'webgpu/gpu_blend_state.dart';
 export 'webgpu/gpu_buffer.dart';
+export 'webgpu/gpu_buffer_binding.dart';
 export 'webgpu/gpu_buffer_binding_layout.dart';
 export 'webgpu/gpu_buffer_binding_type.dart';
 export 'webgpu/gpu_buffer_range.dart';
@@ -90,6 +93,8 @@ export 'window/gpu_window_context.dart';
 /// Ensure the WebGPU library is loaded. This will be automatically
 /// called by Adapter.request, but should be called explicitly if
 /// you create a Window before an Adapter, as in `await webgpu.initialize();`.
-Future<void> initializeWebGPU({bool debug = false}) async {
-  await WGpuLibrary.get().initialize(debug: debug);
+/// {config} lets you load the debug or releaseDebug builds if they are
+/// available (from building libwebgpu locally).
+Future<void> initializeWebGPU({WGpuConfig? config}) async {
+  await WGpuLibrary.get().initialize(config: config ?? WGpuConfig.release);
 }

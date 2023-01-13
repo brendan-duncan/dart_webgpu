@@ -6,6 +6,7 @@ import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
 import 'gpu_bind_group_entry.dart';
 import 'gpu_bind_group_layout.dart';
+import 'gpu_buffer_binding.dart';
 import 'gpu_device.dart';
 import 'gpu_object.dart';
 
@@ -38,13 +39,21 @@ class GPUBindGroup extends GPUObjectBase<wgpu.WGpuBindGroup> {
         throw Exception('Invalid data for BindGroup entries.');
       }
       final binding = e.binding;
-      final resource = e.resource;
+      var resource = e.resource;
+      int offset;
+      int size;
+      if (resource is GPUBufferBinding) {
+        offset = resource.offset;
+        size = resource.size;
+        resource = resource.buffer;
+      } else {
+        offset = e.bufferOffset;
+        size = e.bufferSize;
+      }
 
-      final offset = e.bufferOffset;
-      final size = e.bufferSize;
       p.elementAt(i).ref
         ..binding = binding
-        ..resource = resource.objectPtr.cast<wgpu.WGpuObjectDawn>()
+        ..resource = resource.objectPtr.cast<wgpu.WGpuDawnObject>()
         ..bufferBindOffset = offset
         ..bufferBindSize = size;
     }

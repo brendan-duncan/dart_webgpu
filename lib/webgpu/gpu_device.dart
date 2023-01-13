@@ -88,7 +88,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
     calloc.free(l);
 
     final cb = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int, Pointer<Char>,
+        Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
             Pointer<Void>)>(_deviceLostCB);
 
     libwebgpu.wgpu_device_set_lost_callback(object, cb, object.cast());
@@ -96,7 +96,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
     _errorCallbackData[object.cast<Void>()] = _DeviceCallbackData(this);
 
     final fn = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int, Pointer<Char>,
+        Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
             Pointer<Void>)>(_uncapturedErrorCB);
 
     libwebgpu.wgpu_device_set_uncapturederror_callback(
@@ -355,7 +355,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
     _callbackData[object.cast<Void>()] = _ErrorScopeData(this, callback);
 
     final fn = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuObjectDawn>, Int, Pointer<Char>,
+        Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
             Pointer<Void>)>(_popErrorScopeCB);
 
     libwebgpu.wgpu_device_pop_error_scope_async(object, fn, object.cast());
@@ -385,7 +385,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
     //data.completer.complete(obj);
   }
 
-  static void _popErrorScopeCB(Pointer<wgpu.WGpuObjectDawn> device, int type,
+  static void _popErrorScopeCB(Pointer<wgpu.WGpuDawnObject> device, int type,
       Pointer<Char> message, Pointer<Void> userData) {
     final data = _callbackData[userData] as _ErrorScopeData?;
     _callbackData.remove(userData);
@@ -398,7 +398,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
     }
   }
 
-  static void _deviceLostCB(Pointer<wgpu.WGpuObjectDawn> device, int reason,
+  static void _deviceLostCB(Pointer<wgpu.WGpuDawnObject> device, int reason,
       Pointer<Char> message, Pointer<Void> userData) {
     final data = _errorCallbackData[userData];
     _callbackData.remove(userData);
@@ -411,10 +411,13 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
       for (final cb in device.lost) {
         cb(device, r, msg);
       }
+      if (device.lost.isEmpty) {
+        print('Device Lost: $msg');
+      }
     }
   }
 
-  static void _uncapturedErrorCB(Pointer<wgpu.WGpuObjectDawn> device, int type,
+  static void _uncapturedErrorCB(Pointer<wgpu.WGpuDawnObject> device, int type,
       Pointer<Char> message, Pointer<Void> userData) {
     final data = _errorCallbackData[userData];
     if (data != null && data.device != null) {

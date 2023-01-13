@@ -26,6 +26,7 @@ an updated version of the ffi Dart bindings using ffigen.
 * git
 * Python 3.0+
 * CMake 3.15+
+* Visual Studio 2022 / Xcode / ...
 
 ### Third Party Libraries
 
@@ -39,8 +40,9 @@ Dart WebGPU uses the following third party libraries:
 ### Debugging Tips
 
 * Build libwebgpu with `python build_libwebgpu.py`
-* Make sure to load the Debug build of the library by adding `wgpu.initializeWebGPU(debug: true);`
-to the top of the Dart program.
+* Make sure to load the Debug build of the library by adding `initializeWebGPU(config: WGpuConfig.debug);`
+to the top of the Dart program. You can also link against the release-with-debug-info build using
+  `initializeWebGPU(config: WGpuConfig.releaseDebug);`.
 * Add a breakpoint to the Dart code, run in debugger, pausing execution at the breakpoint.
 * Open libwebgpu/_build/Debug/libwebgpu.sln in Visual Studio
 * In VS `Debug / Attach To Process...`

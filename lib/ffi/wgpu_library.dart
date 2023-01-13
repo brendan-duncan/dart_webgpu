@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'ffi_webgpu.dart' as lib;
+import 'wgpu_config.dart';
 
 class WGpuLibrary {
   DynamicLibrary? _library;
@@ -13,9 +14,9 @@ class WGpuLibrary {
 
   WGpuLibrary._();
 
-  Future<void> initialize({bool debug = false}) async {
+  Future<void> initialize({WGpuConfig config = WGpuConfig.release}) async {
     if (_library == null) {
-      _library = await _dlopen(debug: debug);
+      _library = await _dlopen(config: config);
       _wgpu = lib.libwebgpu(_library!);
     }
   }
@@ -42,7 +43,7 @@ class WGpuLibrary {
 
   late final _finalizer = NativeFinalizer(_wgpuObjectDestroy.cast());
 
-  Future<String> _getLibraryPath({bool debug = false}) async {
+  Future<String> _getLibraryPath({required WGpuConfig config}) async {
     final packagePath = Directory.current.path;
     String libPath;
     if (Directory('$packagePath/libwebgpu/lib').existsSync()) {
@@ -60,7 +61,14 @@ class WGpuLibrary {
       libPath = dir.path;
     }
 
-    final configs = debug ? ['Debug', 'Release'] : ['Release'];
+    // This is the order that it will search for libraries. Packaged
+    // distributions on pub would only have Release, so even asking for
+    // debug would fall through to Release.
+    final configs =
+        config == WGpuConfig.release ? ['Release']
+        : config == WGpuConfig.debug ? ['Debug', 'RelWithDebInfo', 'Release']
+        : ['RelWithDebInfo', 'Release'];
+
     final platform = Platform.isWindows
         ? 'win'
         : Platform.isMacOS
@@ -87,8 +95,10 @@ class WGpuLibrary {
     throw Exception('Could not find native webgpu library');
   }
 
-  Future<DynamicLibrary> _dlopen({bool debug = false}) async {
-    final path = await _getLibraryPath(debug: debug);
+  Future<DynamicLibrary> _dlopen(
+      {required WGpuConfig config}) async {
+    final path = await _getLibraryPath(config: config);
+    print('#### LOADING $path');
     return DynamicLibrary.open(path);
   }
 }

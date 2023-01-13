@@ -69,7 +69,7 @@ class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
     }
 
     final p =
-        libwebgpu.wgpu_buffer_get_mapped_range_dart(object, startOffset, size);
+        libwebgpu.wgpu_buffer_get_mapped_range(object, startOffset, size);
 
     if (p == nullptr) {
       throw Exception('Unable to get mapped range from buffer.');
@@ -108,7 +108,7 @@ class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
         _BufferCallbackData(this, completer, callback);
 
     final cb = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuObjectDawn>, Pointer<Void>, Int, Uint64,
+        Void Function(Pointer<wgpu.WGpuDawnObject>, Pointer<Void>, Int, Uint64,
             Uint64)>(_mapBufferCB);
 
     mappedState = GPUMappedState.pending;
@@ -130,7 +130,7 @@ class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
   String toString() =>
       'Buffer(size: $size, usage: $usage, mappedState: $mappedState)';
 
-  static void _mapBufferCB(Pointer<wgpu.WGpuObjectDawn> buffer,
+  static void _mapBufferCB(Pointer<wgpu.WGpuDawnObject> buffer,
       Pointer<Void> userData, int mode, int offset, int size) {
     final data = _callbackData[userData];
     _callbackData.remove(userData);
