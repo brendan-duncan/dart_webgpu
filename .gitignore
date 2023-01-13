@@ -8,3 +8,4 @@ libwebgpu/dawn
 lib/_native/win-Debug
 lib/_native/win-RelWithDebInfo
 libwebgpu/lib/win-RelWithDebInfo/webgpu.dll
+libwebgpu/lib/win-Debug/webgpu.dll
