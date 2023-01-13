@@ -28,14 +28,14 @@ class GPURenderPipelineDescriptor {
       this.fragment});
 
   factory GPURenderPipelineDescriptor.fromMap(Map<String, Object> map) {
-    final layout = getMapValue<GPUPipelineLayout?>(map['layout'], null);
-    final vertex = getMapObject<GPUVertexState>(map['vertex']);
-    final fragment = getMapObjectNullable<GPUFragmentState>(map['fragment']);
-    final primitive = getMapObjectNullable<GPUPrimitiveState>(map['primitive']);
+    final layout = mapValueNullable<GPUPipelineLayout>(map['layout']);
+    final vertex = mapObject<GPUVertexState>(map['vertex']);
+    final fragment = mapObjectNullable<GPUFragmentState>(map['fragment']);
+    final primitive = mapObjectNullable<GPUPrimitiveState>(map['primitive']);
     final depthStencil =
-        getMapObjectNullable<GPUDepthStencilState>(map['depthStencil']);
+        mapObjectNullable<GPUDepthStencilState>(map['depthStencil']);
     final multisample =
-        getMapObjectNullable<GPUMultisampleState>(map['multisample']);
+        mapObjectNullable<GPUMultisampleState>(map['multisample']);
 
     return GPURenderPipelineDescriptor(
         layout: layout,

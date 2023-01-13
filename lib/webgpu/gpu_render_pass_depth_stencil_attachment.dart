@@ -28,17 +28,17 @@ class GPURenderPassDepthStencilAttachment {
       this.stencilReadOnly = false});
 
   factory GPURenderPassDepthStencilAttachment.fromMap(Map<String, Object> map) {
-    final view = getMapValueRequired<GPUTextureView>(map['view']);
-    final depthClearValue = getMapValue<num>(map['depthClearValue'], 0);
-    final depthLoadOp = getMapValue<GPULoadOp?>(map['depthLoadOp'], null);
-    final depthStoreOp = getMapValue<GPUStoreOp?>(map['depthStoreOp'], null);
-    final depthReadOnly = getMapValue<bool>(map['depthReadOnly'], false);
+    final view = mapValueRequired<GPUTextureView>(map['view']);
+    final depthClearValue = mapValue<num>(map['depthClearValue'], 0);
+    final depthLoadOp = mapValueNullable<GPULoadOp>(map['depthLoadOp']);
+    final depthStoreOp = mapValueNullable<GPUStoreOp>(map['depthStoreOp']);
+    final depthReadOnly = mapValue<bool>(map['depthReadOnly'], false);
 
-    final stencilClearValue = getMapValue<int>(map['stencilClearValue'], 0);
-    final stencilLoadOp = getMapValue<GPULoadOp?>(map['stencilLoadOp'], null);
+    final stencilClearValue = mapValue<int>(map['stencilClearValue'], 0);
+    final stencilLoadOp = mapValueNullable<GPULoadOp>(map['stencilLoadOp']);
     final stencilStoreOp =
-        getMapValue<GPUStoreOp?>(map['stencilStoreOp'], null);
-    final stencilReadOnly = getMapValue<bool>(map['stencilReadOnly'], false);
+        mapValueNullable<GPUStoreOp>(map['stencilStoreOp']);
+    final stencilReadOnly = mapValue<bool>(map['stencilReadOnly'], false);
     return GPURenderPassDepthStencilAttachment(
         view: view,
         depthClearValue: depthClearValue,

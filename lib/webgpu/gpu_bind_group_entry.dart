@@ -14,10 +14,10 @@ class GPUBindGroupEntry {
       this.bufferSize = 0});
 
   factory GPUBindGroupEntry.fromMap(Map<String, Object> map) {
-    final binding = getMapValueRequired<int>(map['binding']);
-    final resource = getMapValueRequired<GPUObject>(map['resource']);
-    final bufferOffset = getMapValue(map['bufferOffset'], 0);
-    final bufferSize = getMapValue(map['bufferSize'], 0);
+    final binding = mapValueRequired<int>(map['binding']);
+    final resource = mapValueRequired<GPUObject>(map['resource']);
+    final bufferOffset = mapValue(map['bufferOffset'], 0);
+    final bufferSize = mapValue(map['bufferSize'], 0);
 
     return GPUBindGroupEntry(
         binding: binding,

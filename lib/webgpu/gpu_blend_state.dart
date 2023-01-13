@@ -9,8 +9,8 @@ class GPUBlendState {
   const GPUBlendState({required this.color, required this.alpha});
 
   factory GPUBlendState.fromMap(Map<String, Object> map) {
-    final color = getMapObject<GPUBlendComponent>(map['color']);
-    final alpha = getMapObject<GPUBlendComponent>(map['alpha']);
+    final color = mapObject<GPUBlendComponent>(map['color']);
+    final alpha = mapObject<GPUBlendComponent>(map['alpha']);
 
     return GPUBlendState(color: color, alpha: alpha);
   }

@@ -33,10 +33,10 @@ class GPUImageCopyBuffer {
       required this.buffer});
 
   factory GPUImageCopyBuffer.fromMap(Map<String, Object> map) {
-    final offset = getMapValue<int>(map['offset'], 0);
-    final bytesPerRow = getMapValue<int>(map['bytesPerRow'], 0);
-    final rowsPerImage = getMapValue<int>(map['rowsPerImage'], 0);
-    final buffer = getMapValueRequired<GPUBuffer>(map['buffer']);
+    final offset = mapValue<int>(map['offset'], 0);
+    final bytesPerRow = mapValue<int>(map['bytesPerRow'], 0);
+    final rowsPerImage = mapValue<int>(map['rowsPerImage'], 0);
+    final buffer = mapValueRequired<GPUBuffer>(map['buffer']);
 
     return GPUImageCopyBuffer(
         buffer: buffer,

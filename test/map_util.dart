@@ -4,10 +4,14 @@ import 'package:webgpu/webgpu/_map_util.dart';
 
 void main() async {
   test('map_util', () async {
-    final e = getMapObject<GPUTextureBindingLayout>({
-      'sampleType': GPUTextureSampleType.float,
-      'viewDimension': GPUTextureViewDimension.textureView2d
+    final e = mapObject<GPUTextureBindingLayout>({
+      'sampleType': 'float',
+      'viewDimension': '3d'
     });
-    print(e);
+    expect(e.sampleType, equals(GPUTextureSampleType.float));
+    expect(e.viewDimension, equals(GPUTextureViewDimension.textureView3d));
+
+    final addressModeNullable = mapValueNullable<GPUAddressMode>('repeat');
+    expect(addressModeNullable, equals(GPUAddressMode.repeat));
   });
 }

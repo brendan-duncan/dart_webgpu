@@ -15,10 +15,10 @@ class GPUComputePipelineDescriptor {
       this.constants});
 
   factory GPUComputePipelineDescriptor.fromMap(Map<String, Object> map) {
-    final layout = getMapValueRequired<GPUPipelineLayout>(map['layout']);
-    final module = getMapValueRequired<GPUShaderModule>(map['module']);
-    final entryPoint = getMapValueRequired<String>(map['entryPoint']);
-    final constants = getMapValue<Map<String, num>?>(map['constants'], null);
+    final layout = mapValueRequired<GPUPipelineLayout>(map['layout']);
+    final module = mapValueRequired<GPUShaderModule>(map['module']);
+    final entryPoint = mapValueRequired<String>(map['entryPoint']);
+    final constants = mapValueNullable<Map<String, num>>(map['constants']);
 
     return GPUComputePipelineDescriptor(
         layout: layout,

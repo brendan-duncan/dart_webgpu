@@ -49,17 +49,17 @@ class GPUBindGroupLayoutEntry {
       this.externalTexture});
 
   factory GPUBindGroupLayoutEntry.fromMap(Map<String, Object> map) {
-    final binding = getMapValueRequired<int>(map['binding']);
-    final visibility = getMapValueRequired<GPUShaderStage>(map['visibility']);
-    final buffer = getMapObjectNullable<GPUBufferBindingLayout>(map['buffer']);
+    final binding = mapValueRequired<int>(map['binding']);
+    final visibility = mapValueRequired<GPUShaderStage>(map['visibility']);
+    final buffer = mapObjectNullable<GPUBufferBindingLayout>(map['buffer']);
     final sampler =
-        getMapObjectNullable<GPUSamplerBindingLayout>(map['sampler']);
+        mapObjectNullable<GPUSamplerBindingLayout>(map['sampler']);
     final texture =
-        getMapObjectNullable<GPUTextureBindingLayout>(map['texture']);
-    final storageTexture = getMapObjectNullable<GPUStorageTextureBindingLayout>(
+        mapObjectNullable<GPUTextureBindingLayout>(map['texture']);
+    final storageTexture = mapObjectNullable<GPUStorageTextureBindingLayout>(
         map['storageTexture']);
     final externalTexture =
-        getMapObjectNullable<GPUExternalTextureBindingLayout>(
+        mapObjectNullable<GPUExternalTextureBindingLayout>(
             map['externalTexture']);
 
     return GPUBindGroupLayoutEntry(

@@ -28,11 +28,11 @@ class GPUImageCopyTexture {
       this.aspect = GPUTextureAspect.all});
 
   factory GPUImageCopyTexture.fromMap(Map<String, Object> map) {
-    final texture = getMapValueRequired<GPUTexture>(map['texture']);
-    final mipLevel = getMapValue<int>(map['mipLevel'], 0);
-    final origin = getMapValue<List<int>>(map['origin'], [0, 0, 0]);
+    final texture = mapValueRequired<GPUTexture>(map['texture']);
+    final mipLevel = mapValue<int>(map['mipLevel'], 0);
+    final origin = mapValue<List<int>>(map['origin'], [0, 0, 0]);
     final aspect =
-        getMapValue<GPUTextureAspect>(map['aspect'], GPUTextureAspect.all);
+        mapValue<GPUTextureAspect>(map['aspect'], GPUTextureAspect.all);
     return GPUImageCopyTexture(
         texture: texture, mipLevel: mipLevel, origin: origin, aspect: aspect);
   }

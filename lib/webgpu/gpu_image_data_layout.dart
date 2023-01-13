@@ -9,9 +9,9 @@ class GPUImageDataLayout {
       {this.offset = 0, required this.bytesPerRow, required this.rowsPerImage});
 
   factory GPUImageDataLayout.fromMap(Map<String, Object> map) {
-    final offset = getMapValue<int>(map['offset'], 0);
-    final bytesPerRow = getMapValueRequired<int>(map['bytesPerRow']);
-    final rowsPerImage = getMapValueRequired<int>(map['rowsPerImage']);
+    final offset = mapValue<int>(map['offset'], 0);
+    final bytesPerRow = mapValueRequired<int>(map['bytesPerRow']);
+    final rowsPerImage = mapValueRequired<int>(map['rowsPerImage']);
     return GPUImageDataLayout(
         offset: offset, bytesPerRow: bytesPerRow, rowsPerImage: rowsPerImage);
   }

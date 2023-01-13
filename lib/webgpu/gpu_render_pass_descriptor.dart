@@ -43,15 +43,15 @@ class GPURenderPassDescriptor {
 
   factory GPURenderPassDescriptor.fromMap(Map<String, Object> map) {
     final colorAttachments =
-        getMapList<GPURenderPassColorAttachment>(map['colorAttachments']);
+        mapList<GPURenderPassColorAttachment>(map['colorAttachments']);
     final depthStencilAttachment =
-        getMapObjectNullable<GPURenderPassDepthStencilAttachment>(
+        mapObjectNullable<GPURenderPassDepthStencilAttachment>(
             map['depthStencilAttachment']);
     final occlusionQuerySet =
-        getMapValue<GPUQuerySet?>(map['occlusionQuerySet'], null);
-    final maxDrawCount = getMapValue<int>(map['maxDrawCount'], 50000000);
+      mapValueNullable<GPUQuerySet>(map['occlusionQuerySet']);
+    final maxDrawCount = mapValue<int>(map['maxDrawCount'], 50000000);
     final timestampWrites =
-        getMapListNullable<GPUTimestampWrite>(map['timestampWrites']);
+        mapListNullable<GPUTimestampWrite>(map['timestampWrites']);
 
     return GPURenderPassDescriptor(
         colorAttachments: colorAttachments,

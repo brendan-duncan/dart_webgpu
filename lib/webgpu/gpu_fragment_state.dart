@@ -15,10 +15,10 @@ class GPUFragmentState {
       required this.targets});
 
   factory GPUFragmentState.fromMap(Map<String, Object> map) {
-    final module = getMapValueRequired<GPUShaderModule>(map['module']);
-    final entryPoint = getMapValueRequired<String>(map['entryPoint']);
-    final constants = getMapValue<Map<String, num>?>(map['constants'], null);
-    final targets = getMapList<GpuColorTargetState>(map['targets']);
+    final module = mapValueRequired<GPUShaderModule>(map['module']);
+    final entryPoint = mapValueRequired<String>(map['entryPoint']);
+    final constants = mapValueNullable<Map<String, num>>(map['constants']);
+    final targets = mapList<GpuColorTargetState>(map['targets']);
 
     return GPUFragmentState(
         module: module,

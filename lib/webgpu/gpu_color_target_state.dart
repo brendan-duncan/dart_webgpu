@@ -12,10 +12,10 @@ class GpuColorTargetState {
       {required this.format, this.blend, this.writeMask = GPUColorWrite.all});
 
   factory GpuColorTargetState.fromMap(Map<String, Object> map) {
-    final format = getMapValueRequired<GPUTextureFormat>(map['format']);
-    final blend = getMapObjectNullable<GPUBlendState>(map['blend']);
+    final format = mapValueRequired<GPUTextureFormat>(map['format']);
+    final blend = mapObjectNullable<GPUBlendState>(map['blend']);
     final writeMask =
-        getMapValue<GPUColorWrite>(map['writeMask'], GPUColorWrite.all);
+        mapValue<GPUColorWrite>(map['writeMask'], GPUColorWrite.all);
 
     return GpuColorTargetState(
         format: format, blend: blend, writeMask: writeMask);

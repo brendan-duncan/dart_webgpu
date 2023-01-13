@@ -13,9 +13,9 @@ class GPUTimestampWrite {
       required this.location});
 
   factory GPUTimestampWrite.fromMap(Map<String, Object> map) {
-    final querySet = getMapValueRequired<GPUQuerySet>(map['querySet']);
-    final queryIndex = getMapValueRequired<int>(map['queryIndex']);
-    final location = getMapValueRequired<GPUTimestampLocation>(map['location']);
+    final querySet = mapValueRequired<GPUQuerySet>(map['querySet']);
+    final queryIndex = mapValueRequired<int>(map['queryIndex']);
+    final location = mapValueRequired<GPUTimestampLocation>(map['location']);
     return GPUTimestampWrite(
         querySet: querySet, queryIndex: queryIndex, location: location);
   }

@@ -21,11 +21,11 @@ class GPUTextureBindingLayout extends GpuBindingLayoutType {
       this.multisampled = false});
 
   factory GPUTextureBindingLayout.fromMap(Map<String, Object> map) {
-    final sampleType = getMapValue<GPUTextureSampleType>(
+    final sampleType = mapValue<GPUTextureSampleType>(
         map['sampleType'], GPUTextureSampleType.float);
-    final viewDimension = getMapValue<GPUTextureViewDimension>(
+    final viewDimension = mapValue<GPUTextureViewDimension>(
         map['viewDimension'], GPUTextureViewDimension.textureView2d);
-    final multisampled = getMapValue<bool>(map['multisampled'], false);
+    final multisampled = mapValue<bool>(map['multisampled'], false);
     return GPUTextureBindingLayout(
         sampleType: sampleType,
         viewDimension: viewDimension,

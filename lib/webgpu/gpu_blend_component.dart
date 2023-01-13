@@ -21,9 +21,9 @@ class GPUBlendComponent {
       this.dstFactor = GPUBlendFactor.zero});
 
   factory GPUBlendComponent.fromMap(Map<String, Object> map) {
-    final operation = getMapValue(map['operation'], GPUBlendOperation.add);
-    final srcFactor = getMapValue(map['srcFactor'], GPUBlendFactor.one);
-    final dstFactor = getMapValue(map['dstFactor'], GPUBlendFactor.zero);
+    final operation = mapValue(map['operation'], GPUBlendOperation.add);
+    final srcFactor = mapValue(map['srcFactor'], GPUBlendFactor.one);
+    final dstFactor = mapValue(map['dstFactor'], GPUBlendFactor.zero);
     return GPUBlendComponent(
         operation: operation, srcFactor: srcFactor, dstFactor: dstFactor);
   }

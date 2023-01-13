@@ -13,10 +13,10 @@ class GPUBufferBindingLayout extends GpuBindingLayoutType {
       this.minBindingSize = 0});
 
   factory GPUBufferBindingLayout.fromMap(Map<String, Object> map) {
-    final type = getMapValue<GPUBufferBindingType>(
+    final type = mapValue<GPUBufferBindingType>(
         map['type'], GPUBufferBindingType.uniform);
-    final hasDynamicOffset = getMapValue<bool>(map['hasDynamicOffset'], false);
-    final minBindingSize = getMapValue<int>(map['minBindingSize'], 0);
+    final hasDynamicOffset = mapValue<bool>(map['hasDynamicOffset'], false);
+    final minBindingSize = mapValue<int>(map['minBindingSize'], 0);
     return GPUBufferBindingLayout(
         type: type,
         hasDynamicOffset: hasDynamicOffset,

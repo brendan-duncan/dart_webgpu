@@ -34,13 +34,13 @@ class GPURenderPassColorAttachment {
       required this.storeOp});
 
   factory GPURenderPassColorAttachment.fromMap(Map<String, Object> map) {
-    final view = getMapValueRequired<GPUTextureView>(map['view']);
+    final view = mapValueRequired<GPUTextureView>(map['view']);
     final resolveTarget =
-        getMapValue<GPUTextureView?>(map['resolveTarget'], null);
+        mapValueNullable<GPUTextureView>(map['resolveTarget']);
     final clearValue =
-        getMapValue<List<num>>(map['clearValue'], [0.0, 0.0, 0.0, 0.0]);
-    final loadOp = getMapValueRequired<GPULoadOp>(map['loadOp']);
-    final storeOp = getMapValueRequired<GPUStoreOp>(map['storeOp']);
+        mapValue<List<num>>(map['clearValue'], [0.0, 0.0, 0.0, 0.0]);
+    final loadOp = mapValueRequired<GPULoadOp>(map['loadOp']);
+    final storeOp = mapValueRequired<GPUStoreOp>(map['storeOp']);
 
     return GPURenderPassColorAttachment(
         view: view,

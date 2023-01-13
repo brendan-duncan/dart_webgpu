@@ -19,15 +19,15 @@ class GPUPrimitiveState {
       this.unclippedDepth = false});
 
   factory GPUPrimitiveState.fromMap(Map<String, Object> map) {
-    final topology = getMapValue<GPUPrimitiveTopology>(
+    final topology = mapValue<GPUPrimitiveTopology>(
         map['topology'], GPUPrimitiveTopology.triangleList);
-    final stripIndexFormat = getMapValue<GPUIndexFormat>(
+    final stripIndexFormat = mapValue<GPUIndexFormat>(
         map['stripIndexFormat'], GPUIndexFormat.undefined);
     final frontFace =
-        getMapValue<GPUFrontFace>(map['frontFace'], GPUFrontFace.ccw);
+        mapValue<GPUFrontFace>(map['frontFace'], GPUFrontFace.ccw);
     final cullMode =
-        getMapValue<GPUCullMode>(map['cullMode'], GPUCullMode.none);
-    final unclippedDepth = getMapValue<bool>(map['unclippedDepth'], false);
+        mapValue<GPUCullMode>(map['cullMode'], GPUCullMode.none);
+    final unclippedDepth = mapValue<bool>(map['unclippedDepth'], false);
 
     return GPUPrimitiveState(
         topology: topology,

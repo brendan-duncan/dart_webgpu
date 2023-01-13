@@ -59,19 +59,19 @@ class GPUDepthStencilState {
       this.depthBiasClamp = 0});
 
   factory GPUDepthStencilState.fromMap(Map<String, Object> map) {
-    final format = getMapValueRequired<GPUTextureFormat>(map['format']);
-    final depthWriteEnabled = getMapValue(map['depthWriteEnabled'], false);
+    final format = mapValueRequired<GPUTextureFormat>(map['format']);
+    final depthWriteEnabled = mapValue(map['depthWriteEnabled'], false);
     final depthCompare =
-        getMapValue(map['depthCompare'], GPUCompareFunction.always);
+        mapValue(map['depthCompare'], GPUCompareFunction.always);
     final stencilFront =
-        getMapObjectNullable<GPUStencilFaceState>(map['stencilFront']);
+        mapObjectNullable<GPUStencilFaceState>(map['stencilFront']);
     final stencilBack =
-        getMapObjectNullable<GPUStencilFaceState>(map['stencilBack']);
-    final stencilReadMask = getMapValue(map['stencilReadMask'], 0xffffffff);
-    final stencilWriteMask = getMapValue(map['stencilWriteMask'], 0xffffffff);
-    final depthBias = getMapValue(map['depthBias'], 0);
-    final depthBiasSlopeScale = getMapValue(map['depthBiasSlopeScale'], 0);
-    final depthBiasClamp = getMapValue(map['depthBiasClamp'], 0);
+        mapObjectNullable<GPUStencilFaceState>(map['stencilBack']);
+    final stencilReadMask = mapValue(map['stencilReadMask'], 0xffffffff);
+    final stencilWriteMask = mapValue(map['stencilWriteMask'], 0xffffffff);
+    final depthBias = mapValue(map['depthBias'], 0);
+    final depthBiasSlopeScale = mapValue(map['depthBiasSlopeScale'], 0);
+    final depthBiasClamp = mapValue(map['depthBiasClamp'], 0);
 
     return GPUDepthStencilState(
         format: format,

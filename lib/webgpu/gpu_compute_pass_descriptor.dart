@@ -10,7 +10,7 @@ class GPUComputePassDescriptor {
 
   factory GPUComputePassDescriptor.fromMap(Map<String, Object> map) {
     final timestampWrites =
-        getMapListNullable<GPUTimestampWrite>(map['timestampWrites']);
+        mapListNullable<GPUTimestampWrite>(map['timestampWrites']);
 
     return GPUComputePassDescriptor(timestampWrites: timestampWrites);
   }

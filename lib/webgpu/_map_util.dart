@@ -55,7 +55,7 @@ import 'gpu_vertex_format.dart';
 import 'gpu_vertex_state.dart';
 import 'gpu_vertex_step_mode.dart';
 
-T getMapValueRequired<T>(Object? object) {
+T mapValueRequired<T>(Object? object) {
   if (object == null) {
     throw Exception('Invalid data for $T');
   }
@@ -154,14 +154,21 @@ T getMapValueRequired<T>(Object? object) {
   return object as T;
 }
 
-T getMapValue<T>(Object? object, T defaultValue) {
+T mapValue<T>(Object? object, T defaultValue) {
   if (object == null) {
     return defaultValue;
   }
-  return getMapValueRequired<T>(object);
+  return mapValueRequired<T>(object);
 }
 
-T? getMapObjectNullable<T>(Object? object) {
+T? mapValueNullable<T>(Object? object) {
+  if (object == null) {
+    return null;
+  }
+  return mapValueRequired<T>(object);
+}
+
+T? mapObjectNullable<T>(Object? object) {
   if (object == null) {
     return null;
   }
@@ -254,15 +261,15 @@ T? getMapObjectNullable<T>(Object? object) {
   throw Exception('Invalid data for $T.');
 }
 
-T getMapObject<T>(Object? object) {
-  final o = getMapObjectNullable<T>(object);
+T mapObject<T>(Object? object) {
+  final o = mapObjectNullable<T>(object);
   if (o == null) {
     throw Exception('Invalid data for $T');
   }
   return o;
 }
 
-List<T>? getMapListNullable<T>(Object? object) {
+List<T>? mapListNullable<T>(Object? object) {
   if (object == null) {
     return null;
   }
@@ -272,11 +279,11 @@ List<T>? getMapListNullable<T>(Object? object) {
   if (object is! List<Map<String, Object>>) {
     throw Exception('Invalid data for $T');
   }
-  return List<T>.generate(object.length, (i) => getMapObject<T>(object[i]));
+  return List<T>.generate(object.length, (i) => mapObject<T>(object[i]));
 }
 
-List<T> getMapList<T>(Object? object) {
-  final l = getMapListNullable<T>(object);
+List<T> mapList<T>(Object? object) {
+  final l = mapListNullable<T>(object);
   if (l == null) {
     throw Exception('Invalid data for $T');
   }

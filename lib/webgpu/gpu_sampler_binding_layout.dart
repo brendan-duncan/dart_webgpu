@@ -8,7 +8,7 @@ class GPUSamplerBindingLayout extends GpuBindingLayoutType {
   const GPUSamplerBindingLayout({this.type = GPUSamplerBindingType.filtering});
 
   factory GPUSamplerBindingLayout.fromMap(Map<String, Object> map) {
-    final type = getMapValue<GPUSamplerBindingType>(
+    final type = mapValue<GPUSamplerBindingType>(
         map['type'], GPUSamplerBindingType.filtering);
     return GPUSamplerBindingLayout(type: type);
   }

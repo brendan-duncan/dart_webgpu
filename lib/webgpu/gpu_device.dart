@@ -110,7 +110,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
           bool mappedAtCreation = false}) =>
       GPUBuffer(this,
           size: size,
-          usage: getMapValueRequired<GPUBufferUsage>(usage),
+          usage: mapValueRequired<GPUBufferUsage>(usage),
           mappedAtCreation: mappedAtCreation);
 
   /// Create a [GPUTexture]
@@ -130,11 +130,11 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
           depthOrArrayLayers: depthOrArrayLayers,
           mipLevelCount: mipLevelCount,
           sampleCount: sampleCount,
-          dimension: getMapValueRequired<GPUTextureDimension>(dimension),
-          format: getMapValueRequired<GPUTextureFormat>(format),
-          usage: getMapValueRequired<GPUTextureUsage>(usage),
+          dimension: mapValueRequired<GPUTextureDimension>(dimension),
+          format: mapValueRequired<GPUTextureFormat>(format),
+          usage: mapValueRequired<GPUTextureUsage>(usage),
           viewFormats: viewFormats
-              ?.map((e) => getMapValueRequired<GPUTextureFormat>(e))
+              ?.map((e) => mapValueRequired<GPUTextureFormat>(e))
               .toList());
 
   /// Create a [GPUSampler]
@@ -150,15 +150,15 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
           Object compare = GPUCompareFunction.undefined,
           int maxAnisotropy = 1}) =>
       GPUSampler(this,
-          addressModeU: getMapValueRequired<GPUAddressMode>(addressModeU),
-          addressModeV: getMapValueRequired<GPUAddressMode>(addressModeV),
-          addressModeW: getMapValueRequired<GPUAddressMode>(addressModeW),
-          magFilter: getMapValueRequired<GPUFilterMode>(magFilter),
-          minFilter: getMapValueRequired<GPUFilterMode>(minFilter),
-          mipmapFilter: getMapValueRequired<GPUFilterMode>(mipmapFilter),
+          addressModeU: mapValueRequired<GPUAddressMode>(addressModeU),
+          addressModeV: mapValueRequired<GPUAddressMode>(addressModeV),
+          addressModeW: mapValueRequired<GPUAddressMode>(addressModeW),
+          magFilter: mapValueRequired<GPUFilterMode>(magFilter),
+          minFilter: mapValueRequired<GPUFilterMode>(minFilter),
+          mipmapFilter: mapValueRequired<GPUFilterMode>(mipmapFilter),
           lodMinClamp: lodMinClamp,
           lodMaxClamp: lodMaxClamp,
-          compare: getMapValueRequired<GPUCompareFunction>(compare),
+          compare: mapValueRequired<GPUCompareFunction>(compare),
           maxAnisotropy: maxAnisotropy);
 
   /// Create a [GPUBindGroupLayout]
@@ -341,12 +341,12 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
   /// Create a [GPUQuerySet]
   GPUQuerySet createQuerySet({required Object type, required int count}) =>
       GPUQuerySet(this,
-          type: getMapValueRequired<GPUQueryType>(type), count: count);
+          type: mapValueRequired<GPUQueryType>(type), count: count);
 
   /// Pushes a new GPU error scope onto the errorScopeStack.
   void pushErrorScope(Object filter) {
     libwebgpu.wgpu_device_push_error_scope(
-        object, getMapValueRequired<GPUErrorFilter>(filter).nativeIndex);
+        object, mapValueRequired<GPUErrorFilter>(filter).nativeIndex);
   }
 
   /// Pops a GPU error scope off the errorScopeStack for this and resolves to

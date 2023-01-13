@@ -13,7 +13,7 @@ class GPUVertexAttribute {
 
   factory GPUVertexAttribute.fromMap(Map<String, Object> map) =>
       GPUVertexAttribute(
-          format: getMapValueRequired<GPUVertexFormat>(map['format']),
-          offset: getMapValueRequired<int>(map['offset']),
-          shaderLocation: getMapValueRequired<int>(map['shaderLocation']));
+          format: mapValueRequired<GPUVertexFormat>(map['format']),
+          offset: mapValueRequired<int>(map['offset']),
+          shaderLocation: mapValueRequired<int>(map['shaderLocation']));
 }
