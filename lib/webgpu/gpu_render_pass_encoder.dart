@@ -15,9 +15,8 @@ import 'gpu_render_pipeline.dart';
 /// Encodes commands for a render pass in a [GPUCommandEncoder].
 /// Created from CommandEncoder.beginRenderPass.
 class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
-  final GPUCommandEncoder encoder;
-
-  GPURenderPassEncoder(this.encoder, {required Object descriptor}) {
+  GPURenderPassEncoder(GPUCommandEncoder encoder,
+      {required Object descriptor}) {
     encoder.addDependent(this);
 
     if (descriptor is Map<String, Object>) {

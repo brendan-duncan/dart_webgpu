@@ -64,10 +64,11 @@ class WGpuLibrary {
     // This is the order that it will search for libraries. Packaged
     // distributions on pub would only have Release, so even asking for
     // debug would fall through to Release.
-    final configs =
-        config == WGpuConfig.release ? ['Release']
-        : config == WGpuConfig.debug ? ['Debug', 'RelWithDebInfo', 'Release']
-        : ['RelWithDebInfo', 'Release'];
+    final configs = config == WGpuConfig.release
+        ? ['Release']
+        : config == WGpuConfig.debug
+            ? ['Debug', 'RelWithDebInfo', 'Release']
+            : ['RelWithDebInfo', 'Release'];
 
     final platform = Platform.isWindows
         ? 'win'
@@ -95,8 +96,7 @@ class WGpuLibrary {
     throw Exception('Could not find native webgpu library');
   }
 
-  Future<DynamicLibrary> _dlopen(
-      {required WGpuConfig config}) async {
+  Future<DynamicLibrary> _dlopen({required WGpuConfig config}) async {
     final path = await _getLibraryPath(config: config);
     print('#### LOADING $path');
     return DynamicLibrary.open(path);

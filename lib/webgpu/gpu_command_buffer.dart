@@ -13,9 +13,6 @@ import 'gpu_object.dart';
 /// A CommandBuffer is created from a CommandEncoder with the
 /// CommandEncoder.finish method.
 class GPUCommandBuffer extends GPUObjectBase<wgpu.WGpuCommandBuffer> {
-  /// The [GPUCommandEncoder] that owns this CommandBuffer.
-  final GPUCommandEncoder encoder;
-
-  GPUCommandBuffer(this.encoder, wgpu.WGpuCommandBuffer o)
+  GPUCommandBuffer(GPUCommandEncoder encoder, wgpu.WGpuCommandBuffer o)
       : super(o, encoder);
 }

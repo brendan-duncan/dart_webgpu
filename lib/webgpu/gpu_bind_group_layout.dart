@@ -14,12 +14,10 @@ import 'gpu_object.dart';
 /// BindGroupLayouts are created from a Device through the
 /// Device.createBindGroupLayout method.
 class GPUBindGroupLayout extends GPUObjectBase<wgpu.WGpuBindGroupLayout> {
-  final GPUDevice device;
-
-  GPUBindGroupLayout.native(this.device, wgpu.WGpuBindGroupLayout o)
+  GPUBindGroupLayout.native(GPUDevice? device, wgpu.WGpuBindGroupLayout o)
       : super(o, device);
 
-  GPUBindGroupLayout(this.device, {required List<Object> entries}) {
+  GPUBindGroupLayout(GPUDevice device, {required List<Object> entries}) {
     device.addDependent(this);
 
     final sizeofEntry = sizeOf<wgpu.WGpuBindGroupLayoutEntry>();

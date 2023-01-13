@@ -1,5 +1,1 @@
-enum WGpuConfig {
-  release,
-  releaseDebug,
-  debug
-}
+enum WGpuConfig { release, releaseDebug, debug }

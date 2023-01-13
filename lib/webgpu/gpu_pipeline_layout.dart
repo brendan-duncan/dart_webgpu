@@ -11,9 +11,7 @@ import 'gpu_object.dart';
 /// objects set up during command encoding in setBindGroup(), and the shaders
 /// of the pipeline set by setPipeline.
 class GPUPipelineLayout extends GPUObjectBase<wgpu.WGpuPipelineLayout> {
-  final GPUDevice device;
-
-  GPUPipelineLayout(this.device, List<GPUBindGroupLayout> layouts) {
+  GPUPipelineLayout(GPUDevice device, List<GPUBindGroupLayout> layouts) {
     device.addDependent(this);
 
     final sizeofPtr = sizeOf<wgpu.WGpuBindGroupLayout>();

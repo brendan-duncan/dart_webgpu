@@ -10,19 +10,17 @@ import 'gpu_buffer_binding.dart';
 import 'gpu_device.dart';
 import 'gpu_object.dart';
 
-/// A BindGroup defines a set of resources to be bound together in a group and
-/// how the resources are used in shader stages.
+/// A GPUBindGroup defines a set of resources to be bound together in a group
+/// and how the resources are used in shader stages.
 ///
-/// BindGroups are created from Device.createBindGroup().
+/// GPUBindGroups are created from GPUDevice.createBindGroup().
 class GPUBindGroup extends GPUObjectBase<wgpu.WGpuBindGroup> {
-  final GPUDevice device;
-
   /// Create a BindGroup from the given [device].
   /// [layout] is the BindGroupLayout the entries of this bind group will
   /// conform to.
   /// [entries] is the list of entries describing the resources to expose to
   /// the shader for each binding described by the layout.
-  GPUBindGroup(this.device,
+  GPUBindGroup(GPUDevice device,
       {required GPUBindGroupLayout layout, required List<Object> entries}) {
     device.addDependent(this);
 
@@ -59,7 +57,7 @@ class GPUBindGroup extends GPUObjectBase<wgpu.WGpuBindGroup> {
     }
 
     final o = libwebgpu.wgpu_device_create_bind_group(
-        device.object, layout.object, p, numEntries);
+        parent!.objectPtr, layout.object, p, numEntries);
 
     setObject(o);
 

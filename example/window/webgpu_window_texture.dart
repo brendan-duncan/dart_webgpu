@@ -47,7 +47,9 @@ void main() async {
     'fragment': {
       'module': device.createShaderModule(code: redFragWGSL),
       'entryPoint': 'main',
-      'targets': [{'format': presentationFormat}],
+      'targets': [
+        {'format': presentationFormat}
+      ],
     }
   });
 
@@ -103,6 +105,5 @@ void main() async {
     device.queue.submit(commandBuffer);
     context.present();
     window.pollEvents();
-    //print('${window.mouseX} ${window.mouseY} ${window.deltaX} ${window.deltaY}');
   }
 }

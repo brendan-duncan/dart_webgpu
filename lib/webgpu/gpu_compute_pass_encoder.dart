@@ -14,10 +14,9 @@ import 'gpu_object.dart';
 /// Encodes commands for a compute pass in a [GPUCommandEncoder].
 /// Created from CommandEncoder.beginComputePass.
 class GPUComputePassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
-  final GPUCommandEncoder encoder;
   late final GPUComputePassDescriptor descriptor;
 
-  GPUComputePassEncoder(this.encoder,
+  GPUComputePassEncoder(GPUCommandEncoder encoder,
       {GPUComputePassDescriptor descriptor =
           const GPUComputePassDescriptor()}) {
     encoder.addDependent(this);

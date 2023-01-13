@@ -8,9 +8,7 @@ import 'gpu_object.dart';
 
 /// A reference to an internal shader module object.
 class GPUShaderModule extends GPUObjectBase<wgpu.WGpuShaderModule> {
-  final GPUDevice device;
-
-  GPUShaderModule(this.device,
+  GPUShaderModule(GPUDevice device,
       {required String
           code /*, Map<String, wgpu.WGpuPipelineLayout>? hints*/}) {
     final p = calloc<wgpu.WGpuShaderModuleDescriptor>();

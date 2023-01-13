@@ -5,10 +5,7 @@ import 'gpu_device.dart';
 import 'gpu_object.dart';
 
 class GPURenderPipeline extends GPUObjectBase<wgpu.WGpuRenderPipeline> {
-  /// The [GPUDevice] that created the pipeline.
-  final GPUDevice device;
-
-  GPURenderPipeline(this.device, [wgpu.WGpuRenderPipeline? o])
+  GPURenderPipeline(GPUDevice device, [wgpu.WGpuRenderPipeline? o])
       : super(o, device);
 
   GPUBindGroupLayout getBindGroupLayout(int index) {
@@ -17,6 +14,6 @@ class GPURenderPipeline extends GPUObjectBase<wgpu.WGpuRenderPipeline> {
           'Attempting to use a RenderPipeline that has not been created');
     }
     final o = libwebgpu.wgpu_pipeline_get_bind_group_layout(object, index);
-    return GPUBindGroupLayout.native(device, o);
+    return GPUBindGroupLayout.native(null, o);
   }
 }

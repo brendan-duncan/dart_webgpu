@@ -13,9 +13,6 @@ import 'gpu_texture_view_dimension.dart';
 /// A view onto some subset of the texture subresources defined by a particular
 /// [GPUTexture].
 class GPUTextureView extends GPUObjectBase<wgpu.WGpuTextureView> {
-  /// The [GPUTexture] into which this is a view.
-  final GPUTexture? texture;
-
   /// The format of the texture view. Must be either the format of the texture
   /// or one of the viewFormats specified during its creation.
   late final GPUTextureFormat format;
@@ -41,8 +38,7 @@ class GPUTextureView extends GPUObjectBase<wgpu.WGpuTextureView> {
   final int arrayLayerCount;
 
   GPUTextureView.native(wgpu.WGpuTextureView o)
-      : texture = null,
-        format = GPUTextureFormat.bgra8unorm,
+      : format = GPUTextureFormat.bgra8unorm,
         dimension = GPUTextureViewDimension.textureView2d,
         aspect = GPUTextureAspect.all,
         baseMipLevel = 0,
@@ -52,7 +48,7 @@ class GPUTextureView extends GPUObjectBase<wgpu.WGpuTextureView> {
     setObject(o);
   }
 
-  GPUTextureView(GPUTexture this.texture,
+  GPUTextureView(GPUTexture texture,
       {required this.dimension,
       GPUTextureFormat? format,
       this.aspect = GPUTextureAspect.all,
@@ -60,8 +56,8 @@ class GPUTextureView extends GPUObjectBase<wgpu.WGpuTextureView> {
       this.mipLevelCount = 1,
       this.baseArrayLayer = 0,
       this.arrayLayerCount = 1}) {
-    texture!.addDependent(this);
-    this.format = format ?? texture!.format;
+    texture.addDependent(this);
+    this.format = format ?? texture.format;
     final d = calloc<wgpu.WGpuTextureViewDescriptor>();
     d.ref.format = this.format.nativeIndex;
     d.ref.dimension = dimension.nativeIndex;
@@ -70,7 +66,7 @@ class GPUTextureView extends GPUObjectBase<wgpu.WGpuTextureView> {
     d.ref.mipLevelCount = mipLevelCount;
     d.ref.baseArrayLayer = baseArrayLayer;
     d.ref.arrayLayerCount = arrayLayerCount;
-    final o = libwebgpu.wgpu_texture_create_view(texture!.object, d);
+    final o = libwebgpu.wgpu_texture_create_view(texture.object, d);
     setObject(o);
     calloc.free(d);
   }

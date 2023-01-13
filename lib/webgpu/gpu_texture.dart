@@ -40,8 +40,6 @@ import 'gpu_texture_view_dimension.dart';
 /// image at a particular z value in the texture. Slices are not separate
 /// subresources.
 class GPUTexture extends GPUObjectBase<wgpu.WGpuTexture> {
-  final GPUDevice device;
-
   /// The width of this Texture.
   final int width;
 
@@ -70,7 +68,7 @@ class GPUTexture extends GPUObjectBase<wgpu.WGpuTexture> {
   /// createView() on this texture (in addition to the texture’s actual format).
   final List<GPUTextureFormat>? viewFormats;
 
-  GPUTexture(this.device,
+  GPUTexture(GPUDevice device,
       {required this.width,
       this.height = 1,
       this.depthOrArrayLayers = 1,

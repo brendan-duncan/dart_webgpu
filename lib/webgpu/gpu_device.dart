@@ -55,9 +55,6 @@ typedef GPURenderPipelineCallback = void Function(GPURenderPipeline p);
 /// A GPUDevice is asynchronously created from an GPUAdapter through
 /// GPUAdapter.requestDevice.
 class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
-  /// The [GPUAdapter] that created this GPUDevice.
-  GPUAdapter adapter;
-
   /// The limits supported by the device (which are exactly the ones with which
   /// it was created).
   late final GPULimits limits;
@@ -76,7 +73,8 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
   /// with pushErrorScope/popErrorScope.
   final uncapturedError = <ErrorCallback>[];
 
-  GPUDevice(this.adapter, Pointer device) : super(device) {
+  GPUDevice(GPUAdapter adapter, Pointer<wgpu.WGpuDawnObject> device)
+      : super(device) {
     adapter.addDependent(this);
     features =
         GPUFeatures(libwebgpu.wgpu_adapter_or_device_get_features(object));

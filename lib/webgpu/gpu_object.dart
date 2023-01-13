@@ -7,14 +7,14 @@ import '../ffi/wgpu_library.dart';
 /// @internal.
 abstract class GPUObject implements Finalizable {
   /// The pointer to the native WebGPU object.
-  Pointer objectPtr = nullptr;
+  Pointer<wgpu.WGpuDawnObject> objectPtr = nullptr;
   GPUObject? _parent;
 
   /// The list of WebGPU objects this object created. When this object is
   /// destroyed, it will also destroy any objects that it has created.
   final dependents = <GPUObject>[];
 
-  GPUObject([Pointer? object, GPUObject? parent]) {
+  GPUObject([Pointer<wgpu.WGpuDawnObject>? object, GPUObject? parent]) {
     if (object != null) {
       setObject(object);
     }
@@ -23,7 +23,7 @@ abstract class GPUObject implements Finalizable {
     }
   }
 
-  /// The WebGPU object that created this object.
+  /// The GPUObject that owns this object.
   GPUObject? get parent => _parent;
 
   /// True if this object is alive, and false if it has been destroyed.
@@ -42,7 +42,7 @@ abstract class GPUObject implements Finalizable {
   }
 
   /// Set the WebGPU object pointer owned by this object.
-  void setObject(Pointer o) {
+  void setObject(Pointer<wgpu.WGpuDawnObject> o) {
     if (objectPtr == nullptr) {
       objectPtr = o;
       webgpu.attachFinalizer(this, objectPtr.cast());
@@ -54,7 +54,7 @@ abstract class GPUObject implements Finalizable {
     destroyDependents();
     webgpu
       ..detachFinalizer(this)
-      ..destroyObject(objectPtr as wgpu.WGpuObjectBase);
+      ..destroyObject(objectPtr);
     objectPtr = nullptr;
     if (_parent != null) {
       _parent!.removeDependent(this);
@@ -73,7 +73,8 @@ abstract class GPUObject implements Finalizable {
 }
 
 class GPUObjectBase<T> extends GPUObject {
-  GPUObjectBase([Pointer? object, GPUObject? parent]) : super(object, parent);
+  GPUObjectBase([Pointer<wgpu.WGpuDawnObject>? object, GPUObject? parent])
+      : super(object, parent);
 
   T get object => objectPtr as T;
 }

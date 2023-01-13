@@ -1,6 +1,5 @@
 import '../webgpu.dart';
 import '_map_util.dart';
-import 'gpu_object.dart';
 
 class GPUBindGroupEntry {
   final int binding;

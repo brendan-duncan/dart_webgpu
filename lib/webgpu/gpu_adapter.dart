@@ -85,7 +85,7 @@ class GPUAdapter extends GPUObjectBase<wgpu.WGpuAdapter> {
   }
 
   /// An Adapter must be created with Adapter.request.
-  GPUAdapter._(Pointer o) : super(o) {
+  GPUAdapter._(Pointer<wgpu.WGpuDawnObject> o) : super(o) {
     features =
         GPUFeatures(libwebgpu.wgpu_adapter_or_device_get_features(object))
             .remove(GPUFeatures.shaderF16);

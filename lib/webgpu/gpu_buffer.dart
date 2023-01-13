@@ -20,9 +20,6 @@ typedef MapAsyncCallback = void Function();
 /// alignment restrictions depending on the operation. Some Buffers can be
 /// mapped which makes the block of memory accessible via a ByteBuffer.
 class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
-  /// The Device that owns this Buffer.
-  final GPUDevice device;
-
   /// The size in bytes of the Buffer.
   final int size;
 
@@ -36,7 +33,7 @@ class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
   /// it will be MappedState.pending.
   late GPUMappedState mappedState;
 
-  GPUBuffer(this.device,
+  GPUBuffer(GPUDevice device,
       {required this.size,
       required this.usage,
       bool mappedAtCreation = false}) {
@@ -68,8 +65,7 @@ class GPUBuffer extends GPUObjectBase<wgpu.WGpuBuffer> {
       size = this.size;
     }
 
-    final p =
-        libwebgpu.wgpu_buffer_get_mapped_range(object, startOffset, size);
+    final p = libwebgpu.wgpu_buffer_get_mapped_range(object, startOffset, size);
 
     if (p == nullptr) {
       throw Exception('Unable to get mapped range from buffer.');
