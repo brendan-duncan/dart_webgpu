@@ -143,3 +143,7 @@ EXPORTS
     wgpu_window_poll_events
     wgpu_window_should_quit
     wgpu_window_get_webgpu_context
+    wgpu_window_mouse_position_x
+    wgpu_window_mouse_position_y
+    wgpu_window_mouse_button
+    wgpu_window_get_key

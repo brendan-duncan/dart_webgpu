@@ -107,5 +107,6 @@ void main() async {
     device.queue.submit(commandBuffer);
     context.present();
     window.pollEvents();
+    //print('${window.mouseX} ${window.mouseY} ${window.deltaX} ${window.deltaY}');
   }
 }

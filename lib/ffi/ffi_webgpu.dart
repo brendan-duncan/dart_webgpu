@@ -2899,15 +2899,65 @@ class libwebgpu {
   late final _wgpu_create_window = _wgpu_create_windowPtr
       .asFunction<WGpuWindow Function(int, int, ffi.Pointer<ffi.Char>)>();
 
-  void wgpu_window_poll_events() {
-    return _wgpu_window_poll_events();
+  void wgpu_window_poll_events(
+    WGpuWindow window,
+  ) {
+    return _wgpu_window_poll_events(
+      window,
+    );
   }
 
   late final _wgpu_window_poll_eventsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
+      _lookup<ffi.NativeFunction<ffi.Void Function(WGpuWindow)>>(
           'wgpu_window_poll_events');
   late final _wgpu_window_poll_events =
-      _wgpu_window_poll_eventsPtr.asFunction<void Function()>();
+      _wgpu_window_poll_eventsPtr.asFunction<void Function(WGpuWindow)>();
+
+  int wgpu_window_mouse_position_x() {
+    return _wgpu_window_mouse_position_x();
+  }
+
+  late final _wgpu_window_mouse_position_xPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function()>>(
+          'wgpu_window_mouse_position_x');
+  late final _wgpu_window_mouse_position_x =
+      _wgpu_window_mouse_position_xPtr.asFunction<int Function()>();
+
+  int wgpu_window_mouse_position_y() {
+    return _wgpu_window_mouse_position_y();
+  }
+
+  late final _wgpu_window_mouse_position_yPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function()>>(
+          'wgpu_window_mouse_position_y');
+  late final _wgpu_window_mouse_position_y =
+      _wgpu_window_mouse_position_yPtr.asFunction<int Function()>();
+
+  int wgpu_window_mouse_button() {
+    return _wgpu_window_mouse_button();
+  }
+
+  late final _wgpu_window_mouse_buttonPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function()>>(
+          'wgpu_window_mouse_button');
+  late final _wgpu_window_mouse_button =
+      _wgpu_window_mouse_buttonPtr.asFunction<int Function()>();
+
+  int wgpu_window_get_key(
+    WGpuWindow window,
+    int key,
+  ) {
+    return _wgpu_window_get_key(
+      window,
+      key,
+    );
+  }
+
+  late final _wgpu_window_get_keyPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(WGpuWindow, ffi.Int)>>(
+          'wgpu_window_get_key');
+  late final _wgpu_window_get_key =
+      _wgpu_window_get_keyPtr.asFunction<int Function(WGpuWindow, int)>();
 
   int wgpu_window_should_quit(
     WGpuWindow window,

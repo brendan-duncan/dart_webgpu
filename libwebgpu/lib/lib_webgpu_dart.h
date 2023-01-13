@@ -14,7 +14,15 @@ typedef void* WGpuWindow;
 
 WGpuWindow wgpu_create_window(int width, int height, const char *title);
 
-void wgpu_window_poll_events();
+void wgpu_window_poll_events(WGpuWindow window);
+
+int wgpu_window_mouse_position_x();
+
+int wgpu_window_mouse_position_y();
+
+int wgpu_window_mouse_button();
+
+int wgpu_window_get_key(WGpuWindow window, int key);
 
 int wgpu_window_should_quit(WGpuWindow window);
 
