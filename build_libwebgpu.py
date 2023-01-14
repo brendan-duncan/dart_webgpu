@@ -367,14 +367,34 @@ def buildDawn():
                         f'third_party/abseil/absl/base/{config}/absl_raw_logging_internal.lib',
                         f'third_party/abseil/absl/base/{config}/absl_log_severity.lib',
                         f'third_party/glfw/src/{config}/glfw3.lib']
-
                 else:
-                    libraries = ['src/tint/libtint.a',
-                                 'src/tint/libtint_val.a',
-                                 'src/tint/libtint_diagnostic_utils.a',
-                                 'src/tint/libtint_utils_io.a',
-                                 'third_party/spirv-tools/source/libSPIRV-Tools.a',
-                                 'third_party/spirv-tools/source/opt/libSPIRV-Tools-opt.a']
+                    libraries = [
+                        f'src/dawn/common/{config}/dawn_common.a',
+                        f'src/dawn/native/{config}/dawn_native.a',
+                        f'src/dawn/native/{config}/webgpu_dawn.a',
+                        f'src/dawn/platform/{config}/dawn_platform.a',
+                        f'src/dawn/utils/{config}/dawn_utils.a',
+                        f'src/dawn/wire/{config}/dawn_wire.a',
+                        f'src/dawn/{config}/dawn_headers.a',
+                        f'src/dawn/{config}/dawn_proc.a',
+                        f'src/dawn/{config}/dawncpp.a',
+                        f'src/dawn/{config}/dawncpp_headers.a',
+                        f'src/tint/{config}/tint.a',
+                        f'src/tint/{config}/tint_val.a',
+                        f'src/tint/{config}/tint_diagnostic_utils.a',
+                        f'src/tint/{config}/tint_utils_io.a',
+                        f'third_party/spirv-tools/source/{config}/SPIRV-Tools.a',
+                        f'third_party/spirv-tools/source/opt/{config}/SPIRV-Tools-opt.a',
+                        f'third_party/abseil/absl/strings/{config}/absl_str_format_internal.a',
+                        f'third_party/abseil/absl/strings/{config}/absl_strings.a',
+                        f'third_party/abseil/absl/strings/{config}/absl_strings_internal.a',
+                        f'third_party/abseil/absl/base/{config}/absl_base.a',
+                        f'third_party/abseil/absl/base/{config}/absl_spinlock_wait.a',
+                        f'third_party/abseil/absl/numeric/{config}/absl_int128.a',
+                        f'third_party/abseil/absl/base/{config}/absl_throw_delegate.a',
+                        f'third_party/abseil/absl/base/{config}/absl_raw_logging_internal.a',
+                        f'third_party/abseil/absl/base/{config}/absl_log_severity.a',
+                        f'third_party/glfw/src/{config}/glfw3.a']
 
                 lib_dawn_dest_path = os.path.join(dawn_libs_path,
                                                   os_name() + '-' + arch + '-' + config)
@@ -422,7 +442,7 @@ def build():
 
         lib_webgpu_url = 'https://github.com/brendan-duncan/wasm_webgpu'
         lib_webgpu_path = os.path.join(build_path, 'lib_webgpu')
-        #git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
+        git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
 
         with cwd(build_path):
             configs = ['Debug', 'Release', 'RelWithDebInfo']
