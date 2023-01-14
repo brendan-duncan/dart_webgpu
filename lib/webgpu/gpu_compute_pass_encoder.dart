@@ -85,5 +85,8 @@ class GPUComputePassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
   /// Completes recording of the compute pass commands sequence.
   void end() {
     libwebgpu.wgpu_encoder_end(object);
+    // wgpu_encoder_end destroys the wgpu object.
+    webgpu.detachFinalizer(this);
+    objectPtr = nullptr;
   }
 }

@@ -188,6 +188,9 @@ class GPUCommandEncoder extends GPUObjectBase<wgpu.WGpuCommandEncoder> {
   /// [GPUCommandBuffer].
   GPUCommandBuffer finish() {
     final o = libwebgpu.wgpu_encoder_finish(object);
+    // wgpu_encoder_finish destroys the wgpu object.
+    webgpu.detachFinalizer(this);
+    objectPtr = nullptr;
     return GPUCommandBuffer(this, o);
   }
 }
