@@ -11,6 +11,13 @@ typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 #endif
 
+#ifdef _WIN32
+// forward declare HWND so we don't need to pull in Windows.h
+#ifndef HWND
+typedef void* HWND;
+#endif
+#endif
+
 // The type 'double_int53_t' shall be an integer-like
 // type that can represent at least 53-bits of consecutive
 // unsigned integers. On the web, this will be a 'double',

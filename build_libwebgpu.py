@@ -8,7 +8,7 @@ import sys
 
 WINDOWS = os.name == 'nt'
 LINUX = platform.system() == 'Linux'
-OSX = platform.mac_ver()[0] != ''
+MAC = platform.mac_ver()[0] != ''
 
 
 # Returns an OS identifier for generated artifact files
@@ -17,7 +17,7 @@ def os_name():
         return 'win'
     if LINUX:
         return 'linux'
-    if OSX:
+    if MAC:
         return 'mac'
     raise Exception('No OS set!')
 
@@ -225,7 +225,7 @@ def fixupDawnCMake():
     fp.close()
 
     modified = False
-    if OSX:
+    if MAC:
         # On arm64 macOS, poison-system-directories is causing the build to fail when called from
         # Python. I don't know why calling CMake from Python makes CMake think it's a cross-platform build
         # whereas calling CMake from the terminal does not. Add no-poison-system-directories to the Clang
@@ -250,7 +250,7 @@ def fixupDawnCMake():
 def gclient(depot_tools_path):
     if WINDOWS:
         return os.path.join(depot_tools_path, 'gclient.bat')
-    if OSX:
+    if MAC:
         return os.path.join(depot_tools_path, 'gclient')
     if LINUX:
         return os.path.join(depot_tools_path, 'gclient')
@@ -316,11 +316,12 @@ def buildDawn():
                 config_cmd.append('-DTINT_BUILD_TESTS=0')
                 config_cmd.append('-DTINT_BUILD_DOCS=0')
                 config_cmd.append('-DTINT_BUILD_DOCS=0')
-                config_cmd.append('-DTINT_BUILD_SAMPLES=0')
-                config_cmd.append('-DDAWN_BUILD_SAMPLES=0')
-                config_cmd.append('-DBUILD_SAMPLES=0')
+                #config_cmd.append('-DTINT_BUILD_SAMPLES=0')
+                #config_cmd.append('-DDAWN_BUILD_SAMPLES=0')
+                #config_cmd.append('-DBUILD_SAMPLES=0')
 
-                if OSX:
+                if MAC:
+                    config_cmd.append('-G Xcode')
                     if arch == 'arm64':
                         config_cmd.append('-DCMAKE_OSX_ARCHITECTURES=arm64')
                         config_cmd.append('-DCMAKE_SYSTEM_PROCESSOR=arm64')
@@ -369,32 +370,32 @@ def buildDawn():
                         f'third_party/glfw/src/{config}/glfw3.lib']
                 else:
                     libraries = [
-                        f'src/dawn/common/libdawn_common.a',
-                        f'src/dawn/native/libdawn_native.a',
-                        f'src/dawn/native/libwebgpu_dawn.a',
-                        f'src/dawn/platform/libdawn_platform.a',
-                        f'src/dawn/utils/libdawn_utils.a',
-                        f'src/dawn/wire/libdawn_wire.a',
-                        f'src/dawn/libdawn_headers.a',
-                        f'src/dawn/libdawn_proc.a',
-                        f'src/dawn/libdawncpp.a',
-                        f'src/dawn/libdawncpp_headers.a',
-                        f'src/tint/libtint.a',
-                        f'src/tint/libtint_val.a',
-                        f'src/tint/libtint_diagnostic_utils.a',
-                        f'src/tint/libtint_utils_io.a',
-                        f'third_party/spirv-tools/source/libSPIRV-Tools.a',
-                        f'third_party/spirv-tools/source/opt/libSPIRV-Tools-opt.a',
-                        f'third_party/abseil/absl/strings/libabsl_str_format_internal.a',
-                        f'third_party/abseil/absl/strings/libabsl_strings.a',
-                        f'third_party/abseil/absl/strings/libabsl_strings_internal.a',
-                        f'third_party/abseil/absl/base/libabsl_base.a',
-                        f'third_party/abseil/absl/base/libabsl_spinlock_wait.a',
-                        f'third_party/abseil/absl/numeric/libabsl_int128.a',
-                        f'third_party/abseil/absl/base/libabsl_throw_delegate.a',
-                        f'third_party/abseil/absl/base/libabsl_raw_logging_internal.a',
-                        f'third_party/abseil/absl/base/libabsl_log_severity.a',
-                        f'third_party/glfw/src/libglfw3.a']
+                        f'src/dawn/common/{config}/libdawn_common.a',
+                        f'src/dawn/native/{config}/libdawn_native.a',
+                        f'src/dawn/native/{config}/libwebgpu_dawn.a',
+                        f'src/dawn/platform/{config}/libdawn_platform.a',
+                        f'src/dawn/utils/{config}/libdawn_utils.a',
+                        f'src/dawn/wire/{config}/libdawn_wire.a',
+                        f'src/dawn/{config}/libdawn_headers.a',
+                        f'src/dawn/{config}/libdawn_proc.a',
+                        f'src/dawn/{config}/libdawncpp.a',
+                        f'src/dawn/{config}/libdawncpp_headers.a',
+                        f'src/tint/{config}/libtint.a',
+                        f'src/tint/{config}/libtint_val.a',
+                        f'src/tint/{config}/libtint_diagnostic_utils.a',
+                        f'src/tint/{config}/libtint_utils_io.a',
+                        f'third_party/spirv-tools/source/{config}/libSPIRV-Tools.a',
+                        f'third_party/spirv-tools/source/opt/{config}/libSPIRV-Tools-opt.a',
+                        f'third_party/abseil/absl/strings/{config}/libabsl_str_format_internal.a',
+                        f'third_party/abseil/absl/strings/{config}/libabsl_strings.a',
+                        f'third_party/abseil/absl/strings/{config}/libabsl_strings_internal.a',
+                        f'third_party/abseil/absl/base/{config}/libabsl_base.a',
+                        f'third_party/abseil/absl/base/{config}/libabsl_spinlock_wait.a',
+                        f'third_party/abseil/absl/numeric/{config}/libabsl_int128.a',
+                        f'third_party/abseil/absl/base/{config}/libabsl_throw_delegate.a',
+                        f'third_party/abseil/absl/base/{config}/libabsl_raw_logging_internal.a',
+                        f'third_party/abseil/absl/base/{config}/libabsl_log_severity.a',
+                        f'third_party/glfw/src/{config}/libglfw3.a']
 
                 lib_dawn_dest_path = os.path.join(dawn_libs_path,
                                                   os_name() + '-' + arch + '-' + config)
@@ -462,14 +463,18 @@ def build():
             for config in configs:
                 mkdir_p(config)
                 with cwd(config):
-                    run([cmake(), f'-DCMAKE_BUILD_TYPE={config}', os.path.join('..', '..')])
+                    config_cmd = [cmake(), f'-DCMAKE_BUILD_TYPE={config}']
+                    if MAC:
+                        config_cmd.append('-G Xcode')
+                    config_cmd.append(os.path.join('..', '..'))
+                    run(config_cmd)
                     run([cmake(), '--build', '.', '--config', config])
                     out_path = os.path.join('..', '..', 'lib', f'{os_name()}-{arch_name()}-{config}')
                     mkdir_p(out_path)
                     if WINDOWS:
                         shutil.copyfile(os.path.join(config, 'webgpu.dll'), os.path.join(out_path, 'webgpu.dll'))
                     else:
-                        shutil.copyfile(os.path.join('libwebgpu.dylib'), os.path.join(out_path, 'libwebgpu.dylib'))
+                        shutil.copyfile(os.path.join(config, 'libwebgpu.dylib'), os.path.join(out_path, 'libwebgpu.dylib'))
 
 
                 # Copy the libs into the pub lib folder for distribution

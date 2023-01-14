@@ -8,6 +8,9 @@ Development is ongoing and there are no guarantees any of it will work properly.
 The API is also in flux, to make it more Dart-centric and reduce boilerplate code.
 
 ### Known Issues
+
+* Currently, it only works on Windows. MacOS, Linux, Web, and possibly Flutter will follow.
+
 * Async functions like mapAsync don't work with Dart's await/Future.
 Dart will currently crash if you try. The WebGPU async functions, mapAsync, createRenderPipelineAsync,
 and createComputePipelineAsync, take a callback arg that will be called when the async
@@ -26,7 +29,7 @@ an updated version of the ffi Dart bindings using ffigen.
 * git
 * Python 3.0+
 * CMake 3.15+
-* Visual Studio 2022 / Xcode / ...
+* Visual Studio / Xcode
 
 ### Third Party Libraries
 
