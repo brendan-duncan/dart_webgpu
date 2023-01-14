@@ -13,7 +13,7 @@
 #endif
 
 #ifdef __clang__
-#pragma clang diagnostic error "-Wpadded"
+//#pragma clang diagnostic error "-Wpadded"
 #endif
 
 #ifdef _MSC_VER
@@ -68,7 +68,9 @@ WGpuCanvasContext wgpu_canvas_get_webgpu_context(const char *canvasSelector NOTN
 #define _HWND void* // Avoid including win32.h when all we need is HWND, which is a void*.
 WGpuCanvasContext wgpu_canvas_get_webgpu_context(_HWND hwnd);
 #else
-#error Targeting currently unsupported platform! (no declaration for wgpu_canvas_get_webgpu_context())
+#define _HWND void* // Avoid including win32.h when all we need is HWND, which is a void*.
+WGpuCanvasContext wgpu_canvas_get_webgpu_context(_HWND hwnd);
+//#error Targeting currently unsupported platform! (no declaration for wgpu_canvas_get_webgpu_context())
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

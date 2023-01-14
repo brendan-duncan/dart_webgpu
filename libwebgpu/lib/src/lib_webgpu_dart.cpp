@@ -1,5 +1,9 @@
 #include "../lib_webgpu_dart.h"
+#ifdef _WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
+#elif defined(__APPLE__)
+#define GLFW_EXPOSE_NATIVE_COCOA
+#endif
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 #include <math.h>
@@ -60,8 +64,12 @@ int wgpu_window_should_quit(WGpuWindow window) {
 }
 
 WGpuCanvasContext wgpu_window_get_webgpu_context(WGpuWindow window) {
+#ifdef _WIN32
     HWND hwnd = glfwGetWin32Window((GLFWwindow*)window);
     return wgpu_canvas_get_webgpu_context(hwnd);
+#else
+#endif
+    return (WGpuCanvasContext)0;
 }
 
 int wgpu_window_mouse_position_x() {

@@ -3942,7 +3942,7 @@ typedef WGpuLoadImageBitmapCallback = ffi.Pointer<
 typedef WGpuImageBitmap = WGpuObjectBase;
 typedef WGpuWindow = ffi.Pointer<ffi.Void>;
 
-const double WGPU_INFINITY = 9218868437227405000.0;
+const double WGPU_INFINITY = double.infinity;
 
 const int EM_TRUE = 1;
 

@@ -5,7 +5,11 @@ libwebgpu/_build
 pubspec.lock
 __pycache__
 libwebgpu/dawn
+lib/_native/mac-arm64-Debug
+lib/_native/mac-arm64-RelWithDebInfo
 lib/_native/win-Debug
 lib/_native/win-RelWithDebInfo
 libwebgpu/lib/win-RelWithDebInfo/webgpu.dll
 libwebgpu/lib/win-Debug/webgpu.dll
+libwebgpu/lib/mac-arm64-RelWithDebInfo
+libwebgpu/lib/mac-arm64-Debug

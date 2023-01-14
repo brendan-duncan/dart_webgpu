@@ -369,38 +369,39 @@ def buildDawn():
                         f'third_party/glfw/src/{config}/glfw3.lib']
                 else:
                     libraries = [
-                        f'src/dawn/common/{config}/dawn_common.a',
-                        f'src/dawn/native/{config}/dawn_native.a',
-                        f'src/dawn/native/{config}/webgpu_dawn.a',
-                        f'src/dawn/platform/{config}/dawn_platform.a',
-                        f'src/dawn/utils/{config}/dawn_utils.a',
-                        f'src/dawn/wire/{config}/dawn_wire.a',
-                        f'src/dawn/{config}/dawn_headers.a',
-                        f'src/dawn/{config}/dawn_proc.a',
-                        f'src/dawn/{config}/dawncpp.a',
-                        f'src/dawn/{config}/dawncpp_headers.a',
-                        f'src/tint/{config}/tint.a',
-                        f'src/tint/{config}/tint_val.a',
-                        f'src/tint/{config}/tint_diagnostic_utils.a',
-                        f'src/tint/{config}/tint_utils_io.a',
-                        f'third_party/spirv-tools/source/{config}/SPIRV-Tools.a',
-                        f'third_party/spirv-tools/source/opt/{config}/SPIRV-Tools-opt.a',
-                        f'third_party/abseil/absl/strings/{config}/absl_str_format_internal.a',
-                        f'third_party/abseil/absl/strings/{config}/absl_strings.a',
-                        f'third_party/abseil/absl/strings/{config}/absl_strings_internal.a',
-                        f'third_party/abseil/absl/base/{config}/absl_base.a',
-                        f'third_party/abseil/absl/base/{config}/absl_spinlock_wait.a',
-                        f'third_party/abseil/absl/numeric/{config}/absl_int128.a',
-                        f'third_party/abseil/absl/base/{config}/absl_throw_delegate.a',
-                        f'third_party/abseil/absl/base/{config}/absl_raw_logging_internal.a',
-                        f'third_party/abseil/absl/base/{config}/absl_log_severity.a',
-                        f'third_party/glfw/src/{config}/glfw3.a']
+                        f'src/dawn/common/libdawn_common.a',
+                        f'src/dawn/native/libdawn_native.a',
+                        f'src/dawn/native/libwebgpu_dawn.a',
+                        f'src/dawn/platform/libdawn_platform.a',
+                        f'src/dawn/utils/libdawn_utils.a',
+                        f'src/dawn/wire/libdawn_wire.a',
+                        f'src/dawn/libdawn_headers.a',
+                        f'src/dawn/libdawn_proc.a',
+                        f'src/dawn/libdawncpp.a',
+                        f'src/dawn/libdawncpp_headers.a',
+                        f'src/tint/libtint.a',
+                        f'src/tint/libtint_val.a',
+                        f'src/tint/libtint_diagnostic_utils.a',
+                        f'src/tint/libtint_utils_io.a',
+                        f'third_party/spirv-tools/source/libSPIRV-Tools.a',
+                        f'third_party/spirv-tools/source/opt/libSPIRV-Tools-opt.a',
+                        f'third_party/abseil/absl/strings/libabsl_str_format_internal.a',
+                        f'third_party/abseil/absl/strings/libabsl_strings.a',
+                        f'third_party/abseil/absl/strings/libabsl_strings_internal.a',
+                        f'third_party/abseil/absl/base/libabsl_base.a',
+                        f'third_party/abseil/absl/base/libabsl_spinlock_wait.a',
+                        f'third_party/abseil/absl/numeric/libabsl_int128.a',
+                        f'third_party/abseil/absl/base/libabsl_throw_delegate.a',
+                        f'third_party/abseil/absl/base/libabsl_raw_logging_internal.a',
+                        f'third_party/abseil/absl/base/libabsl_log_severity.a',
+                        f'third_party/glfw/src/libglfw3.a']
 
                 lib_dawn_dest_path = os.path.join(dawn_libs_path,
                                                   os_name() + '-' + arch + '-' + config)
                 mkdir_p(lib_dawn_dest_path)
 
                 for libPath in libraries:
+                    print('# COPY', os.getcwd() + '/' + libPath)
                     out_path = os.path.join(lib_dawn_dest_path, os.path.basename(libPath))
                     shutil.copyfile(libPath, out_path)
 
@@ -433,6 +434,8 @@ def fixHeadersForFFIGen(includes_path):
 
 
 def build():
+    print('#### BUILDING FOR', os_name(), arch_name())
+    print('----------------------------')
     with cwd('libwebgpu'):
         print('#### BUILDING libwebgpu in', os.getcwd())
         buildDawn()
@@ -461,27 +464,23 @@ def build():
                 with cwd(config):
                     run([cmake(), f'-DCMAKE_BUILD_TYPE={config}', os.path.join('..', '..')])
                     run([cmake(), '--build', '.', '--config', config])
-                    out_path = os.path.join('..', '..', 'lib', f'{os_name()}-{config}')
+                    out_path = os.path.join('..', '..', 'lib', f'{os_name()}-{arch_name()}-{config}')
                     mkdir_p(out_path)
-                    shutil.copyfile(os.path.join(config, 'webgpu.dll'), os.path.join(out_path, 'webgpu.dll'))
+                    if WINDOWS:
+                        shutil.copyfile(os.path.join(config, 'webgpu.dll'), os.path.join(out_path, 'webgpu.dll'))
+                    else:
+                        shutil.copyfile(os.path.join('libwebgpu.dylib'), os.path.join(out_path, 'libwebgpu.dylib'))
 
 
-            # Copy the libs into the pub lib folder for distribution
+                # Copy the libs into the pub lib folder for distribution
 
-            pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-Release')
-            release_lib_path = os.path.join('..', 'lib', f'{os_name()}-Release')
-            mkdir_p(pub_path)
-            shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
-
-            pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-Debug')
-            release_lib_path = os.path.join('..', 'lib', f'{os_name()}-Debug')
-            mkdir_p(pub_path)
-            shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
-
-            pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-RelWithDebInfo')
-            release_lib_path = os.path.join('..', 'lib', f'{os_name()}-RelWithDebInfo')
-            mkdir_p(pub_path)
-            shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
+                pub_path = os.path.join('..', '..', 'lib', '_native', f'{os_name()}-{arch_name()}-{config}')
+                release_lib_path = os.path.join('..', 'lib', f'{os_name()}-{arch_name()}-{config}')
+                mkdir_p(pub_path)
+                if WINDOWS:
+                    shutil.copyfile(os.path.join(release_lib_path, 'webgpu.dll'), os.path.join(pub_path, 'webgpu.dll'))
+                else:
+                    shutil.copyfile(os.path.join(release_lib_path, 'libwebgpu.dylib'), os.path.join(pub_path, 'libwebgpu.dylib'))
 
             # Generate the ffi wrapper with ffigen. The configuration is defined in pubspec.yaml.
             fixHeadersForFFIGen(includes_path)

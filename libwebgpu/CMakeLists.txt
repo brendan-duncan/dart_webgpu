@@ -12,23 +12,47 @@ add_library(webgpu SHARED
     lib/src/lib_webgpu_dart.cpp
 )
 
-if(WIN32)
-    target_link_directories(webgpu PUBLIC "_build/dawn_libs/win-x64-$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>")
-endif()
-
-if(UNIX AND NOT APPLE)
-    # Linux
-endif()
-
-if(APPLE)
-    # MacOS
-endif()
-
 target_include_directories(webgpu PUBLIC _build/dawn_libs/include)
 
 set_property(TARGET webgpu PROPERTY
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL") # /MD
 
+if(APPLE)
+target_link_directories(webgpu PUBLIC "_build/dawn_libs/mac-arm64-${CMAKE_BUILD_TYPE}")
+target_link_libraries(webgpu PUBLIC
+    "-framework Cocoa"
+    "-framework Metal"
+    "-framework IOKit"
+    "-framework IOSurface"
+    "-framework QuartzCore"
+    libabsl_strings_internal.a
+    libabsl_throw_delegate.a
+    libdawn_common.a
+    libdawn_headers.a
+    libdawn_native.a
+    libdawn_platform.a
+    libdawn_proc.a
+    libdawn_utils.a
+    libdawn_wire.a
+    libSPIRV-Tools.a
+    libSPIRV-Tools-opt.a
+    libtint.a
+    libtint_diagnostic_utils.a
+    libtint_utils_io.a
+    libtint_val.a
+    libabsl_base.a
+    libabsl_int128.a
+    libabsl_log_severity.a
+    libabsl_raw_logging_internal.a
+    libabsl_spinlock_wait.a
+    libabsl_str_format_internal.a
+    libabsl_strings.a
+    libglfw3.a
+)
+endif()
+
+if(WIN32)
+target_link_directories(webgpu PUBLIC "_build/dawn_libs/win-x64-${CMAKE_BUILD_TYPE}")
 target_link_libraries(webgpu PUBLIC
     absl_strings_internal.lib
     absl_throw_delegate.lib
@@ -55,3 +79,4 @@ target_link_libraries(webgpu PUBLIC
     dxguid.lib
     glfw3.lib
 )
+endif()
