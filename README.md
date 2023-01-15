@@ -2,6 +2,8 @@
 
 Dart bindings of the WebGPU graphics API.
 
+![Dart WebGPU](dart_webgpu.jpg)
+
 ## WARNING: Experimental, Work In Progress
 
 Development is ongoing and there are no guarantees any of it will work properly.
@@ -9,7 +11,9 @@ The API is also in flux, to make it more Dart-centric and reduce boilerplate cod
 
 ### Known Issues
 
-* Currently, it only works on Windows. MacOS, Linux, Web, and possibly Flutter will follow.
+* Currently, it only works on Windows and MacOS. Linux, Web, and possibly Flutter will follow.
+
+* GPUWindow currently locks up MacOS.
 
 * Async functions like mapAsync don't work with Dart's await/Future.
 Dart will currently crash if you try. The WebGPU async functions, mapAsync, createRenderPipelineAsync,
