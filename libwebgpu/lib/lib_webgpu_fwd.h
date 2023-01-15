@@ -12,10 +12,10 @@ typedef unsigned long long uint64_t;
 #endif
 
 #ifdef _WIN32
-// forward declare HWND so we don't need to pull in Windows.h
-#ifndef HWND
-typedef void* HWND;
-#endif
+// forward declare HWND so we don't need to pull in Windows.h. Using an alternative
+// name because the window.h version uses a pointer to an empty struct, making it
+// difficult to forward declare.
+typedef void* _HWND;
 #endif
 
 // The type 'double_int53_t' shall be an integer-like

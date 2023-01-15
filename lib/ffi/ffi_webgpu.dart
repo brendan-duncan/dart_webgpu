@@ -54,20 +54,19 @@ class libwebgpu {
       _wgpu_destroy_all_objectsPtr.asFunction<void Function()>();
 
   WGpuCanvasContext wgpu_canvas_get_webgpu_context(
-    ffi.Pointer<ffi.Void> window,
+    _HWND hwnd,
   ) {
     return _wgpu_canvas_get_webgpu_context(
-      window,
+      hwnd,
     );
   }
 
-  late final _wgpu_canvas_get_webgpu_contextPtr = _lookup<
-      ffi.NativeFunction<
-          WGpuCanvasContext Function(
-              ffi.Pointer<ffi.Void>)>>('wgpu_canvas_get_webgpu_context');
+  late final _wgpu_canvas_get_webgpu_contextPtr =
+      _lookup<ffi.NativeFunction<WGpuCanvasContext Function(_HWND)>>(
+          'wgpu_canvas_get_webgpu_context');
   late final _wgpu_canvas_get_webgpu_context =
       _wgpu_canvas_get_webgpu_contextPtr
-          .asFunction<WGpuCanvasContext Function(ffi.Pointer<ffi.Void>)>();
+          .asFunction<WGpuCanvasContext Function(_HWND)>();
 
   int wgpu_is_valid_object(
     WGpuObjectBase obj,
@@ -3138,6 +3137,9 @@ class WGpuDeviceDescriptor extends ffi.Struct {
   external WGpuSupportedLimits requiredLimits;
 
   external WGpuQueueDescriptor defaultQueue;
+
+  @ffi.Uint32()
+  external int _explicitPaddingFor8BytesAlignedSize2;
 }
 
 typedef WGPU_FEATURES_BITFIELD = ffi.Int;
@@ -3187,9 +3189,6 @@ class WGpuTextureDescriptor extends ffi.Struct {
   @ffi.Int()
   external int numViewFormats;
 
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
-
   external ffi.Pointer<WGPU_TEXTURE_FORMAT> viewFormats;
 }
 
@@ -3228,9 +3227,6 @@ class WGpuExternalTextureDescriptor extends ffi.Struct {
 
   @HTML_PREDEFINED_COLOR_SPACE()
   external int colorSpace;
-
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
 }
 
 typedef WGpuObjectBase = ffi.Pointer<WGpuDawnObject>;
@@ -3356,9 +3352,6 @@ class WGpuBindGroupEntry extends ffi.Struct {
   @ffi.Uint32()
   external int binding;
 
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
-
   external WGpuObjectBase resource;
 
   @ffi.Uint64()
@@ -3373,9 +3366,6 @@ class WGpuShaderModuleDescriptor extends ffi.Struct {
 
   @ffi.Int()
   external int numHints;
-
-  @ffi.Uint32()
-  external int _unused64BitPadding;
 
   external ffi.Pointer<WGpuShaderModuleCompilationHint> hints;
 }
@@ -3405,9 +3395,6 @@ class WGpuCompilationMessage extends ffi.Struct {
 
   @ffi.Uint32()
   external int length;
-
-  @ffi.Uint32()
-  external int _unused64BitPadding;
 }
 
 typedef WGPU_COMPILATION_MESSAGE_TYPE = ffi.Int;
@@ -3415,9 +3402,6 @@ typedef WGPU_COMPILATION_MESSAGE_TYPE = ffi.Int;
 class WGpuCompilationInfo extends ffi.Struct {
   @ffi.Int()
   external int numMessages;
-
-  @ffi.Uint32()
-  external int _unused64BitPadding;
 
   external ffi.Pointer<WGpuCompilationMessage> messages;
 }
@@ -3427,9 +3411,6 @@ class WGpuPipelineConstant extends ffi.Struct {
 
   @ffi.Uint32()
   external int _dummyPadding;
-
-  @ffi.Uint32()
-  external int _unused64BitPadding;
 
   @ffi.Double()
   external double value;
@@ -3470,9 +3451,6 @@ typedef WGpuShaderModule = WGpuObjectBase;
 class WGpuVertexBufferLayout extends ffi.Struct {
   @ffi.Int()
   external int numAttributes;
-
-  @ffi.Uint32()
-  external int _unused64BitPadding;
 
   external ffi.Pointer<WGpuVertexAttribute> attributes;
 
@@ -3580,9 +3558,6 @@ class WGpuMultisampleState extends ffi.Struct {
 
   @ffi.Int()
   external int alphaToCoverageEnabled;
-
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
 }
 
 class WGpuFragmentState extends ffi.Struct {
@@ -3653,6 +3628,9 @@ class WGpuImageCopyBuffer extends ffi.Struct {
   external int rowsPerImage;
 
   external WGpuBuffer buffer;
+
+  @ffi.Uint32()
+  external int _explicitPaddingFor8BytesAlignedSize;
 }
 
 typedef WGpuBuffer = WGpuObjectBase;
@@ -3667,9 +3645,6 @@ class WGpuImageCopyTexture extends ffi.Struct {
 
   @WGPU_TEXTURE_ASPECT()
   external int aspect;
-
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
 }
 
 typedef WGpuTexture = WGpuObjectBase;
@@ -3701,9 +3676,6 @@ class WGpuImageCopyTextureTagged extends ffi.Struct {
 
   @ffi.Int()
   external int premultipliedAlpha;
-
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
 }
 
 class WGpuImageCopyExternalImage extends ffi.Struct {
@@ -3713,9 +3685,6 @@ class WGpuImageCopyExternalImage extends ffi.Struct {
 
   @ffi.Int()
   external int flipY;
-
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
 }
 
 class WGpuOrigin2D extends ffi.Struct {
@@ -3729,9 +3698,6 @@ class WGpuOrigin2D extends ffi.Struct {
 class WGpuComputePassDescriptor extends ffi.Struct {
   @ffi.Uint32()
   external int numTimestampWrites;
-
-  @ffi.Uint32()
-  external int _unused64BitPadding;
 
   external ffi.Pointer<WGpuComputePassTimestampWrite> timestampWrites;
 }
@@ -3851,9 +3817,6 @@ class WGpuRenderBundleEncoderDescriptor extends ffi.Struct {
   @ffi.Int()
   external int numColorFormats;
 
-  @ffi.Uint32()
-  external int _unused64BitPadding;
-
   external ffi.Pointer<WGPU_TEXTURE_FORMAT> colorFormats;
 
   @WGPU_TEXTURE_FORMAT()
@@ -3891,9 +3854,6 @@ class WGpuCanvasConfiguration extends ffi.Struct {
   @ffi.Int()
   external int numViewFormats;
 
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
-
   external ffi.Pointer<WGPU_TEXTURE_FORMAT> viewFormats;
 
   @HTML_PREDEFINED_COLOR_SPACE()
@@ -3918,6 +3878,7 @@ class WGpuExtent3D extends ffi.Struct {
 }
 
 typedef WGpuCanvasContext = WGpuObjectBase;
+typedef _HWND = ffi.Pointer<ffi.Void>;
 typedef WGpuRequestAdapterCallback = ffi.Pointer<
     ffi.NativeFunction<ffi.Void Function(WGpuAdapter, ffi.Pointer<ffi.Void>)>>;
 typedef WGpuAdapter = WGpuObjectBase;
@@ -3981,9 +3942,7 @@ typedef WGpuLoadImageBitmapCallback = ffi.Pointer<
 typedef WGpuImageBitmap = WGpuObjectBase;
 typedef WGpuWindow = ffi.Pointer<ffi.Void>;
 
-const int ALIGN_64BIT = 1;
-
-const double WGPU_INFINITY = double.infinity;
+const double WGPU_INFINITY = 9218868437227405000.0;
 
 const int EM_TRUE = 1;
 

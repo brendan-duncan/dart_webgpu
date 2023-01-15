@@ -71,10 +71,10 @@ class WGpuLibrary {
             : ['RelWithDebInfo', 'Release'];
 
     final platform = Platform.isWindows
-        ? 'win'
+        ? 'win-x64'
         : Platform.isMacOS
             ? 'mac-arm64'
-            : 'linux';
+            : 'linux-x64';
 
     for (final config in configs) {
       final path = '$libPath/$platform-$config';

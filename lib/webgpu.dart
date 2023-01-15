@@ -1,3 +1,5 @@
+library webgpu;
+
 import 'ffi/wgpu_config.dart';
 import 'ffi/wgpu_library.dart';
 

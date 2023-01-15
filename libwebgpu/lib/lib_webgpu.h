@@ -68,7 +68,7 @@ void wgpu_destroy_all_objects(void);
 #ifdef __EMSCRIPTEN__
 WGpuCanvasContext wgpu_canvas_get_webgpu_context(const char *canvasSelector NOTNULL);
 #elif defined (_WIN32)
-WGpuCanvasContext wgpu_canvas_get_webgpu_context(HWND hwnd NOTNULL);
+WGpuCanvasContext wgpu_canvas_get_webgpu_context(_HWND hwnd NOTNULL);
 #elif defined (__APPLE__)
 WGpuCanvasContext wgpu_canvas_get_webgpu_context(void* window NOTNULL);
 #else

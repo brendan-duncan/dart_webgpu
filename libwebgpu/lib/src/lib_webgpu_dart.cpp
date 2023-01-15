@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "../lib_webgpu_dart.h"
 #ifdef _WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -25,16 +24,11 @@ void wgpu_object_finalize_dart(WGpuObjectBase wgpuObject) {
 }
 
 namespace {
-void printGLFWError(int code, const char* message) {
-  fprintf(stderr, "GLFW error: %d - %s\n", code, message);
-}
-bool _glfwInitialized = false;
+    bool _glfwInitialized = false;
 }
 
 WGpuWindow wgpu_create_window(int width, int height, const char *title) {
-    setenv("ANGLE_DEFAULT_PLATFORM", "swiftshader", 1);
     if (!_glfwInitialized) {
-        glfwSetErrorCallback(printGLFWError);
         if (!glfwInit()) {
             return nullptr;
         }
