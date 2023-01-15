@@ -1,8 +1,12 @@
 # Dart WebGPU
 
-Dart bindings of the WebGPU graphics API.
+Dart native bindings of the WebGPU graphics API.
 
 ![Dart WebGPU](dart_webgpu.jpg)
+
+## Example
+
+### https://github.com/brendan-duncan/dartcraft
 
 ## WARNING: Experimental, Work In Progress
 
@@ -39,9 +43,9 @@ an updated version of the ffi Dart bindings using ffigen.
 
 Dart WebGPU uses the following third party libraries:
 
-- Dawn: https://dawn.googlesource.com/dawn
+- **Dawn**: https://dawn.googlesource.com/dawn
   - This is Google's implementation of WebGPU.
-- lib_webgpu: https://github.com/juj/wasm_webgpu
+- **lib_webgpu**: https://github.com/juj/wasm_webgpu
   - This is a wrapper around Dawn that simplifies the API making binding easier.
 
 ### Debugging Tips
