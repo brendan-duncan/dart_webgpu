@@ -395,7 +395,7 @@ def build():
     print('----------------------------')
     with cwd('libwebgpu'):
         print('#### BUILDING libwebgpu in', os.getcwd())
-        #buildDawn()
+        buildDawn()
 
         path = os.getcwd()
         build_path = os.path.join(path, '_build')
@@ -413,8 +413,8 @@ def build():
             lib_path = os.path.join(lib_webgpu_path, 'lib')
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu.h'), os.path.join(includes_path, 'lib_webgpu.h'))
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_fwd.h'), os.path.join(includes_path, 'lib_webgpu_fwd.h'))
-            #shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_dawn.h'),
-            #                os.path.join(includes_path, 'lib_webgpu_dawn.h'))
+            #shutil.copyfile(os.path.join(path, 'lib', 'lib_webgpu_dawn.h'),
+                            #os.path.join(includes_path, 'lib_webgpu_dawn.h'))
 
             for config in configs:
                 mkdir_p(config)

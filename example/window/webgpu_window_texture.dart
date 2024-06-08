@@ -2,7 +2,7 @@ import 'package:image/image.dart' as img;
 import 'package:webgpu/webgpu.dart';
 
 void main() async {
-  await initializeWebGPU(config: WGpuConfig.releaseDebug);
+  await initializeWebGPU(config: WGpuConfig.debug);
 
   final adapter = await GPUAdapter.request();
   final device = await adapter.requestDevice();
