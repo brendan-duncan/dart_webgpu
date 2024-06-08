@@ -1,4 +1,5 @@
 import errno
+import glob
 import os
 import platform
 import shutil
@@ -264,6 +265,16 @@ def prepareDawnForBuild(env, depot_tools_path):
     fixupDawnCMake()
 
 
+def findLibraries(config):
+    libs = []
+    baseDir = os.path.join('libwebgpu', '_build', 'dawn', f'out-{config}')
+    filter = os.path.normpath(f'**/*.lib')
+    for filename in glob.glob(filter, recursive=True):
+        filename = os.path.normpath(filename)
+        libs.append(filename)
+    return libs
+
+
 def buildDawn():
     path = os.getcwd()
     build_path = os.path.join(path, '_build')
@@ -300,7 +311,7 @@ def buildDawn():
         print("#### PREPARING Dawn FOR BUILD")
         prepareDawnForBuild(env, depot_tools_path)
 
-        configs = ['Debug', 'Release', 'RelWithDebInfo']
+        configs = ['Debug']#, 'Release', 'RelWithDebInfo']
         for config in configs:
             out_dir = f'out-{config}'
             mkdir_p(out_dir)
@@ -340,62 +351,7 @@ def buildDawn():
                 print("#### BUILDING Dawn", config, "IN", os.getcwd())
                 run([cmake(), '--build', '.', '--config', config], out_path)
 
-                if WINDOWS:
-                    libraries = [
-                        f'src/dawn/common/{config}/dawn_common.lib',
-                        f'src/dawn/native/{config}/dawn_native.lib',
-                        f'src/dawn/native/{config}/webgpu_dawn.lib',
-                        f'src/dawn/platform/{config}/dawn_platform.lib',
-                        f'src/dawn/utils/{config}/dawn_utils.lib',
-                        f'src/dawn/wire/{config}/dawn_wire.lib',
-                        f'src/dawn/{config}/dawn_headers.lib',
-                        f'src/dawn/{config}/dawn_proc.lib',
-                        f'src/dawn/{config}/dawncpp.lib',
-                        f'src/dawn/{config}/dawncpp_headers.lib',
-                        f'src/tint/{config}/tint.lib',
-                        f'src/tint/{config}/tint_val.lib',
-                        f'src/tint/{config}/tint_diagnostic_utils.lib',
-                        f'src/tint/{config}/tint_utils_io.lib',
-                        f'third_party/spirv-tools/source/{config}/SPIRV-Tools.lib',
-                        f'third_party/spirv-tools/source/opt/{config}/SPIRV-Tools-opt.lib',
-                        f'third_party/abseil/absl/strings/{config}/absl_str_format_internal.lib',
-                        f'third_party/abseil/absl/strings/{config}/absl_strings.lib',
-                        f'third_party/abseil/absl/strings/{config}/absl_strings_internal.lib',
-                        f'third_party/abseil/absl/base/{config}/absl_base.lib',
-                        f'third_party/abseil/absl/base/{config}/absl_spinlock_wait.lib',
-                        f'third_party/abseil/absl/numeric/{config}/absl_int128.lib',
-                        f'third_party/abseil/absl/base/{config}/absl_throw_delegate.lib',
-                        f'third_party/abseil/absl/base/{config}/absl_raw_logging_internal.lib',
-                        f'third_party/abseil/absl/base/{config}/absl_log_severity.lib',
-                        f'third_party/glfw/src/{config}/glfw3.lib']
-                else:
-                    libraries = [
-                        f'src/dawn/common/{config}/libdawn_common.a',
-                        f'src/dawn/native/{config}/libdawn_native.a',
-                        f'src/dawn/native/{config}/libwebgpu_dawn.a',
-                        f'src/dawn/platform/{config}/libdawn_platform.a',
-                        f'src/dawn/utils/{config}/libdawn_utils.a',
-                        f'src/dawn/wire/{config}/libdawn_wire.a',
-                        f'src/dawn/{config}/libdawn_headers.a',
-                        f'src/dawn/{config}/libdawn_proc.a',
-                        f'src/dawn/{config}/libdawncpp.a',
-                        f'src/dawn/{config}/libdawncpp_headers.a',
-                        f'src/tint/{config}/libtint.a',
-                        f'src/tint/{config}/libtint_val.a',
-                        f'src/tint/{config}/libtint_diagnostic_utils.a',
-                        f'src/tint/{config}/libtint_utils_io.a',
-                        f'third_party/spirv-tools/source/{config}/libSPIRV-Tools.a',
-                        f'third_party/spirv-tools/source/opt/{config}/libSPIRV-Tools-opt.a',
-                        f'third_party/abseil/absl/strings/{config}/libabsl_str_format_internal.a',
-                        f'third_party/abseil/absl/strings/{config}/libabsl_strings.a',
-                        f'third_party/abseil/absl/strings/{config}/libabsl_strings_internal.a',
-                        f'third_party/abseil/absl/base/{config}/libabsl_base.a',
-                        f'third_party/abseil/absl/base/{config}/libabsl_spinlock_wait.a',
-                        f'third_party/abseil/absl/numeric/{config}/libabsl_int128.a',
-                        f'third_party/abseil/absl/base/{config}/libabsl_throw_delegate.a',
-                        f'third_party/abseil/absl/base/{config}/libabsl_raw_logging_internal.a',
-                        f'third_party/abseil/absl/base/{config}/libabsl_log_severity.a',
-                        f'third_party/glfw/src/{config}/libglfw3.a']
+                libraries = findLibraries(config)
 
                 lib_dawn_dest_path = os.path.join(dawn_libs_path,
                                                   os_name() + '-' + arch + '-' + config)
@@ -439,7 +395,7 @@ def build():
     print('----------------------------')
     with cwd('libwebgpu'):
         print('#### BUILDING libwebgpu in', os.getcwd())
-        buildDawn()
+        #buildDawn()
 
         path = os.getcwd()
         build_path = os.path.join(path, '_build')
@@ -449,7 +405,7 @@ def build():
         git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
 
         with cwd(build_path):
-            configs = ['Debug', 'Release', 'RelWithDebInfo']
+            configs = ['Debug']#, 'Release', 'RelWithDebInfo']
 
             # Copy the lib_webgpu headers to the binding generation folder. This is done before building the DLL
             # so lib_webgpu_dawn.h can be found by lib_webgpu_dart.cpp.
@@ -457,8 +413,8 @@ def build():
             lib_path = os.path.join(lib_webgpu_path, 'lib')
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu.h'), os.path.join(includes_path, 'lib_webgpu.h'))
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_fwd.h'), os.path.join(includes_path, 'lib_webgpu_fwd.h'))
-            shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_dawn.h'),
-                            os.path.join(includes_path, 'lib_webgpu_dawn.h'))
+            #shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_dawn.h'),
+            #                os.path.join(includes_path, 'lib_webgpu_dawn.h'))
 
             for config in configs:
                 mkdir_p(config)
@@ -475,7 +431,6 @@ def build():
                         shutil.copyfile(os.path.join(config, 'webgpu.dll'), os.path.join(out_path, 'webgpu.dll'))
                     else:
                         shutil.copyfile(os.path.join(config, 'libwebgpu.dylib'), os.path.join(out_path, 'libwebgpu.dylib'))
-
 
                 # Copy the libs into the pub lib folder for distribution
 

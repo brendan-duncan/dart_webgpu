@@ -1,6 +1,6 @@
 #pragma once
 
-enum WgpuObjectType {
+enum _WgpuObjectType {
   kWebGPUInvalidObject = 0,
   kWebGPUAdapter,
   kWebGPUDevice,
@@ -32,7 +32,7 @@ enum WgpuObjectType {
 // it would be a bad pointer. The app should make sure to delete derived objects before a parent
 // object, such as deleting all texture_view's before deleting the texture.
 
-struct WGpuDawnObject {
-  enum WgpuObjectType type; // C/Dawn doesn't have the RTTI that JS has.
+struct _WGpuObject {
+  _WgpuObjectType type; // C/Dawn doesn't have the RTTI that JS has.
   void* dawnObject;
 };

@@ -1,21 +1,9 @@
 #pragma once
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-// Avoid pulling in stdint.h and define the types used explicitly.
-#ifndef int32_t
-typedef int int32_t;
-typedef unsigned int uint32_t;
-typedef unsigned long long uint64_t;
-#endif
-
-#ifdef _WIN32
-// forward declare HWND so we don't need to pull in Windows.h. Using an alternative
-// name because the window.h version uses a pointer to an empty struct, making it
-// difficult to forward declare.
-typedef void* _HWND;
 #endif
 
 // The type 'double_int53_t' shall be an integer-like
@@ -47,7 +35,7 @@ typedef uint64_t double_int53_t;
 #ifdef __EMSCRIPTEN__
 typedef int WGpuObjectBase;
 #else
-typedef struct WGpuDawnObject *WGpuObjectBase;
+typedef struct _WGpuObject *WGpuObjectBase;
 #endif
 
 typedef struct WGpuObjectDescriptorBase WGpuObjectDescriptorBase;
@@ -176,13 +164,14 @@ typedef struct WGpuOrigin3D WGpuOrigin3D;
 typedef struct WGpuExtent3D WGpuExtent3D;
 typedef struct WGpuBindGroupLayoutEntry WGpuBindGroupLayoutEntry;
 typedef WGpuObjectBase WGpuImageBitmap;
+typedef struct WGpuPipelineError WGpuPipelineError;
 
 // Callbacks in the order of appearance in the WebIDL:
 
 typedef void (*WGpuRequestAdapterCallback)(WGpuAdapter adapter, void *userData);
 typedef void (*WGpuRequestDeviceCallback)(WGpuDevice device, void *userData);
 typedef void (*WGpuRequestAdapterInfoCallback)(WGpuAdapter adapter, const WGpuAdapterInfo *adapterInfo NOTNULL, void *userData);
-typedef void (*WGpuCreatePipelineCallback)(WGpuDevice device, WGpuPipelineBase pipeline, void *userData);
+typedef void (*WGpuCreatePipelineCallback)(WGpuDevice device, WGpuPipelineError *error, WGpuPipelineBase pipeline, void *userData);
 typedef void (*WGpuBufferMapCallback)(WGpuBuffer buffer, void *userData, WGPU_MAP_MODE_FLAGS mode, double_int53_t offset, double_int53_t size);
 typedef void (*WGpuGetCompilationInfoCallback)(WGpuShaderModule shaderModule, WGpuCompilationInfo *compilationInfo NOTNULL, void *userData);
 typedef void (*WGpuOnSubmittedWorkDoneCallback)(WGpuQueue queue, void *userData);

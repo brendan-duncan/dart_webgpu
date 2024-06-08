@@ -4,16 +4,16 @@ description: >-
   Dart bindings of the WebGPU graphics API.
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   ffi: ^2.0.1
   path: ^1.8.0
 
 dev_dependencies:
-  ffigen: ^7.2.4
-  image: ^4.0.8
-  lints: ^2.0.1
+  ffigen: ^12.0.0
+  image: ^4.2.0
+  lints: ^4.0.0
   test: ^1.16.0
 
 # This should be run from libwebgpu/build.py, as it sets up the build folder prior to running ffigen.

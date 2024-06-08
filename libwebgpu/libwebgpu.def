@@ -63,7 +63,6 @@ EXPORTS
     wgpu_texture_usage
     wgpu_is_texture_view
     wgpu_is_external_texture
-    wgpu_external_texture_is_expired
     wgpu_is_sampler
     wgpu_is_bind_group_layout
     wgpu_is_bind_group
@@ -87,7 +86,6 @@ EXPORTS
     wgpu_command_encoder_copy_texture_to_buffer
     wgpu_command_encoder_copy_texture_to_texture
     wgpu_command_encoder_clear_buffer
-    wgpu_command_encoder_write_timestamp
     wgpu_command_encoder_resolve_query_set
     wgpu_encoder_finish
     wgpu_is_binding_commands_mixin
@@ -115,9 +113,7 @@ EXPORTS
     wgpu_is_render_bundle
     wgpu_is_render_bundle_encoder
     wgpu_is_queue
-    wgpu_queue_submit_one
     wgpu_queue_submit_one_and_destroy
-    wgpu_queue_submit_multiple
     wgpu_queue_submit_multiple_and_destroy
     wgpu_queue_set_on_submitted_work_done_callback
     wgpu_queue_write_buffer
