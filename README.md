@@ -38,6 +38,10 @@ an updated version of the ffi Dart bindings using ffigen.
 * Python 3.0+
 * CMake 3.15+
 * Visual Studio / Xcode
+* LLVM
+    * Windows: run `winget install -e --id LLVM.LLVM`
+    * MacOS: run `brew install llvm`
+    * Linux: run `sudo apt-get install libclang-dev`
 
 ### Third Party Libraries
 

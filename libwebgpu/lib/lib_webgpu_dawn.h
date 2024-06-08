@@ -33,6 +33,6 @@ enum _WgpuObjectType {
 // object, such as deleting all texture_view's before deleting the texture.
 
 struct _WGpuObject {
-  _WgpuObjectType type; // C/Dawn doesn't have the RTTI that JS has.
+  enum _WgpuObjectType type; // C/Dawn doesn't have the RTTI that JS has.
   void* dawnObject;
 };

@@ -311,7 +311,7 @@ def buildDawn():
         print("#### PREPARING Dawn FOR BUILD")
         prepareDawnForBuild(env, depot_tools_path)
 
-        configs = ['Debug']#, 'Release', 'RelWithDebInfo']
+        configs = ['Debug', 'Release', 'RelWithDebInfo']
         for config in configs:
             out_dir = f'out-{config}'
             mkdir_p(out_dir)
@@ -405,7 +405,7 @@ def build():
         git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
 
         with cwd(build_path):
-            configs = ['Debug']#, 'Release', 'RelWithDebInfo']
+            configs = ['Debug', 'Release', 'RelWithDebInfo']
 
             # Copy the lib_webgpu headers to the binding generation folder. This is done before building the DLL
             # so lib_webgpu_dawn.h can be found by lib_webgpu_dart.cpp.
