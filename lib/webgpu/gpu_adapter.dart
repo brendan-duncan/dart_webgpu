@@ -128,7 +128,8 @@ class GPUAdapter extends GPUObjectBase<wgpu.WGpuAdapter> {
         Pointer.fromFunction<Void Function(wgpu.WGpuDevice, Pointer<Void>)>(
             _requestDeviceCB);
 
-    libwebgpu.wgpu_adapter_request_device_async(object, o, fn, o.cast<Void>());
+    //libwebgpu.wgpu_adapter_request_device_async(object, o, fn, o.cast<Void>());
+    libwebgpu.wgpu_adapter_request_device_async_simple(object, fn);
 
     return completer.future;
   }

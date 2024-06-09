@@ -198,8 +198,8 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
       for (final e in constants.entries) {
         final name = e.key.toNativeUtf8();
         final value = e.value.toDouble();
-        c.elementAt(i).ref.name = name.cast<Char>();
-        c.elementAt(i).ref.value = value;
+        (c + i).ref.name = name.cast<Char>();
+        (c + i).ref.value = value;
         i++;
       }
     }
@@ -208,7 +208,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
         desc.module.object, entryStr, desc.layout.object, c, numConstants);
 
     for (var i = 0; i < numConstants; ++i) {
-      malloc.free(c.elementAt(i).ref.name);
+      malloc.free((c + i).ref.name);
     }
 
     malloc.free(entryStr);
@@ -272,13 +272,13 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
       for (final e in constants.entries) {
         final name = e.key.toNativeUtf8();
         final value = e.value.toDouble();
-        c.elementAt(i).ref.name = name.cast<Char>();
-        c.elementAt(i).ref.value = value;
+        (c + i).ref.name = name.cast<Char>();
+        (c + i).ref.value = value;
         i++;
       }
     }
 
-    libwebgpu.wgpu_device_create_compute_pipeline_async(
+    /*libwebgpu.wgpu_device_create_compute_pipeline_async(
         object,
         desc.module.object,
         entryStr,
@@ -286,10 +286,10 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
         c,
         numConstants,
         cb,
-        object.cast());
+        object.cast());*/
 
     for (var i = 0; i < numConstants; ++i) {
-      malloc.free(c.elementAt(i).ref.name);
+      malloc.free((c + i).ref.name);
     }
     malloc.free(entryStr);
     calloc.free(c);
@@ -325,8 +325,8 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
         Void Function(wgpu.WGpuDevice, wgpu.WGpuPipelineBase,
             Pointer<Void>)>(_createRenderPipelineCB);
 
-    libwebgpu.wgpu_device_create_render_pipeline_async(
-        object, d, cb, object.cast());
+    /*libwebgpu.wgpu_device_create_render_pipeline_async(
+        object, d, cb, object.cast());*/
 
     desc.deleteNative(d);
     return pipeline;

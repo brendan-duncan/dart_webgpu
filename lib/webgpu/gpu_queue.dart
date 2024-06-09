@@ -21,13 +21,13 @@ class GPUQueue extends GPUObjectBase<wgpu.WGpuQueue> {
     // Submitting an empty command-buffer can be used to flush the pending queue
     // commands.
     if (commandBufferOrList == null) {
-      libwebgpu.wgpu_queue_submit_multiple(object, nullptr, 0);
+      libwebgpu.wgpu_queue_submit_multiple_and_destroy(object, nullptr, 0);
     } else if (commandBufferOrList is GPUCommandBuffer) {
-      libwebgpu.wgpu_queue_submit_one(object, commandBufferOrList.object);
+      libwebgpu.wgpu_queue_submit_one_and_destroy(object, commandBufferOrList.object);
       commandBufferOrList.destroy();
     } else if (commandBufferOrList is List<GPUCommandBuffer>) {
       for (final cb in commandBufferOrList) {
-        libwebgpu.wgpu_queue_submit_one(object, cb.object);
+        libwebgpu.wgpu_queue_submit_one_and_destroy(object, cb.object);
         cb.destroy();
       }
     } else {

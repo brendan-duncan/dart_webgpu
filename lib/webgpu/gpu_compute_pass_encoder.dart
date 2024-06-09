@@ -25,27 +25,13 @@ class GPUComputePassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
     this.descriptor = desc;
 
     final d = calloc<wgpu.WGpuComputePassDescriptor>();
-    final numTimestampWrites = desc.timestampWrites?.length ?? 0;
-    d.ref.numTimestampWrites = numTimestampWrites;
-    d.ref.timestampWrites =
-        calloc<wgpu.WGpuComputePassTimestampWrite>(numTimestampWrites);
-    if (numTimestampWrites > 0) {
-      for (var i = 0; i < numTimestampWrites; ++i) {
-        final tsw = desc.timestampWrites![i];
-        d.ref.timestampWrites.elementAt(i).ref
-          ..location = tsw.location.nativeIndex
-          ..queryIndex = tsw.queryIndex
-          ..querySet = tsw.querySet.object;
-      }
-    }
 
     final o =
         libwebgpu.wgpu_command_encoder_begin_compute_pass(encoder.object, d);
     setObject(o);
 
     calloc
-      ..free(d.ref.timestampWrites)
-      ..free(d);
+      .free(d);
   }
 
   /// Set the current [GPUComputePipeline].

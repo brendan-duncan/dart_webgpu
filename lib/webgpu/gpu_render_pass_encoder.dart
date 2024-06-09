@@ -74,20 +74,6 @@ class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
       }
     }
 
-    final numTimestampWrites = descriptor.timestampWrites?.length ?? 0;
-    d.ref.numTimestampWrites = numTimestampWrites;
-    if (numTimestampWrites > 0) {
-      d.ref.timestampWrites =
-          calloc<wgpu.WGpuRenderPassTimestampWrite>(numTimestampWrites);
-      for (var i = 0; i < numTimestampWrites; ++i) {
-        final tsw = descriptor.timestampWrites![i];
-        d.ref.timestampWrites.elementAt(i).ref
-          ..location = tsw.location.nativeIndex
-          ..queryIndex = tsw.queryIndex
-          ..querySet = tsw.querySet.object;
-      }
-    }
-
     final o =
         libwebgpu.wgpu_command_encoder_begin_render_pass(encoder.object, d);
 
@@ -95,10 +81,6 @@ class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
 
     if (numColorAttachments > 0) {
       calloc.free(d.ref.colorAttachments);
-    }
-
-    if (numTimestampWrites > 0) {
-      calloc.free(d.ref.timestampWrites);
     }
 
     calloc.free(d);

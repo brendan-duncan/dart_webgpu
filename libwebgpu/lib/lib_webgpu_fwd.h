@@ -35,7 +35,7 @@ typedef uint64_t double_int53_t;
 #ifdef __EMSCRIPTEN__
 typedef int WGpuObjectBase;
 #else
-typedef struct _WGpuObject *WGpuObjectBase;
+typedef struct WGpuDawnObject *WGpuObjectBase;
 #endif
 
 typedef struct WGpuObjectDescriptorBase WGpuObjectDescriptorBase;

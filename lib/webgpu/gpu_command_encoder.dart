@@ -164,14 +164,6 @@ class GPUCommandEncoder extends GPUObjectBase<wgpu.WGpuCommandEncoder> {
         object, buffer.object, offset, size);
   }
 
-  /// Writes a timestamp value into a [GPUQuerySet] when all previous commands
-  /// have completed executing.
-  void writeTimestamp(
-      {required GPUQuerySet querySet, required int queryIndex}) {
-    libwebgpu.wgpu_command_encoder_write_timestamp(
-        object, querySet.object, queryIndex);
-  }
-
   /// Resolves query results from a [GPUQuerySet] out into a range of a
   /// [GPUBuffer].
   void resolveQuerySet(

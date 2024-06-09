@@ -3389,7 +3389,7 @@ class libwebgpu {
   late final _wgpu_buffer_map_sync = _wgpu_buffer_map_syncPtr
       .asFunction<void Function(WGpuBuffer, int, int, int)>();
 
-  int wgpu_buffer_get_mapped_range(
+  ffi.Pointer<ffi.Void> wgpu_buffer_get_mapped_range(
     WGpuBuffer buffer,
     int startOffset,
     int size,
@@ -3403,10 +3403,10 @@ class libwebgpu {
 
   late final _wgpu_buffer_get_mapped_rangePtr = _lookup<
       ffi.NativeFunction<
-          double_int53_t Function(WGpuBuffer, double_int53_t,
+          ffi.Pointer<ffi.Void> Function(WGpuBuffer, double_int53_t,
               double_int53_t)>>('wgpu_buffer_get_mapped_range');
   late final _wgpu_buffer_get_mapped_range = _wgpu_buffer_get_mapped_rangePtr
-      .asFunction<int Function(WGpuBuffer, int, int)>();
+      .asFunction<ffi.Pointer<ffi.Void> Function(WGpuBuffer, int, int)>();
 
   void wgpu_buffer_read_mapped_range(
     WGpuBuffer buffer,
@@ -5461,7 +5461,7 @@ class libwebgpu {
           .asFunction<WGpuCanvasContext Function(WGpuWindow)>();
 }
 
-abstract class _WgpuObjectType {
+abstract class WgpuObjectType {
   static const int kWebGPUInvalidObject = 0;
   static const int kWebGPUAdapter = 1;
   static const int kWebGPUDevice = 2;
@@ -5487,7 +5487,7 @@ abstract class _WgpuObjectType {
   static const int kWebGPUCanvasContext = 22;
 }
 
-final class _WGpuObject extends ffi.Struct {
+final class WGpuDawnObject extends ffi.Struct {
   @ffi.Int32()
   external int type;
 
@@ -5730,7 +5730,7 @@ final class WGpuExternalTextureDescriptor extends ffi.Struct {
   external int colorSpace;
 }
 
-typedef WGpuObjectBase = ffi.Pointer<_WGpuObject>;
+typedef WGpuObjectBase = ffi.Pointer<WGpuDawnObject>;
 typedef HTML_PREDEFINED_COLOR_SPACE = ffi.Int;
 typedef DartHTML_PREDEFINED_COLOR_SPACE = int;
 

@@ -390,6 +390,59 @@ def fixHeadersForFFIGen(includes_path):
     fp.close()
 
 
+def replaceSubstring(test_str, s1, s2):
+    result = ""
+    i = 0
+    while i < len(test_str):
+        if test_str[i:i+len(s1)] == s1:
+            result += s2
+            i += len(s1)
+        else:
+            result += test_str[i]
+            i += 1
+    return result
+
+
+def fixLibWebGpu(path):
+    lib_webgpu = os.path.join(path, 'lib', 'lib_webgpu_dawn.cpp')
+    print('#### FIXING', lib_webgpu)
+    fp = open(lib_webgpu, 'rt')
+    txt = fp.read()
+    fp.close()
+    txt = replaceSubstring(txt, '_WgpuObjectType', 'WgpuObjectType')
+    txt = replaceSubstring(txt, '_WGpuObject', 'WGpuDawnObject')
+    txt = replaceSubstring(txt, 'WGpuDawnObjectBuffer', '_WGpuObjectBuffer')
+    # lib_webgpu was designed for Emscripten; fix it up for ffigen
+    txt = replaceSubstring(txt, 'double_int53_t wgpu_buffer_get_mapped_range', 'void* wgpu_buffer_get_mapped_range')
+    txt = replaceSubstring(txt, 'return (double_int53_t)offset;', 'return offset;')
+
+    fp = open(lib_webgpu, 'wt')
+    fp.write(txt)
+    fp.close()
+
+    lib_webgpu = os.path.join(path, 'lib', 'lib_webgpu_fwd.h')
+    print('#### FIXING', lib_webgpu)
+    fp = open(lib_webgpu, 'rt')
+    txt = fp.read()
+    fp.close()
+    txt = replaceSubstring(txt, '_WGpuObject', 'WGpuDawnObject')
+    fp = open(lib_webgpu, 'wt')
+    fp.write(txt)
+    fp.close()
+
+    lib_webgpu = os.path.join(path, 'lib', 'lib_webgpu.h')
+    print('#### FIXING', lib_webgpu)
+    fp = open(lib_webgpu, 'rt')
+    txt = fp.read()
+    fp.close()
+    txt = replaceSubstring(txt, 'double_int53_t wgpu_buffer_get_mapped_range', 'void* wgpu_buffer_get_mapped_range')
+    fp = open(lib_webgpu, 'wt')
+    fp.write(txt)
+    fp.close()
+
+
+
+
 def build():
     print('#### BUILDING FOR', os_name(), arch_name())
     print('----------------------------')
@@ -404,6 +457,8 @@ def build():
         lib_webgpu_path = os.path.join(build_path, 'lib_webgpu')
         git_clone_and_update_to(lib_webgpu_url, lib_webgpu_path, 'main')
 
+        fixLibWebGpu(lib_webgpu_path)
+
         with cwd(build_path):
             configs = ['Debug', 'Release', 'RelWithDebInfo']
 
@@ -413,8 +468,6 @@ def build():
             lib_path = os.path.join(lib_webgpu_path, 'lib')
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu.h'), os.path.join(includes_path, 'lib_webgpu.h'))
             shutil.copyfile(os.path.join(lib_path, 'lib_webgpu_fwd.h'), os.path.join(includes_path, 'lib_webgpu_fwd.h'))
-            #shutil.copyfile(os.path.join(path, 'lib', 'lib_webgpu_dawn.h'),
-                            #os.path.join(includes_path, 'lib_webgpu_dawn.h'))
 
             for config in configs:
                 mkdir_p(config)
