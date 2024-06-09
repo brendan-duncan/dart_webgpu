@@ -59,8 +59,9 @@ class GPURenderPassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
         final ca = descriptor.colorAttachments[i];
         final nc = ca.clearValue.length;
 
-        final dca = d.ref.colorAttachments.elementAt(i).ref
+        final dca = (d.ref.colorAttachments + i).ref
           ..view = ca.view.object
+          ..depthSlice = ca.depthSlice
           ..storeOp = ca.storeOp.nativeIndex
           ..loadOp = ca.loadOp.nativeIndex
           ..clearValue.r = nc > 0 ? ca.clearValue[0].toDouble() : 0.0

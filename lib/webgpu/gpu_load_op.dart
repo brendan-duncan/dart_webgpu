@@ -1,4 +1,5 @@
 enum GPULoadOp {
+  undefined,
   /// Loads the existing value for this attachment into the render pass.
   load,
 

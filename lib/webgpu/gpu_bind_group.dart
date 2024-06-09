@@ -49,7 +49,7 @@ class GPUBindGroup extends GPUObjectBase<wgpu.WGpuBindGroup> {
         size = e.bufferSize;
       }
 
-      p.elementAt(i).ref
+      (p + i).ref
         ..binding = binding
         ..resource = resource.objectPtr.cast<wgpu.WGpuDawnObject>()
         ..bufferBindOffset = offset

@@ -8,6 +8,8 @@ class GPURenderPassColorAttachment {
   /// for this color attachment.
   final GPUTextureView view;
 
+  final int depthSlice;
+
   /// A TextureView describing the texture subresource that will receive the
   /// resolved output for this color attachment if view is multisampled.
   final GPUTextureView? resolveTarget;
@@ -28,6 +30,7 @@ class GPURenderPassColorAttachment {
 
   const GPURenderPassColorAttachment(
       {required this.view,
+      this.depthSlice = -1,
       this.resolveTarget,
       this.clearValue = const [0.0, 0.0, 0.0, 0.0],
       required this.loadOp,
@@ -35,6 +38,7 @@ class GPURenderPassColorAttachment {
 
   factory GPURenderPassColorAttachment.fromMap(Map<String, Object> map) {
     final view = mapValueRequired<GPUTextureView>(map['view']);
+    final depthSlice = mapValue<int>(map['depthSlice'], -1);
     final resolveTarget =
         mapValueNullable<GPUTextureView>(map['resolveTarget']);
     final clearValue =
@@ -44,6 +48,7 @@ class GPURenderPassColorAttachment {
 
     return GPURenderPassColorAttachment(
         view: view,
+        depthSlice: depthSlice,
         loadOp: loadOp,
         storeOp: storeOp,
         resolveTarget: resolveTarget,

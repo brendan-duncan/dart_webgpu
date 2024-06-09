@@ -115,6 +115,41 @@ class GPUAdapter extends GPUObjectBase<wgpu.WGpuAdapter> {
     final o = calloc<wgpu.WGpuDeviceDescriptor>();
     o.ref.requiredFeatures = requiredFeatures?.value ?? 0;
 
+    final l = calloc<wgpu.WGpuSupportedLimits>();
+    libwebgpu.wgpu_adapter_or_device_get_limits(object, l);
+    // TODO: this would be a lot simpler if I knew how to get the Pointer of o.ref.requiredLimits.
+    o.ref.requiredLimits.maxUniformBufferBindingSize = l.ref.maxUniformBufferBindingSize;
+    o.ref.requiredLimits.maxStorageBufferBindingSize = l.ref.maxStorageBufferBindingSize;
+    o.ref.requiredLimits.maxBufferSize = l.ref.maxBufferSize;
+    o.ref.requiredLimits.maxTextureDimension1D = l.ref.maxTextureDimension1D;
+    o.ref.requiredLimits.maxTextureDimension2D = l.ref.maxTextureDimension2D;
+    o.ref.requiredLimits.maxTextureDimension3D = l.ref.maxTextureDimension3D;
+    o.ref.requiredLimits.maxTextureArrayLayers = l.ref.maxTextureArrayLayers;
+    o.ref.requiredLimits.maxBindGroups = l.ref.maxBindGroups;
+    o.ref.requiredLimits.maxBindGroupsPlusVertexBuffers = l.ref.maxBindGroupsPlusVertexBuffers;
+    o.ref.requiredLimits.maxBindingsPerBindGroup = l.ref.maxBindingsPerBindGroup;
+    o.ref.requiredLimits.maxDynamicUniformBuffersPerPipelineLayout = l.ref.maxDynamicUniformBuffersPerPipelineLayout;
+    o.ref.requiredLimits.maxDynamicStorageBuffersPerPipelineLayout = l.ref.maxDynamicStorageBuffersPerPipelineLayout;
+    o.ref.requiredLimits.maxSampledTexturesPerShaderStage = l.ref.maxSampledTexturesPerShaderStage;
+    o.ref.requiredLimits.maxSamplersPerShaderStage = l.ref.maxSamplersPerShaderStage;
+    o.ref.requiredLimits.maxStorageBuffersPerShaderStage = l.ref.maxStorageBuffersPerShaderStage;
+    o.ref.requiredLimits.maxStorageTexturesPerShaderStage = l.ref.maxStorageTexturesPerShaderStage;
+    o.ref.requiredLimits.maxUniformBuffersPerShaderStage = l.ref.maxUniformBuffersPerShaderStage;
+    o.ref.requiredLimits.minUniformBufferOffsetAlignment = l.ref.minUniformBufferOffsetAlignment;
+    o.ref.requiredLimits.minStorageBufferOffsetAlignment = l.ref.minStorageBufferOffsetAlignment;
+    o.ref.requiredLimits.maxVertexBuffers = l.ref.maxVertexBuffers;
+    o.ref.requiredLimits.maxVertexAttributes = l.ref.maxVertexAttributes;
+    o.ref.requiredLimits.maxVertexBufferArrayStride = l.ref.maxVertexBufferArrayStride;
+    o.ref.requiredLimits.maxInterStageShaderComponents = l.ref.maxInterStageShaderComponents;
+    o.ref.requiredLimits.maxInterStageShaderVariables = l.ref.maxInterStageShaderVariables;
+    o.ref.requiredLimits.maxColorAttachments = l.ref.maxColorAttachments;
+    o.ref.requiredLimits.maxColorAttachmentBytesPerSample = l.ref.maxColorAttachmentBytesPerSample;
+    o.ref.requiredLimits.maxComputeWorkgroupStorageSize = l.ref.maxComputeWorkgroupStorageSize;
+    o.ref.requiredLimits.maxComputeInvocationsPerWorkgroup = l.ref.maxComputeInvocationsPerWorkgroup;
+    o.ref.requiredLimits.maxComputeWorkgroupSizeX = l.ref.maxComputeWorkgroupSizeX;
+    o.ref.requiredLimits.maxComputeWorkgroupSizeY = l.ref.maxComputeWorkgroupSizeY;
+    o.ref.requiredLimits.maxComputeWorkgroupSizeZ = l.ref.maxComputeWorkgroupSizeZ;
+
     requiredLimits?.copyTo(o.ref.requiredLimits);
     if (defaultQueue != null) {
       final q = defaultQueue.toNativeUtf8();
@@ -128,8 +163,9 @@ class GPUAdapter extends GPUObjectBase<wgpu.WGpuAdapter> {
         Pointer.fromFunction<Void Function(wgpu.WGpuDevice, Pointer<Void>)>(
             _requestDeviceCB);
 
-    //libwebgpu.wgpu_adapter_request_device_async(object, o, fn, o.cast<Void>());
-    libwebgpu.wgpu_adapter_request_device_async_simple(object, fn);
+    libwebgpu.wgpu_adapter_request_device_async(object, o, fn, o.cast<Void>());
+
+    calloc.free(l);
 
     return completer.future;
   }

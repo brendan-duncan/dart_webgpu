@@ -89,7 +89,7 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
         Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
             Pointer<Void>)>(_deviceLostCB);
 
-    libwebgpu.wgpu_device_set_lost_callback(object, cb, object.cast());
+    //libwebgpu.wgpu_device_set_lost_callback(object, cb, object.cast());
 
     _errorCallbackData[object.cast<Void>()] = _DeviceCallbackData(this);
 
