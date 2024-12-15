@@ -24,8 +24,9 @@ class GPUWindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
       GPUTextureFormat? format,
       GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
       List<GPUTextureFormat>? viewFormats}) {
+    final ctx = libwebgpu.wgpu_window_get_webgpu_context(window.object);
     final f = libwebgpu.navigator_gpu_get_preferred_canvas_format(
-        adapter.object, object);
+        adapter.object, ctx);
     preferredFormat = GPUTextureFormat.values[f - 1];
     configure(format: format, usage: usage, viewFormats: viewFormats);
   }

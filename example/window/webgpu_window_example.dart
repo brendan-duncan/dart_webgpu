@@ -13,7 +13,7 @@ void main() async {
   });
 
   final window = GPUWindow(width: 800, height: 600);
-  final context = window.createContext(device);
+  final context = window.createContext(adapter, device);
 
   var g = 0.0;
 

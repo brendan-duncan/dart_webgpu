@@ -4,6 +4,7 @@ import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
+import '../webgpu/gpu_adapter.dart';
 import '../webgpu/gpu_device.dart';
 import '../webgpu/gpu_texture_format.dart';
 import '../webgpu/gpu_texture_usage.dart';
@@ -60,11 +61,12 @@ class GPUWindow {
 
   bool isKeyPressed(int key) => libwebgpu.wgpu_window_get_key(object, key) != 0;
 
-  GPUWindowContext createContext(GPUDevice device,
+  GPUWindowContext createContext(GPUAdapter adapter, GPUDevice device,
           {GPUTextureFormat? format,
           GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
           List<GPUTextureFormat>? viewFormats}) =>
       GPUWindowContext(this,
+          adapter: adapter,
           device: device,
           format: format,
           usage: usage,

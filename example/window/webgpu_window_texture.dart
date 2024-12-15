@@ -8,7 +8,7 @@ void main() async {
   final device = await adapter.requestDevice();
 
   final window = GPUWindow(width: 800, height: 600);
-  final context = window.createContext(device);
+  final context = window.createContext(adapter, device);
   final presentationFormat = context.preferredFormat;
 
   const triangleVertWGSL = '''
