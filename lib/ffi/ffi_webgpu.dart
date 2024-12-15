@@ -2604,6 +2604,37 @@ class libwebgpu {
   late final _wgpu_sync_operations_pending =
       _wgpu_sync_operations_pendingPtr.asFunction<int Function()>();
 
+  void wgpu_request_animation_frame_loop(
+    ffi.Pointer<
+            ffi.NativeFunction<
+                ffi.Int Function(
+                    ffi.Double time, ffi.Pointer<ffi.Void> userData)>>
+        callback,
+    ffi.Pointer<ffi.Void> userData,
+  ) {
+    return _wgpu_request_animation_frame_loop(
+      callback,
+      userData,
+    );
+  }
+
+  late final _wgpu_request_animation_frame_loopPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<
+                  ffi.NativeFunction<
+                      ffi.Int Function(
+                          ffi.Double time, ffi.Pointer<ffi.Void> userData)>>,
+              ffi.Pointer<ffi.Void>)>>('wgpu_request_animation_frame_loop');
+  late final _wgpu_request_animation_frame_loop =
+      _wgpu_request_animation_frame_loopPtr.asFunction<
+          void Function(
+              ffi.Pointer<
+                  ffi.NativeFunction<
+                      ffi.Int Function(
+                          ffi.Double time, ffi.Pointer<ffi.Void> userData)>>,
+              ffi.Pointer<ffi.Void>)>();
+
   int navigator_gpu_request_adapter_async(
     ffi.Pointer<WGpuRequestAdapterOptions> options,
     WGpuRequestAdapterCallback adapterCallback,
@@ -2669,16 +2700,23 @@ class libwebgpu {
       _navigator_gpu_request_adapter_sync_simplePtr
           .asFunction<WGpuAdapter Function()>();
 
-  int navigator_gpu_get_preferred_canvas_format() {
-    return _navigator_gpu_get_preferred_canvas_format();
+  int navigator_gpu_get_preferred_canvas_format(
+    WGpuAdapter arg0,
+    WGpuCanvasContext arg1,
+  ) {
+    return _navigator_gpu_get_preferred_canvas_format(
+      arg0,
+      arg1,
+    );
   }
 
-  late final _navigator_gpu_get_preferred_canvas_formatPtr =
-      _lookup<ffi.NativeFunction<WGPU_TEXTURE_FORMAT Function()>>(
-          'navigator_gpu_get_preferred_canvas_format');
+  late final _navigator_gpu_get_preferred_canvas_formatPtr = _lookup<
+      ffi.NativeFunction<
+          WGPU_TEXTURE_FORMAT Function(WGpuAdapter,
+              WGpuCanvasContext)>>('navigator_gpu_get_preferred_canvas_format');
   late final _navigator_gpu_get_preferred_canvas_format =
       _navigator_gpu_get_preferred_canvas_formatPtr
-          .asFunction<int Function()>();
+          .asFunction<int Function(WGpuAdapter, WGpuCanvasContext)>();
 
   ffi.Pointer<ffi.Pointer<ffi.Char>>
       navigator_gpu_get_wgsl_language_features() {
@@ -2782,6 +2820,23 @@ class libwebgpu {
       _wgpu_adapter_or_device_get_limitsPtr.asFunction<
           void Function(WGpuAdapter, ffi.Pointer<WGpuSupportedLimits>)>();
 
+  void wgpu_adapter_get_info(
+    WGpuAdapter adapter,
+    ffi.Pointer<WGpuAdapterInfo> adapterInfo,
+  ) {
+    return _wgpu_adapter_get_info(
+      adapter,
+      adapterInfo,
+    );
+  }
+
+  late final _wgpu_adapter_get_infoPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(WGpuAdapter,
+              ffi.Pointer<WGpuAdapterInfo>)>>('wgpu_adapter_get_info');
+  late final _wgpu_adapter_get_info = _wgpu_adapter_get_infoPtr
+      .asFunction<void Function(WGpuAdapter, ffi.Pointer<WGpuAdapterInfo>)>();
+
   int wgpu_adapter_is_fallback_adapter(
     WGpuAdapter adapter,
   ) {
@@ -2875,28 +2930,6 @@ class libwebgpu {
   late final _wgpu_adapter_request_device_sync_simple =
       _wgpu_adapter_request_device_sync_simplePtr
           .asFunction<WGpuDevice Function(WGpuAdapter)>();
-
-  void wgpu_adapter_request_adapter_info_async(
-    WGpuAdapter adapter,
-    WGpuRequestAdapterInfoCallback callback,
-    ffi.Pointer<ffi.Void> userData,
-  ) {
-    return _wgpu_adapter_request_adapter_info_async(
-      adapter,
-      callback,
-      userData,
-    );
-  }
-
-  late final _wgpu_adapter_request_adapter_info_asyncPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(WGpuAdapter, WGpuRequestAdapterInfoCallback,
-                  ffi.Pointer<ffi.Void>)>>(
-      'wgpu_adapter_request_adapter_info_async');
-  late final _wgpu_adapter_request_adapter_info_async =
-      _wgpu_adapter_request_adapter_info_asyncPtr.asFunction<
-          void Function(WGpuAdapter, WGpuRequestAdapterInfoCallback,
-              ffi.Pointer<ffi.Void>)>();
 
   late final ffi.Pointer<WGpuDeviceDescriptor>
       _WGPU_DEVICE_DESCRIPTOR_DEFAULT_INITIALIZER =
@@ -4047,26 +4080,6 @@ class libwebgpu {
           WGpuRenderPassEncoder Function(
               WGpuCommandEncoder, ffi.Pointer<WGpuRenderPassDescriptor>)>();
 
-  WGpuRenderPassEncoder wgpu_command_encoder_begin_render_pass_1color_0depth(
-    WGpuCommandEncoder commandEncoder,
-    ffi.Pointer<WGpuRenderPassDescriptor> renderPassDesc,
-  ) {
-    return _wgpu_command_encoder_begin_render_pass_1color_0depth(
-      commandEncoder,
-      renderPassDesc,
-    );
-  }
-
-  late final _wgpu_command_encoder_begin_render_pass_1color_0depthPtr = _lookup<
-          ffi.NativeFunction<
-              WGpuRenderPassEncoder Function(
-                  WGpuCommandEncoder, ffi.Pointer<WGpuRenderPassDescriptor>)>>(
-      'wgpu_command_encoder_begin_render_pass_1color_0depth');
-  late final _wgpu_command_encoder_begin_render_pass_1color_0depth =
-      _wgpu_command_encoder_begin_render_pass_1color_0depthPtr.asFunction<
-          WGpuRenderPassEncoder Function(
-              WGpuCommandEncoder, ffi.Pointer<WGpuRenderPassDescriptor>)>();
-
   WGpuComputePassEncoder wgpu_command_encoder_begin_compute_pass(
     WGpuCommandEncoder commandEncoder,
     ffi.Pointer<WGpuComputePassDescriptor> computePassDesc,
@@ -5203,6 +5216,26 @@ class libwebgpu {
           void Function(
               WGpuDevice, WGpuDeviceErrorCallback, ffi.Pointer<ffi.Void>)>();
 
+  int wgpu_device_pop_error_scope_sync(
+    WGpuDevice device,
+    ffi.Pointer<ffi.Char> dstErrorMessage,
+    int errorMessageLength,
+  ) {
+    return _wgpu_device_pop_error_scope_sync(
+      device,
+      dstErrorMessage,
+      errorMessageLength,
+    );
+  }
+
+  late final _wgpu_device_pop_error_scope_syncPtr = _lookup<
+      ffi.NativeFunction<
+          WGPU_ERROR_TYPE Function(WGpuDevice, ffi.Pointer<ffi.Char>,
+              ffi.Int)>>('wgpu_device_pop_error_scope_sync');
+  late final _wgpu_device_pop_error_scope_sync =
+      _wgpu_device_pop_error_scope_syncPtr
+          .asFunction<int Function(WGpuDevice, ffi.Pointer<ffi.Char>, int)>();
+
   void wgpu_device_set_uncapturederror_callback(
     WGpuDevice device,
     WGpuDeviceErrorCallback callback,
@@ -5224,6 +5257,14 @@ class libwebgpu {
       _wgpu_device_set_uncapturederror_callbackPtr.asFunction<
           void Function(
               WGpuDevice, WGpuDeviceErrorCallback, ffi.Pointer<ffi.Void>)>();
+
+  late final ffi.Pointer<WGpuCanvasToneMapping>
+      _WGPU_CANVAS_TONE_MAPPING_DEFAULT_INITIALIZER =
+      _lookup<WGpuCanvasToneMapping>(
+          'WGPU_CANVAS_TONE_MAPPING_DEFAULT_INITIALIZER');
+
+  WGpuCanvasToneMapping get WGPU_CANVAS_TONE_MAPPING_DEFAULT_INITIALIZER =>
+      _WGPU_CANVAS_TONE_MAPPING_DEFAULT_INITIALIZER.ref;
 
   late final ffi.Pointer<WGpuCanvasConfiguration>
       _WGPU_CANVAS_CONFIGURATION_DEFAULT_INITIALIZER =
@@ -5338,19 +5379,30 @@ class libwebgpu {
           void Function(ffi.Pointer<ffi.Char>, int, WGpuLoadImageBitmapCallback,
               ffi.Pointer<ffi.Void>)>();
 
+  void wgpu_present_all_rendering_and_wait_for_next_animation_frame() {
+    return _wgpu_present_all_rendering_and_wait_for_next_animation_frame();
+  }
+
+  late final _wgpu_present_all_rendering_and_wait_for_next_animation_framePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
+          'wgpu_present_all_rendering_and_wait_for_next_animation_frame');
+  late final _wgpu_present_all_rendering_and_wait_for_next_animation_frame =
+      _wgpu_present_all_rendering_and_wait_for_next_animation_framePtr
+          .asFunction<void Function()>();
+
   void wgpu_object_finalize_dart(
-    WGpuObjectBase wgpuObject,
+    ffi.Pointer<WGpuDawnObject> wgpuObject,
   ) {
     return _wgpu_object_finalize_dart(
       wgpuObject,
     );
   }
 
-  late final _wgpu_object_finalize_dartPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(WGpuObjectBase)>>(
-          'wgpu_object_finalize_dart');
-  late final _wgpu_object_finalize_dart =
-      _wgpu_object_finalize_dartPtr.asFunction<void Function(WGpuObjectBase)>();
+  late final _wgpu_object_finalize_dartPtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<WGpuDawnObject>)>>(
+      'wgpu_object_finalize_dart');
+  late final _wgpu_object_finalize_dart = _wgpu_object_finalize_dartPtr
+      .asFunction<void Function(ffi.Pointer<WGpuDawnObject>)>();
 
   WGpuWindow wgpu_create_window(
     int width,
@@ -5569,9 +5621,6 @@ final class WGpuSupportedLimits extends ffi.Struct {
   external int maxVertexBufferArrayStride;
 
   @ffi.Uint32()
-  external int maxInterStageShaderComponents;
-
-  @ffi.Uint32()
   external int maxInterStageShaderVariables;
 
   @ffi.Uint32()
@@ -5594,6 +5643,9 @@ final class WGpuSupportedLimits extends ffi.Struct {
 
   @ffi.Uint32()
   external int maxComputeWorkgroupSizeZ;
+
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
 final class WGpuAdapterInfo extends ffi.Struct {
@@ -5622,26 +5674,26 @@ typedef WGPU_POWER_PREFERENCE = ffi.Int;
 typedef DartWGPU_POWER_PREFERENCE = int;
 
 final class WGpuDeviceDescriptor extends ffi.Struct {
-  @WGPU_FEATURES_BITFIELD()
-  external int requiredFeatures;
-
-  @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
-
   external WGpuSupportedLimits requiredLimits;
 
   external WGpuQueueDescriptor defaultQueue;
 
+  @WGPU_FEATURES_BITFIELD()
+  external int requiredFeatures;
+
   @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize2;
+  external int unused_padding;
+}
+
+final class WGpuQueueDescriptor extends ffi.Struct {
+  external ffi.Pointer<ffi.Char> label;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
 }
 
 typedef WGPU_FEATURES_BITFIELD = ffi.Int;
 typedef DartWGPU_FEATURES_BITFIELD = int;
-
-final class WGpuQueueDescriptor extends ffi.Struct {
-  external ffi.Pointer<ffi.Char> label;
-}
 
 final class WGpuBufferDescriptor extends ffi.Struct {
   @ffi.Uint64()
@@ -5658,6 +5710,14 @@ typedef WGPU_BUFFER_USAGE_FLAGS = ffi.Int;
 typedef DartWGPU_BUFFER_USAGE_FLAGS = int;
 
 final class WGpuTextureDescriptor extends ffi.Struct {
+  external ffi.Pointer<WGPU_TEXTURE_FORMAT> viewFormats;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
+  @ffi.Int()
+  external int numViewFormats;
+
   @ffi.Uint32()
   external int width;
 
@@ -5682,16 +5742,14 @@ final class WGpuTextureDescriptor extends ffi.Struct {
   @WGPU_TEXTURE_USAGE_FLAGS()
   external int usage;
 
-  @ffi.Int()
-  external int numViewFormats;
-
-  external ffi.Pointer<WGPU_TEXTURE_FORMAT> viewFormats;
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
-typedef WGPU_TEXTURE_DIMENSION = ffi.Int;
-typedef DartWGPU_TEXTURE_DIMENSION = int;
 typedef WGPU_TEXTURE_FORMAT = ffi.Int;
 typedef DartWGPU_TEXTURE_FORMAT = int;
+typedef WGPU_TEXTURE_DIMENSION = ffi.Int;
+typedef DartWGPU_TEXTURE_DIMENSION = int;
 typedef WGPU_TEXTURE_USAGE_FLAGS = ffi.Int;
 typedef DartWGPU_TEXTURE_USAGE_FLAGS = int;
 
@@ -5701,6 +5759,9 @@ final class WGpuTextureViewDescriptor extends ffi.Struct {
 
   @WGPU_TEXTURE_VIEW_DIMENSION()
   external int dimension;
+
+  @WGPU_TEXTURE_USAGE_FLAGS()
+  external int usage;
 
   @WGPU_TEXTURE_ASPECT()
   external int aspect;
@@ -5786,7 +5847,7 @@ final class WGpuBindGroupLayoutEntry extends ffi.Struct {
   external int type;
 
   @ffi.Uint32()
-  external int _dummyPadding64Bits;
+  external int unused_padding;
 
   external UnnamedUnion1 layout;
 }
@@ -5860,7 +5921,7 @@ typedef DartWGPU_STORAGE_TEXTURE_ACCESS = int;
 
 final class WGpuExternalTextureBindingLayout extends ffi.Struct {
   @ffi.Uint32()
-  external int _dummyPadding;
+  external int unused_padding;
 }
 
 final class WGpuBindGroupEntry extends ffi.Struct {
@@ -5879,22 +5940,40 @@ final class WGpuBindGroupEntry extends ffi.Struct {
 final class WGpuShaderModuleDescriptor extends ffi.Struct {
   external ffi.Pointer<ffi.Char> code;
 
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
+  external ffi.Pointer<WGpuShaderModuleCompilationHint> hints;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_1;
+
   @ffi.Int()
   external int numHints;
 
-  external ffi.Pointer<WGpuShaderModuleCompilationHint> hints;
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
 final class WGpuShaderModuleCompilationHint extends ffi.Struct {
   external ffi.Pointer<ffi.Char> entryPoint;
 
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
   external WGpuPipelineLayout layout;
+
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
 typedef WGpuPipelineLayout = WGpuObjectBase;
 
 final class WGpuCompilationMessage extends ffi.Struct {
   external ffi.Pointer<ffi.Char> message;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
 
   @WGPU_COMPILATION_MESSAGE_TYPE()
   external int type;
@@ -5910,6 +5989,9 @@ final class WGpuCompilationMessage extends ffi.Struct {
 
   @ffi.Uint32()
   external int length;
+
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
 typedef WGPU_COMPILATION_MESSAGE_TYPE = ffi.Int;
@@ -5919,6 +6001,9 @@ final class WGpuCompilationInfo extends ffi.Struct {
   @ffi.Int()
   external int numMessages;
 
+  @ffi.Uint32()
+  external int unused_padding;
+
   external ffi.Pointer<WGpuCompilationMessage> messages;
 }
 
@@ -5926,7 +6011,7 @@ final class WGpuPipelineConstant extends ffi.Struct {
   external ffi.Pointer<ffi.Char> name;
 
   @ffi.Uint32()
-  external int _dummyPadding;
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
 
   @ffi.Double()
   external double value;
@@ -5941,43 +6026,59 @@ final class WGpuRenderPipelineDescriptor extends ffi.Struct {
 
   external WGpuMultisampleState multisample;
 
+  @ffi.Uint32()
+  external int unused_padding;
+
   external WGpuFragmentState fragment;
 
   external WGpuPipelineLayout layout;
+
+  @ffi.Uint32()
+  external int unused_padding2;
 }
 
 final class WGpuVertexState extends ffi.Struct {
-  external WGpuShaderModule module;
-
   external ffi.Pointer<ffi.Char> entryPoint;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
+  external ffi.Pointer<WGpuVertexBufferLayout> buffers;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_1;
+
+  external ffi.Pointer<WGpuPipelineConstant> constants;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_2;
+
+  external WGpuShaderModule module;
 
   @ffi.Int()
   external int numBuffers;
 
-  external ffi.Pointer<WGpuVertexBufferLayout> buffers;
-
   @ffi.Int()
   external int numConstants;
 
-  external ffi.Pointer<WGpuPipelineConstant> constants;
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
-typedef WGpuShaderModule = WGpuObjectBase;
-
 final class WGpuVertexBufferLayout extends ffi.Struct {
-  @ffi.Int()
-  external int numAttributes;
-
   external ffi.Pointer<WGpuVertexAttribute> attributes;
 
-  @ffi.Uint64()
-  external int arrayStride;
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
+  @ffi.Int()
+  external int numAttributes;
 
   @WGPU_VERTEX_STEP_MODE()
   external int stepMode;
 
-  @ffi.Uint32()
-  external int _unused64BitPadding;
+  @ffi.Uint64()
+  external int arrayStride;
 }
 
 final class WGpuVertexAttribute extends ffi.Struct {
@@ -5995,6 +6096,7 @@ typedef WGPU_VERTEX_FORMAT = ffi.Int;
 typedef DartWGPU_VERTEX_FORMAT = int;
 typedef WGPU_VERTEX_STEP_MODE = ffi.Int;
 typedef DartWGPU_VERTEX_STEP_MODE = int;
+typedef WGpuShaderModule = WGpuObjectBase;
 
 final class WGpuPrimitiveState extends ffi.Struct {
   @WGPU_PRIMITIVE_TOPOLOGY()
@@ -6084,19 +6186,31 @@ final class WGpuMultisampleState extends ffi.Struct {
 }
 
 final class WGpuFragmentState extends ffi.Struct {
-  external WGpuShaderModule module;
-
   external ffi.Pointer<ffi.Char> entryPoint;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
+  external ffi.Pointer<WGpuColorTargetState> targets;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_1;
+
+  external ffi.Pointer<WGpuPipelineConstant> constants;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_2;
+
+  external WGpuShaderModule module;
 
   @ffi.Int()
   external int numTargets;
 
-  external ffi.Pointer<WGpuColorTargetState> targets;
-
   @ffi.Int()
   external int numConstants;
 
-  external ffi.Pointer<WGpuPipelineConstant> constants;
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
 final class WGpuColorTargetState extends ffi.Struct {
@@ -6135,12 +6249,12 @@ typedef DartWGPU_COLOR_WRITE_FLAGS = int;
 
 final class WGpuCommandBufferDescriptor extends ffi.Struct {
   @ffi.Uint32()
-  external int _dummyPadding;
+  external int unused_padding;
 }
 
 final class WGpuCommandEncoderDescriptor extends ffi.Struct {
   @ffi.Uint32()
-  external int _dummyPadding;
+  external int unused_padding;
 }
 
 final class WGpuImageCopyBuffer extends ffi.Struct {
@@ -6156,7 +6270,7 @@ final class WGpuImageCopyBuffer extends ffi.Struct {
   external WGpuBuffer buffer;
 
   @ffi.Uint32()
-  external int _explicitPaddingFor8BytesAlignedSize;
+  external int unused_padding;
 }
 
 typedef WGpuBuffer = WGpuObjectBase;
@@ -6238,23 +6352,26 @@ final class WGpuComputePassTimestampWrites extends ffi.Struct {
 typedef WGpuQuerySet = WGpuObjectBase;
 
 final class WGpuRenderPassDescriptor extends ffi.Struct {
-  @ffi.Int()
-  external int numColorAttachments;
+  @double_int53_t()
+  external int maxDrawCount;
 
   external ffi.Pointer<WGpuRenderPassColorAttachment> colorAttachments;
+
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
+  @ffi.Int()
+  external int numColorAttachments;
 
   external WGpuRenderPassDepthStencilAttachment depthStencilAttachment;
 
   external WGpuQuerySet occlusionQuerySet;
 
-  @double_int53_t()
-  external int maxDrawCount;
-
   external WGpuRenderPassTimestampWrites timestampWrites;
-
-  @ffi.Uint32()
-  external int unused_padding;
 }
+
+typedef double_int53_t = ffi.Uint64;
+typedef Dartdouble_int53_t = int;
 
 final class WGpuRenderPassColorAttachment extends ffi.Struct {
   external WGpuTextureView view;
@@ -6270,8 +6387,8 @@ final class WGpuRenderPassColorAttachment extends ffi.Struct {
   @WGPU_LOAD_OP()
   external int loadOp;
 
-  @ffi.Int()
-  external int dummyDoublePadding;
+  @ffi.Uint32()
+  external int unused_padding;
 
   external WGpuColor clearValue;
 }
@@ -6324,9 +6441,6 @@ final class WGpuRenderPassDepthStencilAttachment extends ffi.Struct {
   external int stencilReadOnly;
 }
 
-typedef double_int53_t = ffi.Uint64;
-typedef Dartdouble_int53_t = int;
-
 final class WGpuRenderPassTimestampWrites extends ffi.Struct {
   external WGpuQuerySet querySet;
 
@@ -6339,7 +6453,7 @@ final class WGpuRenderPassTimestampWrites extends ffi.Struct {
 
 final class WGpuRenderBundleDescriptor extends ffi.Struct {
   @ffi.Uint32()
-  external int _dummyPadding;
+  external int unused_padding;
 }
 
 final class WGpuRenderBundleEncoderDescriptor extends ffi.Struct {
@@ -6386,14 +6500,30 @@ final class WGpuCanvasConfiguration extends ffi.Struct {
 
   external ffi.Pointer<WGPU_TEXTURE_FORMAT> viewFormats;
 
+  @ffi.Uint32()
+  external int unused_padding_to_make_32bit_ptrs_64bit_0;
+
   @HTML_PREDEFINED_COLOR_SPACE()
   external int colorSpace;
 
+  external WGpuCanvasToneMapping toneMapping;
+
   @WGPU_CANVAS_ALPHA_MODE()
   external int alphaMode;
+
+  @ffi.Uint32()
+  external int unused_padding;
 }
 
 typedef WGpuDevice = WGpuObjectBase;
+
+final class WGpuCanvasToneMapping extends ffi.Struct {
+  @WGPU_CANVAS_TONE_MAPPING_MODE()
+  external int mode;
+}
+
+typedef WGPU_CANVAS_TONE_MAPPING_MODE = ffi.Int;
+typedef DartWGPU_CANVAS_TONE_MAPPING_MODE = int;
 typedef WGPU_CANVAS_ALPHA_MODE = ffi.Int;
 typedef DartWGPU_CANVAS_ALPHA_MODE = int;
 
@@ -6506,16 +6636,6 @@ typedef WGpuRequestDeviceCallbackFunction = ffi.Void Function(
     WGpuDevice device, ffi.Pointer<ffi.Void> userData);
 typedef DartWGpuRequestDeviceCallbackFunction = void Function(
     WGpuDevice device, ffi.Pointer<ffi.Void> userData);
-typedef WGpuRequestAdapterInfoCallback
-    = ffi.Pointer<ffi.NativeFunction<WGpuRequestAdapterInfoCallbackFunction>>;
-typedef WGpuRequestAdapterInfoCallbackFunction = ffi.Void Function(
-    WGpuAdapter adapter,
-    ffi.Pointer<WGpuAdapterInfo> adapterInfo,
-    ffi.Pointer<ffi.Void> userData);
-typedef DartWGpuRequestAdapterInfoCallbackFunction = void Function(
-    WGpuAdapter adapter,
-    ffi.Pointer<WGpuAdapterInfo> adapterInfo,
-    ffi.Pointer<ffi.Void> userData);
 typedef WGpuQueue = WGpuObjectBase;
 typedef WGpuSampler = WGpuObjectBase;
 typedef WGpuExternalTexture = WGpuObjectBase;
@@ -6820,6 +6940,8 @@ const double HUGE_VALF = double.infinity;
 
 const double HUGE_VALL = double.infinity;
 
+const double _UCRT_NAN = double.nan;
+
 const double NAN = double.nan;
 
 const int _DENORM = -2;
@@ -6948,9 +7070,9 @@ const double WGPU_NAN = double.nan;
 
 const double WGPU_INFINITY = double.infinity;
 
-const int EM_TRUE = 1;
+const int WGPU_TRUE = 1;
 
-const int EM_FALSE = 0;
+const int WGPU_FALSE = 0;
 
 const int WGPU_OBJECT_LABEL_MAX_LENGTH = 256;
 
@@ -6960,21 +7082,29 @@ const int WGPU_FEATURE_DEPTH32FLOAT_STENCIL8 = 2;
 
 const int WGPU_FEATURE_TEXTURE_COMPRESSION_BC = 4;
 
-const int WGPU_FEATURE_TEXTURE_COMPRESSION_ETC2 = 8;
+const int WGPU_FEATURE_TEXTURE_COMPRESSION_BC_SLICED_3D = 8;
 
-const int WGPU_FEATURE_TEXTURE_COMPRESSION_ASTC = 16;
+const int WGPU_FEATURE_TEXTURE_COMPRESSION_ETC2 = 16;
 
-const int WGPU_FEATURE_TIMESTAMP_QUERY = 32;
+const int WGPU_FEATURE_TEXTURE_COMPRESSION_ASTC = 32;
 
-const int WGPU_FEATURE_INDIRECT_FIRST_INSTANCE = 64;
+const int WGPU_FEATURE_TIMESTAMP_QUERY = 64;
 
-const int WGPU_FEATURE_SHADER_F16 = 128;
+const int WGPU_FEATURE_INDIRECT_FIRST_INSTANCE = 128;
 
-const int WGPU_FEATURE_RG11B10UFLOAT_RENDERABLE = 256;
+const int WGPU_FEATURE_SHADER_F16 = 256;
 
-const int WGPU_FEATURE_BGRA8UNORM_STORAGE = 512;
+const int WGPU_FEATURE_RG11B10UFLOAT_RENDERABLE = 512;
 
-const int WGPU_FEATURE_FLOAT32_FILTERABLE = 1024;
+const int WGPU_FEATURE_BGRA8UNORM_STORAGE = 1024;
+
+const int WGPU_FEATURE_FLOAT32_FILTERABLE = 2048;
+
+const int WGPU_FEATURE_CLIP_DISTANCES = 4096;
+
+const int WGPU_FEATURE_DUAL_SOURCE_BLENDING = 8192;
+
+const int WGPU_FEATURE_FIRST_UNUSED_BIT = 16384;
 
 const int HTML_PREDEFINED_COLOR_SPACE_INVALID = 0;
 
@@ -7424,6 +7554,14 @@ const int WGPU_BLEND_FACTOR_CONSTANT = 12;
 
 const int WGPU_BLEND_FACTOR_ONE_MINUS_CONSTANT = 13;
 
+const int WGPU_BLEND_FACTOR_SRC1 = 14;
+
+const int WGPU_BLEND_FACTOR_ONE_MINUS_SRC1 = 15;
+
+const int WGPU_BLEND_FACTOR_SRC1_ALPHA = 16;
+
+const int WGPU_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA = 17;
+
 const int WGPU_BLEND_OPERATION_INVALID = 0;
 
 const int WGPU_BLEND_OPERATION_DISABLED = 0;
@@ -7574,10 +7712,16 @@ const int WGPU_ERROR_TYPE_VALIDATION = 2;
 
 const int WGPU_ERROR_TYPE_UNKNOWN_ERROR = 3;
 
-const int WGPU_ERROR_FILTER_INVALID = 0;
+const int WGPU_ERROR_FILTER_NO_ERROR = 0;
 
 const int WGPU_ERROR_FILTER_OUT_OF_MEMORY = 1;
 
 const int WGPU_ERROR_FILTER_VALIDATION = 2;
 
 const int WGPU_ERROR_FILTER_INTERNAL = 3;
+
+const int WGPU_CANVAS_TONE_MAPPING_MODE_INVALID = 0;
+
+const int WGPU_CANVAS_TONE_MAPPING_MODE_STANDARD = 1;
+
+const int WGPU_CANVAS_TONE_MAPPING_MODE_EXTENDED = 2;

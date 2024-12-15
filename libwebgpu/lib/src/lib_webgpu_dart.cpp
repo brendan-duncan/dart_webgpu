@@ -8,7 +8,7 @@
 #include <GLFW/glfw3native.h>
 #include <math.h>
 
-void wgpu_object_finalize_dart(WGpuObjectBase wgpuObject) {
+void wgpu_object_finalize_dart(WGpuDawnObject* wgpuObject) {
     if (wgpuObject->dawnObject == nullptr) {
         return;
     }

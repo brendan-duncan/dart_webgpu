@@ -30,8 +30,7 @@ class GPUComputePassEncoder extends GPUObjectBase<wgpu.WGpuComputePassEncoder> {
         libwebgpu.wgpu_command_encoder_begin_compute_pass(encoder.object, d);
     setObject(o);
 
-    calloc
-      .free(d);
+    calloc.free(d);
   }
 
   /// Set the current [GPUComputePipeline].

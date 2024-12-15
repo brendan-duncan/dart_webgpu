@@ -4,6 +4,7 @@ import 'package:ffi/ffi.dart';
 
 import '../ffi/ffi_webgpu.dart' as wgpu;
 import '../ffi/wgpu_library.dart';
+import '../webgpu/gpu_adapter.dart';
 import '../webgpu/gpu_device.dart';
 import '../webgpu/gpu_object.dart';
 import '../webgpu/gpu_texture_format.dart';
@@ -13,15 +14,18 @@ import 'gpu_window.dart';
 
 class GPUWindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
   final GPUWindow window;
+  final GPUAdapter adapter;
   final GPUDevice device;
   late final GPUTextureFormat preferredFormat;
 
   GPUWindowContext(this.window,
-      {required this.device,
+      {required this.adapter,
+      required this.device,
       GPUTextureFormat? format,
       GPUTextureUsage usage = GPUTextureUsage.renderAttachment,
       List<GPUTextureFormat>? viewFormats}) {
-    final f = libwebgpu.navigator_gpu_get_preferred_canvas_format();
+    final f = libwebgpu.navigator_gpu_get_preferred_canvas_format(
+        adapter.object, object);
     preferredFormat = GPUTextureFormat.values[f - 1];
     configure(format: format, usage: usage, viewFormats: viewFormats);
   }
@@ -47,7 +51,7 @@ class GPUWindowContext extends GPUObjectBase<wgpu.WGpuCanvasContext> {
       ..numViewFormats = numViewFormats
       ..viewFormats = calloc<wgpu.WGPU_TEXTURE_FORMAT>(numViewFormats);
     for (var i = 0; i < numViewFormats; ++i) {
-      c.ref.viewFormats.elementAt(i).value = viewFormats![i].nativeIndex;
+      (c.ref.viewFormats + i).value = viewFormats![i].nativeIndex;
     }
 
     libwebgpu.wgpu_canvas_context_configure(

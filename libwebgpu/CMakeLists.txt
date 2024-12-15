@@ -77,11 +77,11 @@ if(WIN32)
         absl_city.lib
         absl_civil_time.lib
         absl_cord.lib
-        absl_cord_internal.lib
         absl_cordz_functions.lib
         absl_cordz_handle.lib
         absl_cordz_info.lib
         absl_cordz_sample_token.lib
+        absl_cord_internal.lib
         absl_crc32c.lib
         absl_crc_cord_state.lib
         absl_crc_cpu_detect.lib
@@ -145,11 +145,11 @@ if(WIN32)
         absl_stacktrace.lib
         absl_status.lib
         absl_statusor.lib
-        absl_str_format_internal.lib
         absl_strerror.lib
-        absl_string_view.lib
         absl_strings.lib
         absl_strings_internal.lib
+        absl_string_view.lib
+        absl_str_format_internal.lib
         absl_symbolize.lib
         absl_synchronization.lib
         absl_throw_delegate.lib
@@ -159,15 +159,17 @@ if(WIN32)
         dawn_common.lib
         dawn_glfw.lib
         dawn_native.lib
+        dawn_native_objects.lib
         dawn_platform.lib
         dawn_proc.lib
         dawn_sample_utils.lib
-        dawn_utils.lib
+        dawn_system_utils.lib
+        dawn_test_utils.lib
+        dawn_wgpu_utils.lib
         dawn_wire.lib
         glfw3.lib
-        libprotobuf-mutator.lib
-        SPIRV-Tools.lib
         SPIRV-Tools-opt.lib
+        SPIRV-Tools.lib
         tint_api.lib
         tint_api_common.lib
         tint_cmd_common.lib
@@ -176,18 +178,22 @@ if(WIN32)
         tint_lang_core_constant.lib
         tint_lang_core_intrinsic.lib
         tint_lang_core_ir.lib
-        tint_lang_core_ir_binary.lib
-        tint_lang_core_ir_binary_proto.lib
         tint_lang_core_ir_transform.lib
-        tint_lang_core_ir_transform_common.lib
+        tint_lang_core_ir_type.lib
         tint_lang_core_type.lib
         tint_lang_glsl_validate.lib
+        tint_lang_hlsl.lib
+        tint_lang_hlsl_intrinsic.lib
+        tint_lang_hlsl_ir.lib
+        tint_lang_hlsl_type.lib
         tint_lang_hlsl_validate.lib
         tint_lang_hlsl_writer.lib
         tint_lang_hlsl_writer_ast_printer.lib
         tint_lang_hlsl_writer_ast_raise.lib
         tint_lang_hlsl_writer_common.lib
         tint_lang_hlsl_writer_helpers.lib
+        tint_lang_hlsl_writer_printer.lib
+        tint_lang_hlsl_writer_raise.lib
         tint_lang_spirv.lib
         tint_lang_spirv_intrinsic.lib
         tint_lang_spirv_ir.lib
@@ -200,8 +206,6 @@ if(WIN32)
         tint_lang_spirv_type.lib
         tint_lang_spirv_validate.lib
         tint_lang_spirv_writer.lib
-        tint_lang_spirv_writer_ast_printer.lib
-        tint_lang_spirv_writer_ast_raise.lib
         tint_lang_spirv_writer_common.lib
         tint_lang_spirv_writer_helpers.lib
         tint_lang_spirv_writer_printer.lib
@@ -227,27 +231,23 @@ if(WIN32)
         tint_lang_wgsl_writer_ir_to_program.lib
         tint_lang_wgsl_writer_raise.lib
         tint_lang_wgsl_writer_syntax_tree_printer.lib
-        tint_utils_cli.lib
+        tint_utils.lib
         tint_utils_command.lib
         tint_utils_containers.lib
-        tint_utils_debug.lib
         tint_utils_diagnostic.lib
         tint_utils_file.lib
-        tint_utils_generator.lib
         tint_utils_ice.lib
-        tint_utils_id.lib
         tint_utils_macros.lib
         tint_utils_math.lib
         tint_utils_memory.lib
-        tint_utils_reflection.lib
         tint_utils_result.lib
         tint_utils_rtti.lib
-        tint_utils_socket.lib
         tint_utils_strconv.lib
         tint_utils_symbol.lib
         tint_utils_system.lib
         tint_utils_text.lib
-        tint_utils_traits.lib
+        VulkanLayerSettings.lib
+        VulkanSafeStruct.lib
         webgpu_dawn.lib
     )
 endif()

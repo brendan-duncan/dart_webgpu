@@ -8,7 +8,7 @@ extern "C" {
 // Wrapper around wgpu_object_destroy for use with Dart Finalizers, to get around a crash with Device
 // trying to call the device lost callback when the Device was destroyed by the garbage collection Finalizer
 // after the main function has ended.
-void wgpu_object_finalize_dart(WGpuObjectBase wgpuObject);
+void wgpu_object_finalize_dart(struct WGpuDawnObject* wgpuObject);
 
 typedef void* WGpuWindow;
 

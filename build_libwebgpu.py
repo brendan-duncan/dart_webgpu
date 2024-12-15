@@ -448,7 +448,7 @@ def build():
     print('----------------------------')
     with cwd('libwebgpu'):
         print('#### BUILDING libwebgpu in', os.getcwd())
-        buildDawn()
+        #buildDawn()
 
         path = os.getcwd()
         build_path = os.path.join(path, '_build')

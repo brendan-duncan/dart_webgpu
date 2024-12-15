@@ -23,7 +23,8 @@ class GPUQueue extends GPUObjectBase<wgpu.WGpuQueue> {
     if (commandBufferOrList == null) {
       libwebgpu.wgpu_queue_submit_multiple_and_destroy(object, nullptr, 0);
     } else if (commandBufferOrList is GPUCommandBuffer) {
-      libwebgpu.wgpu_queue_submit_one_and_destroy(object, commandBufferOrList.object);
+      libwebgpu.wgpu_queue_submit_one_and_destroy(
+          object, commandBufferOrList.object);
       commandBufferOrList.destroy();
     } else if (commandBufferOrList is List<GPUCommandBuffer>) {
       for (final cb in commandBufferOrList) {

@@ -62,7 +62,7 @@ class GPULimits {
     maxVertexBuffers = l.ref.maxVertexBuffers;
     maxVertexAttributes = l.ref.maxVertexAttributes;
     maxVertexBufferArrayStride = l.ref.maxVertexBufferArrayStride;
-    maxInterStageShaderComponents = l.ref.maxInterStageShaderComponents;
+    //maxInterStageShaderComponents = l.ref.maxInterStageShaderComponents;
     maxInterStageShaderVariables = l.ref.maxInterStageShaderVariables;
     maxColorAttachments = l.ref.maxColorAttachments;
     maxColorAttachmentBytesPerSample = l.ref.maxColorAttachmentBytesPerSample;
@@ -98,7 +98,7 @@ class GPULimits {
       ..maxVertexBuffers = maxVertexBuffers
       ..maxVertexAttributes = maxVertexAttributes
       ..maxVertexBufferArrayStride = maxVertexBufferArrayStride
-      ..maxInterStageShaderComponents = maxInterStageShaderComponents
+      //..maxInterStageShaderComponents = maxInterStageShaderComponents
       ..maxInterStageShaderVariables = maxInterStageShaderVariables
       ..maxColorAttachments = maxColorAttachments
       ..maxColorAttachmentBytesPerSample = maxColorAttachmentBytesPerSample

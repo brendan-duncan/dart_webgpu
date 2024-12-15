@@ -2,6 +2,7 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/html5.h>
+#include <emscripten/wasm_worker.h>
 #endif
 
 #ifdef __clang__
@@ -40,10 +41,32 @@
 #define WGPU_INFINITY ((double)INFINITY)
 #endif
 
-#ifndef __EMSCRIPTEN__
-#define EM_BOOL int
-#define EM_TRUE 1
-#define EM_FALSE 0
+// WGPU_BOOL is a boolean type that has a defined size of 4 bytes to ensure a fixed struct padding.
+#define WGPU_BOOL int
+#define WGPU_TRUE 1
+#define WGPU_FALSE 0
+
+// This macro allows structs that contain pointers to be explicitly aligned up to 8 bytes so that
+// even in 32-bit pointer builds, struct alignments are checked to match against Wasm64 builds.
+#if __cplusplus >= 201103L
+#define _WGPU_ALIGN_TO_64BITS //alignas(8)
+#else
+#define _WGPU_ALIGN_TO_64BITS //__attribute__((aligned(8)))
+#endif
+
+// The _WGPU_PTR_PADDING() macro pads pointers in 32-bit builds up to 64-bits so that memory layout
+// of WebGPU structures is identical in 32-bit and 64-bit builds. This way the JS side marshalling
+// can stay the same (except for reading pointers).
+#ifdef __wasm64__
+#define _WGPU_PTR_PADDING(x)
+#else
+#define _WGPU_PTR_PADDING(x) uint32_t unused_padding_to_make_32bit_ptrs_64bit_##x;
+#endif
+
+#if defined(__EMSCRIPTEN__) && __cplusplus >= 201103L
+#define VERIFY_STRUCT_SIZE(struct_name, size) static_assert(sizeof(struct_name) == (size), "lib_webgpu.js is hardcoded to expect this size. If this changes, modify lib_webgpu.js accordingly. (search for sizeof(..) on struct name)");
+#else
+#define VERIFY_STRUCT_SIZE(struct_name, size)
 #endif
 
 #ifdef __cplusplus
@@ -64,9 +87,12 @@ void wgpu_object_destroy(WGpuObjectBase wgpuObject);
 // Deinitializes all initialized WebGPU objects.
 void wgpu_destroy_all_objects(void);
 
-// Acquires a canvas context from a canvas by calling canvas.getCanvasContext().
 #ifdef __EMSCRIPTEN__
+// Initializes a WebGPU rendering context to a canvas by calling canvas.getContext('webgpu').
 WGpuCanvasContext wgpu_canvas_get_webgpu_context(const char *canvasSelector NOTNULL);
+
+// Initializes a WebGPU rendering context to the given Offscreen Canvas.
+WGpuCanvasContext wgpu_offscreen_canvas_get_webgpu_context(OffscreenCanvasId id);
 #elif defined (_WIN32)
 WGpuCanvasContext wgpu_canvas_get_webgpu_context(void *hwnd);
 #else
@@ -83,7 +109,7 @@ interface mixin GPUObjectBase {
 };
 */
 // Returns true if the given handle references a valid WebGPU object
-EM_BOOL wgpu_is_valid_object(WGpuObjectBase obj);
+WGPU_BOOL wgpu_is_valid_object(WGpuObjectBase obj);
 // Set a human-readable label for the given WebGPU object. Pass an empty string "" to clear a label.
 void wgpu_object_set_label(WGpuObjectBase obj, const char *label NOTNULL);
 // Gets the human-readable label of a WebGPU object. If dstLabelSize is too short to
@@ -144,7 +170,6 @@ interface GPUSupportedLimits {
     readonly attribute unsigned long long maxBufferSize;
     readonly attribute unsigned long maxVertexAttributes;
     readonly attribute unsigned long maxVertexBufferArrayStride;
-    readonly attribute unsigned long maxInterStageShaderComponents;
     readonly attribute unsigned long maxInterStageShaderVariables;
     readonly attribute unsigned long maxColorAttachments;
     readonly attribute unsigned long maxColorAttachmentBytesPerSample;
@@ -161,31 +186,33 @@ typedef struct WGpuSupportedLimits
   // See the table in https://www.w3.org/TR/webgpu/#limits for the minimum/maximum
   // default values for these limits.
 
+  // When requesting an adapter with given limits, pass a value of zero to
+  // omit requesting limits for that particular field.
+
   // 64-bit fields must be present first before the 32-bit fields in this struct.
-  uint64_t maxUniformBufferBindingSize; // required >= 16384
+  uint64_t maxUniformBufferBindingSize; // required >= 65536
   uint64_t maxStorageBufferBindingSize; // required >= 128*1024*1024 (128MB)
   uint64_t maxBufferSize;               // required >= 256*1024*1024 (256MB)
 
   uint32_t maxTextureDimension1D; // required >= 8192
   uint32_t maxTextureDimension2D; // required >= 8192
   uint32_t maxTextureDimension3D; // required >= 2048
-  uint32_t maxTextureArrayLayers; // required >= 2048
+  uint32_t maxTextureArrayLayers; // required >= 256
   uint32_t maxBindGroups; // required >= 4
   uint32_t maxBindGroupsPlusVertexBuffers; // required >= 24
-  uint32_t maxBindingsPerBindGroup; // required >= 640
+  uint32_t maxBindingsPerBindGroup; // required >= 1000
   uint32_t maxDynamicUniformBuffersPerPipelineLayout; // required >= 8
   uint32_t maxDynamicStorageBuffersPerPipelineLayout; // required >= 4
   uint32_t maxSampledTexturesPerShaderStage; // required >= 16
   uint32_t maxSamplersPerShaderStage; // required >= 16
   uint32_t maxStorageBuffersPerShaderStage; // required >= 8
-  uint32_t maxStorageTexturesPerShaderStage; // required >= 8
+  uint32_t maxStorageTexturesPerShaderStage; // required >= 4
   uint32_t maxUniformBuffersPerShaderStage; // required >= 12
   uint32_t minUniformBufferOffsetAlignment; // required >= 256 bytes
   uint32_t minStorageBufferOffsetAlignment; // required >= 256 bytes
   uint32_t maxVertexBuffers; // required >= 8
   uint32_t maxVertexAttributes; // required >= 16
   uint32_t maxVertexBufferArrayStride; // required >= 2048
-  uint32_t maxInterStageShaderComponents; // required >= 60
   uint32_t maxInterStageShaderVariables; // required >= 16
   uint32_t maxColorAttachments; // required >= 8
   uint32_t maxColorAttachmentBytesPerSample; // required >= 32
@@ -194,7 +221,10 @@ typedef struct WGpuSupportedLimits
   uint32_t maxComputeWorkgroupSizeX; // required >= 256
   uint32_t maxComputeWorkgroupSizeY; // required >= 256
   uint32_t maxComputeWorkgroupSizeZ; // required >= 64
+  uint32_t unused_padding;
 } WGpuSupportedLimits;
+
+VERIFY_STRUCT_SIZE(WGpuSupportedLimits, 34*sizeof(uint32_t));
 
 /*
 [Exposed=(Window, DedicatedWorker)]
@@ -207,6 +237,7 @@ enum GPUFeatureName {
     "depth-clip-control",
     "depth32float-stencil8",
     "texture-compression-bc",
+    "texture-compression-bc-sliced-3d",
     "texture-compression-etc2",
     "texture-compression-astc",
     "timestamp-query",
@@ -215,20 +246,27 @@ enum GPUFeatureName {
     "rg11b10ufloat-renderable",
     "bgra8unorm-storage",
     "float32-filterable",
+    "clip-distances",
+    "dual-source-blending",
 };
 */
 typedef int WGPU_FEATURES_BITFIELD;
-#define WGPU_FEATURE_DEPTH_CLIP_CONTROL         0x01
-#define WGPU_FEATURE_DEPTH32FLOAT_STENCIL8      0x02
-#define WGPU_FEATURE_TEXTURE_COMPRESSION_BC     0x04
-#define WGPU_FEATURE_TEXTURE_COMPRESSION_ETC2   0x08
-#define WGPU_FEATURE_TEXTURE_COMPRESSION_ASTC   0x10
-#define WGPU_FEATURE_TIMESTAMP_QUERY            0x20
-#define WGPU_FEATURE_INDIRECT_FIRST_INSTANCE    0x40
-#define WGPU_FEATURE_SHADER_F16                 0x80
-#define WGPU_FEATURE_RG11B10UFLOAT_RENDERABLE  0x100
-#define WGPU_FEATURE_BGRA8UNORM_STORAGE        0x200
-#define WGPU_FEATURE_FLOAT32_FILTERABLE        0x400
+#define WGPU_FEATURE_DEPTH_CLIP_CONTROL                   0x01
+#define WGPU_FEATURE_DEPTH32FLOAT_STENCIL8                0x02
+#define WGPU_FEATURE_TEXTURE_COMPRESSION_BC               0x04
+#define WGPU_FEATURE_TEXTURE_COMPRESSION_BC_SLICED_3D     0x08
+#define WGPU_FEATURE_TEXTURE_COMPRESSION_ETC2             0x10
+#define WGPU_FEATURE_TEXTURE_COMPRESSION_ASTC             0x20
+#define WGPU_FEATURE_TIMESTAMP_QUERY                      0x40
+#define WGPU_FEATURE_INDIRECT_FIRST_INSTANCE              0x80
+#define WGPU_FEATURE_SHADER_F16                          0x100
+#define WGPU_FEATURE_RG11B10UFLOAT_RENDERABLE            0x200
+#define WGPU_FEATURE_BGRA8UNORM_STORAGE                  0x400
+#define WGPU_FEATURE_FLOAT32_FILTERABLE                  0x800
+#define WGPU_FEATURE_CLIP_DISTANCES                     0x1000
+#define WGPU_FEATURE_DUAL_SOURCE_BLENDING               0x2000
+
+#define WGPU_FEATURE_FIRST_UNUSED_BIT                   0x4000 // Allows examining the number of actually used bits in a WGPU_FEATURES_BITFIELD value.
 
 /*
 // WebGPU reuses the color space enum from the HTML Canvas specification:
@@ -283,7 +321,7 @@ interface GPU {
 // Returns true if the browser is advertising to be WebGPU-aware. This means that the browser in question is shipping with WebGPU available, but does not
 // necessarily mean that there would exist any WebGPU adapters or devices that are supported. The only way to know if WebGPU is actually possible will
 // be to try to request and adapter and then a device.
-EM_BOOL navigator_gpu_available(void);
+WGPU_BOOL navigator_gpu_available(void);
 
 // This function can be used to remove access to WebGPU API on the current JS page. This can be useful for debugging or sandboxing purposes. Note that
 // if the page has already initialized a WebGPU context, then the context is not affected. Amounts to a 'delete navigator.gpu' operation.
@@ -296,26 +334,38 @@ void navigator_delete_webgpu_api_access(void);
 // See buffer_map_sync.c for an example.
 int wgpu_sync_operations_pending(void);
 
+// Performs a requestAnimationFrame() animation loop in a manner that is paused/held whenever there are JSPI-asyncified operations in
+// flight and execution of Wasm should be suspended. After the JSPI call is resolved, the given requestAnimationFrame() call will continue to run.
+// Semantics of the callback function are as in emscripten_request_animation_frame_loop() API.
+void wgpu_request_animation_frame_loop(WGPU_BOOL (*callback)(double time, void *userData), void *userData);
+
 typedef void (*WGpuRequestAdapterCallback)(WGpuAdapter adapter, void *userData);
 // Requests an adapter from the user agent. The user agent chooses whether to return an adapter, and, if so, chooses according to the provided options.
-// If WebGPU is not supported by the browser, returns EM_FALSE.
-// Otherwise returns EM_TRUE, and the callback will resolve later with an ID handle to the adapter.
+// If WebGPU is not supported by the browser, returns false.
+// Otherwise returns true, and the callback will resolve later with an ID handle to the adapter.
 // The callback will also be resolved in the event of an initialization failure, but the ID handle
 // passed to the callback will then be zero.
 // options: may be null to request an adapter without specific options.
 // Note: If the current browser is not aware of the WebGPU API, then this function will by design abort execution
 // (fail on assert, and throw a JS exception in release builds). To gracefully detect whether the current browser is new enough to be WebGPU API aware,
 // call the function navigator_gpu_available() to check.
-EM_BOOL navigator_gpu_request_adapter_async(const WGpuRequestAdapterOptions *options, WGpuRequestAdapterCallback adapterCallback, void *userData);
-// Requests a WebGPU adapter synchronously. Requires building with -sASYNCIFY=1 linker flag to work.
+WGPU_BOOL navigator_gpu_request_adapter_async(const WGpuRequestAdapterOptions *options NOTNULL, WGpuRequestAdapterCallback adapterCallback, void *userData);
+// Requests a WebGPU adapter synchronously. Requires building with -sJSPI=1 linker flag to work.
 // options: may be null to request an adapter without specific options.
-WGpuAdapter navigator_gpu_request_adapter_sync(const WGpuRequestAdapterOptions *options);
+WGpuAdapter navigator_gpu_request_adapter_sync(const WGpuRequestAdapterOptions *options NOTNULL);
 
 // Like above, but tiny code size without options.
 void navigator_gpu_request_adapter_async_simple(WGpuRequestAdapterCallback adapterCallback);
 WGpuAdapter navigator_gpu_request_adapter_sync_simple(void);
 
+#ifdef __EMSCRIPTEN__
 WGPU_TEXTURE_FORMAT navigator_gpu_get_preferred_canvas_format(void);
+#elif defined (_WIN32)
+WGPU_TEXTURE_FORMAT navigator_gpu_get_preferred_canvas_format(WGpuAdapter, WGpuCanvasContext);
+#else 
+#error Targeting currently unsupported platform! (no declaration for navigator_gpu_get_preferred_canvas_format())
+#endif
+
 
 // Returns an array of strings representing supported WGSL language features. The array of strings is terminated by a null string.
 // If you do not need to enumerate though all supported language features, you can use the simpler navigator_gpu_is_wgsl_language_feature_supported()
@@ -324,7 +374,7 @@ const char * const * navigator_gpu_get_wgsl_language_features(void);
 // Tests if the given WGSL language feature is supported. (the given feature string exists in navigator.gpu.wgslLanguageFeatures set).
 // If this information is needed often (e.g. in an inner loop of a shader cross-compiler), then it is recommended to cache the return value,
 // since the supported WGSL language features will not change during page lifetime.
-EM_BOOL navigator_gpu_is_wgsl_language_feature_supported(const char *feature);
+WGPU_BOOL navigator_gpu_is_wgsl_language_feature_supported(const char *feature);
 /*
 dictionary GPURequestAdapterOptions {
     GPUPowerPreference powerPreference;
@@ -341,7 +391,7 @@ typedef struct WGpuRequestAdapterOptions
   //       agent may select different adapters given the same power preference. Typically, given the same hardware configuration and
   //       state and powerPreference, the user agent is likely to select the same adapter.
   WGPU_POWER_PREFERENCE powerPreference;
-  EM_BOOL forceFallbackAdapter;
+  WGPU_BOOL forceFallbackAdapter;
 } WGpuRequestAdapterOptions;
 extern const WGpuRequestAdapterOptions WGPU_REQUEST_ADAPTER_OPTIONS_DEFAULT_INITIALIZER;
 
@@ -361,71 +411,68 @@ typedef int WGPU_POWER_PREFERENCE;
 interface GPUAdapter {
     [SameObject] readonly attribute GPUSupportedFeatures features;
     [SameObject] readonly attribute WGpuSupportedLimits limits;
+    [SameObject] readonly attribute GPUAdapterInfo info;
     readonly attribute boolean isFallbackAdapter;
 
     Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor = {});
-    Promise<GPUAdapterInfo> requestAdapterInfo();
 };
 */
 typedef WGpuObjectBase WGpuAdapter;
 // Returns true if the given handle references a valid GPUAdapter.
-EM_BOOL wgpu_is_adapter(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_adapter(WGpuObjectBase object);
 
 // Returns a bitfield of all the supported features on this adapter.
 WGPU_FEATURES_BITFIELD wgpu_adapter_or_device_get_features(WGpuAdapter adapter);
 #define wgpu_adapter_get_features wgpu_adapter_or_device_get_features
 
 // Returns true if the given feature is supported by this adapter.
-EM_BOOL wgpu_adapter_or_device_supports_feature(WGpuAdapter adapter, WGPU_FEATURES_BITFIELD feature);
+WGPU_BOOL wgpu_adapter_or_device_supports_feature(WGpuAdapter adapter, WGPU_FEATURES_BITFIELD feature);
 #define wgpu_adapter_supports_feature wgpu_adapter_or_device_supports_feature
 
 // Populates the adapter.limits field of the given adapter to the provided structure.
 void wgpu_adapter_or_device_get_limits(WGpuAdapter adapter, WGpuSupportedLimits *limits NOTNULL);
 #define wgpu_adapter_get_limits wgpu_adapter_or_device_get_limits
 
-EM_BOOL wgpu_adapter_is_fallback_adapter(WGpuAdapter adapter);
+// Returns the WebGPU adapter 'info' field.
+void wgpu_adapter_get_info(WGpuAdapter adapter, WGpuAdapterInfo *adapterInfo NOTNULL);
+
+WGPU_BOOL wgpu_adapter_is_fallback_adapter(WGpuAdapter adapter);
 
 typedef void (*WGpuRequestDeviceCallback)(WGpuDevice device, void *userData);
 
 void wgpu_adapter_request_device_async(WGpuAdapter adapter, const WGpuDeviceDescriptor *descriptor NOTNULL, WGpuRequestDeviceCallback deviceCallback, void *userData);
-// Requests a WebGPU device synchronously. Requires building with -sASYNCIFY=1 linker flag to work.
+// Requests a WebGPU device synchronously. Requires building with -sJSPI=1 linker flag to work.
 WGpuDevice wgpu_adapter_request_device_sync(WGpuAdapter adapter, const WGpuDeviceDescriptor *descriptor NOTNULL);
 
 // Like above, but tiny code size without options.
 void wgpu_adapter_request_device_async_simple(WGpuAdapter adapter, WGpuRequestDeviceCallback deviceCallback);
 WGpuDevice wgpu_adapter_request_device_sync_simple(WGpuAdapter adapter);
 
-// Callback function type that is called when GPUAdapter information has been obtained. The information will be reported in a struct of
-// type WGpuAdapterInfo. Do not hold on to this struct pointer after the duration of this call (but make a copy of the contents if desirable)
-typedef void (*WGpuRequestAdapterInfoCallback)(WGpuAdapter adapter, const WGpuAdapterInfo *adapterInfo NOTNULL, void *userData);
-
-// Begins a process to asynchronously request GPUAdapter information.
-void wgpu_adapter_request_adapter_info_async(WGpuAdapter adapter, WGpuRequestAdapterInfoCallback callback, void *userData);
-// TODO: Create asyncified wgpu_adapter_request_adapter_info_sync() function.
-
 /*
 dictionary GPUQueueDescriptor : GPUObjectDescriptorBase {
 };
 */
-typedef struct WGpuQueueDescriptor
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuQueueDescriptor
 {
   const char *label;
+  _WGPU_PTR_PADDING(0);
 } WGpuQueueDescriptor;
+
+VERIFY_STRUCT_SIZE(WGpuQueueDescriptor, 2*sizeof(uint32_t));
 
 /*
 dictionary GPUDeviceDescriptor : GPUObjectDescriptorBase {
     sequence<GPUFeatureName> requiredFeatures = [];
-    record<DOMString, GPUSize64> requiredLimits = {};
+    record<DOMString, (GPUSize64 or undefined)> requiredLimits = {};
     GPUQueueDescriptor defaultQueue = {};
 };
 */
 typedef struct WGpuDeviceDescriptor
 {
-  WGPU_FEATURES_BITFIELD requiredFeatures;
-  uint32_t _explicitPaddingFor8BytesAlignedSize; // alignof(WGpuSupportedLimits) is 64-bit, hence explicitly show a padding here.
   WGpuSupportedLimits requiredLimits;
   WGpuQueueDescriptor defaultQueue;
-  uint32_t _explicitPaddingFor8BytesAlignedSize2;
+  WGPU_FEATURES_BITFIELD requiredFeatures;
+  uint32_t unused_padding;
 } WGpuDeviceDescriptor;
 extern const WGpuDeviceDescriptor WGPU_DEVICE_DESCRIPTOR_DEFAULT_INITIALIZER;
 
@@ -463,7 +510,7 @@ GPUDevice includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuDevice;
 // Returns true if the given handle references a valid GPUDevice.
-EM_BOOL wgpu_is_device(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_device(WGpuObjectBase object);
 
 #define wgpu_device_get_features wgpu_adapter_or_device_get_features
 #define wgpu_device_supports_feature wgpu_adapter_or_device_supports_feature
@@ -471,9 +518,7 @@ EM_BOOL wgpu_is_device(WGpuObjectBase object);
 
 WGpuQueue wgpu_device_get_queue(WGpuDevice device);
 
-#ifdef __EMSCRIPTEN__
-void wgpu_device_tick(WGpuDevice device) __attribute__((deprecated("The function wgpu_device_tick() is not available when targeting the web. Presentation always occurs when yielding out from browser event loop.")));
-#else
+#ifndef __EMSCRIPTEN__
 void wgpu_device_tick(WGpuDevice device);
 #endif
 
@@ -557,14 +602,14 @@ GPUBuffer includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuBuffer;
 // Returns true if the given handle references a valid GPUBuffer.
-EM_BOOL wgpu_is_buffer(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_buffer(WGpuObjectBase object);
 
 // TODO: Add error status to map callback for when mapAsync() promise rejects.
 typedef void (*WGpuBufferMapCallback)(WGpuBuffer buffer, void *userData, WGPU_MAP_MODE_FLAGS mode, double_int53_t offset, double_int53_t size);
 #define WGPU_MAX_SIZE -1
 void wgpu_buffer_map_async(WGpuBuffer buffer, WGpuBufferMapCallback callback, void *userData, WGPU_MAP_MODE_FLAGS mode, double_int53_t offset _WGPU_DEFAULT_VALUE(0), double_int53_t size _WGPU_DEFAULT_VALUE(WGPU_MAX_SIZE));
 
-// Maps the given WGpuBuffer synchronously. Requires building with -sASYNCIFY=1 linker flag to work.
+// Maps the given WGpuBuffer synchronously. Requires building with -sJSPI=1 linker flag to work.
 void wgpu_buffer_map_sync(WGpuBuffer buffer, WGPU_MAP_MODE_FLAGS mode, double_int53_t offset _WGPU_DEFAULT_VALUE(0), double_int53_t size _WGPU_DEFAULT_VALUE(WGPU_MAX_SIZE));
 
 #define WGPU_BUFFER_GET_MAPPED_RANGE_FAILED ((double_int53_t)-1)
@@ -605,7 +650,7 @@ typedef struct WGpuBufferDescriptor
 {
   uint64_t size;
   WGPU_BUFFER_USAGE_FLAGS usage;
-  EM_BOOL mappedAtCreation; // Note: it is valid to set mappedAtCreation to true without MAP_READ or MAP_WRITE in usage. This can be used to set the buffer’s initial data.
+  WGPU_BOOL mappedAtCreation; // Note: it is valid to set mappedAtCreation to true without MAP_READ or MAP_WRITE in usage. This can be used to set the buffer’s initial data.
 } WGpuBufferDescriptor;
 
 /*
@@ -668,7 +713,7 @@ GPUTexture includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuTexture;
 // Returns true if the given handle references a valid GPUTexture.
-EM_BOOL wgpu_is_texture(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_texture(WGpuObjectBase object);
 // textureViewDesc: Can be null, in which case a default view is created.
 WGpuTextureView wgpu_texture_create_view(WGpuTexture texture, const WGpuTextureViewDescriptor *textureViewDesc _WGPU_DEFAULT_VALUE(0));
 // Same as above, but does not take any descriptor args.
@@ -694,8 +739,11 @@ dictionary GPUTextureDescriptor : GPUObjectDescriptorBase {
     sequence<GPUTextureFormat> viewFormats = [];
 };
 */
-typedef struct WGpuTextureDescriptor
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuTextureDescriptor
 {
+  WGPU_TEXTURE_FORMAT *viewFormats;
+  _WGPU_PTR_PADDING(0);
+  int numViewFormats;
   uint32_t width;
   uint32_t height; // default = 1;
   uint32_t depthOrArrayLayers; // default = 1;
@@ -704,8 +752,7 @@ typedef struct WGpuTextureDescriptor
   WGPU_TEXTURE_DIMENSION dimension; // default = WGPU_TEXTURE_DIMENSION_2D
   WGPU_TEXTURE_FORMAT format;
   WGPU_TEXTURE_USAGE_FLAGS usage;
-  int numViewFormats;
-  WGPU_TEXTURE_FORMAT *viewFormats;
+  uint32_t unused_padding;
 } WGpuTextureDescriptor;
 extern const WGpuTextureDescriptor WGPU_TEXTURE_DESCRIPTOR_DEFAULT_INITIALIZER;
 
@@ -748,13 +795,14 @@ GPUTextureView includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuTextureView;
 // Returns true if the given handle references a valid GPUTextureView.
-EM_BOOL wgpu_is_texture_view(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_texture_view(WGpuObjectBase object);
 
 
 /*
 dictionary GPUTextureViewDescriptor : GPUObjectDescriptorBase {
     GPUTextureFormat format;
     GPUTextureViewDimension dimension;
+    GPUTextureUsageFlags usage = 0;
     GPUTextureAspect aspect = "all";
     GPUIntegerCoordinate baseMipLevel = 0;
     GPUIntegerCoordinate mipLevelCount;
@@ -766,6 +814,10 @@ typedef struct WGpuTextureViewDescriptor
 {
   WGPU_TEXTURE_FORMAT format;
   WGPU_TEXTURE_VIEW_DIMENSION dimension;
+  // The allowed usages for the texture view. Must be a subset of the
+  // usage flags of the texture. If 0, defaults to the full set of
+  // usage flags of the texture.
+  WGPU_TEXTURE_USAGE_FLAGS usage; // default = 0
   WGPU_TEXTURE_ASPECT aspect; // default = WGPU_TEXTURE_ASPECT_ALL
   uint32_t baseMipLevel; // default = 0
   uint32_t mipLevelCount;
@@ -1049,7 +1101,7 @@ GPUExternalTexture includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuExternalTexture;
 // Returns true if the given handle references a valid GPUExternalTexture.
-EM_BOOL wgpu_is_external_texture(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_external_texture(WGpuObjectBase object);
 
 /*
 dictionary GPUExternalTextureDescriptor : GPUObjectDescriptorBase {
@@ -1075,7 +1127,7 @@ GPUSampler includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuSampler;
 // Returns true if the given handle references a valid GPUSampler.
-EM_BOOL wgpu_is_sampler(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_sampler(WGpuObjectBase object);
 
 /*
 dictionary GPUSamplerDescriptor : GPUObjectDescriptorBase {
@@ -1172,7 +1224,7 @@ GPUBindGroupLayout includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuBindGroupLayout;
 // Returns true if the given handle references a valid GPUBindGroupLayout.
-EM_BOOL wgpu_is_bind_group_layout(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_bind_group_layout(WGpuObjectBase object);
 
 /*
 dictionary GPUBindGroupLayoutDescriptor : GPUObjectDescriptorBase {
@@ -1240,7 +1292,7 @@ dictionary GPUBufferBindingLayout {
 typedef struct WGpuBufferBindingLayout
 {
   WGPU_BUFFER_BINDING_TYPE type;
-  EM_BOOL hasDynamicOffset;
+  int hasDynamicOffset;
   uint64_t minBindingSize;
 } WGpuBufferBindingLayout;
 extern const WGpuBufferBindingLayout WGPU_BUFFER_BINDING_LAYOUT_DEFAULT_INITIALIZER;
@@ -1297,7 +1349,7 @@ typedef struct WGpuTextureBindingLayout
 {
   WGPU_TEXTURE_SAMPLE_TYPE sampleType;
   WGPU_TEXTURE_VIEW_DIMENSION viewDimension;
-  EM_BOOL multisampled;
+  WGPU_BOOL multisampled;
 } WGpuTextureBindingLayout;
 extern const WGpuTextureBindingLayout WGPU_TEXTURE_BINDING_LAYOUT_DEFAULT_INITIALIZER;
 
@@ -1335,7 +1387,7 @@ dictionary GPUExternalTextureBindingLayout {
 */
 typedef struct WGpuExternalTextureBindingLayout
 {
-  uint32_t _dummyPadding; // Appease mixed C and C++ compilation to agree on non-zero struct size.
+  uint32_t unused_padding; // Appease mixed C and C++ compilation to agree on non-zero struct size.
 } WGpuExternalTextureBindingLayout;
 
 /*
@@ -1346,7 +1398,7 @@ GPUBindGroup includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuBindGroup;
 // Returns true if the given handle references a valid GPUBindGroup.
-EM_BOOL wgpu_is_bind_group(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_bind_group(WGpuObjectBase object);
 
 /*
 dictionary GPUBindGroupDescriptor : GPUObjectDescriptorBase {
@@ -1393,7 +1445,7 @@ GPUPipelineLayout includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuPipelineLayout;
 // Returns true if the given handle references a valid GPUPipelineLayout.
-EM_BOOL wgpu_is_pipeline_layout(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_pipeline_layout(WGpuObjectBase object);
 
 /*
 dictionary GPUPipelineLayoutDescriptor : GPUObjectDescriptorBase {
@@ -1411,7 +1463,7 @@ GPUShaderModule includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuShaderModule;
 // Returns true if the given handle references a valid GPUShaderModule.
-EM_BOOL wgpu_is_shader_module(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_shader_module(WGpuObjectBase object);
 
 typedef void (*WGpuGetCompilationInfoCallback)(WGpuShaderModule shaderModule, WGpuCompilationInfo *compilationInfo NOTNULL, void *userData);
 
@@ -1425,27 +1477,29 @@ dictionary GPUShaderModuleCompilationHint {
     (GPUPipelineLayout or GPUAutoLayoutMode) layout;
 };
 */
-typedef struct WGpuShaderModuleCompilationHint
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuShaderModuleCompilationHint
 {
   const char *entryPoint;
-  // WGPU_AUTO_LAYOUT_MODE
+  _WGPU_PTR_PADDING(0);
   WGpuPipelineLayout layout;  // Assign the special value WGPU_AUTO_LAYOUT_MODE_AUTO (default) to hint an automatically created pipeline object.
+  uint32_t unused_padding;
 } WGpuShaderModuleCompilationHint;
 extern const WGpuShaderModuleCompilationHint WGPU_SHADER_MODULE_COMPILATION_HINT_DEFAULT_INITIALIZER;
 
 /*
 dictionary GPUShaderModuleDescriptor : GPUObjectDescriptorBase {
     required USVString code;
-    object sourceMap;
     sequence<GPUShaderModuleCompilationHint> compilationHints = [];
 };
 */
-typedef struct WGpuShaderModuleDescriptor
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuShaderModuleDescriptor
 {
   const char *code;
-  // TODO: add sourceMap support
-  int numHints;
+  _WGPU_PTR_PADDING(0);
   const WGpuShaderModuleCompilationHint *hints;
+  _WGPU_PTR_PADDING(1);
+  int numHints;
+  uint32_t unused_padding;
 } WGpuShaderModuleDescriptor;
 
 /*
@@ -1473,10 +1527,11 @@ interface GPUCompilationMessage {
     readonly attribute unsigned long long length;
 };
 */
-typedef struct WGpuCompilationMessage
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuCompilationMessage
 {
   // A human-readable string containing the message generated during the shader compilation.
   char *message;
+  _WGPU_PTR_PADDING(0);
 
   // The severity level of the message.
   WGPU_COMPILATION_MESSAGE_TYPE type;
@@ -1503,7 +1558,11 @@ typedef struct WGpuCompilationMessage
   // The number of UTF-16 code units in the substring that message corresponds to. If the message
   // does not correspond with a substring then length must be 0.
   uint32_t length;
+
+  uint32_t unused_padding;
 } WGpuCompilationMessage;
+
+VERIFY_STRUCT_SIZE(WGpuCompilationMessage, 8*sizeof(uint32_t));
 
 /*
 [Exposed=(Window, DedicatedWorker), Serializable, SecureContext]
@@ -1514,8 +1573,12 @@ interface GPUCompilationInfo {
 typedef struct WGpuCompilationInfo
 {
   int numMessages;
+  uint32_t unused_padding;
   WGpuCompilationMessage* messages;
 } WGpuCompilationInfo;
+
+VERIFY_STRUCT_SIZE(WGpuCompilationInfo, 2*sizeof(uint32_t));
+
 // Deallocates a WGpuCompilationInfo object produced by a call to wgpu_free_compilation_info()
 #define wgpu_free_compilation_info(info) free((info))
 
@@ -1556,10 +1619,10 @@ dictionary GPUProgrammableStage {
 typedef double GPUPipelineConstantValue; // May represent WGSL’s bool, f32, i32, u32, and f16 if enabled.
 */
 
-typedef struct WGpuPipelineConstant
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuPipelineConstant
 {
   const char *name;
-  uint32_t _dummyPadding; // (would be automatically inserted by the compiler, but present here for explicity)
+  _WGPU_PTR_PADDING(0);
   double value;
 } WGpuPipelineConstant;
 
@@ -1573,7 +1636,7 @@ GPUComputePipeline includes GPUPipelineBase;
 */
 typedef WGpuObjectBase WGpuComputePipeline;
 // Returns true if the given handle references a valid GPUComputePipeline.
-EM_BOOL wgpu_is_compute_pipeline(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_compute_pipeline(WGpuObjectBase object);
 
 /*
 dictionary GPUComputePipelineDescriptor : GPUPipelineDescriptorBase {
@@ -1592,7 +1655,7 @@ GPURenderPipeline includes GPUPipelineBase;
 typedef WGpuObjectBase WGpuRenderPipeline;
 typedef WGpuObjectBase WGpuPipelineBase;
 // Returns true if the given handle references a valid GPURenderPipeline.
-EM_BOOL wgpu_is_render_pipeline(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_render_pipeline(WGpuObjectBase object);
 
 /*
 dictionary GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
@@ -1640,9 +1703,10 @@ typedef struct WGpuPrimitiveState
   WGPU_FRONT_FACE frontFace; // Defaults to WGPU_FRONT_FACE_CCW ('ccw')
   WGPU_CULL_MODE cullMode; // Defaults to WGPU_CULL_MODE_NONE ('none')
 
-  EM_BOOL unclippedDepth; // defaults to EM_FALSE.
+  WGPU_BOOL unclippedDepth; // defaults to false.
 } WGpuPrimitiveState;
 
+VERIFY_STRUCT_SIZE(WGpuPrimitiveState, 5*sizeof(uint32_t));
 /*
 enum GPUFrontFace {
     "ccw",
@@ -1678,24 +1742,34 @@ typedef struct WGpuMultisampleState
 {
   uint32_t count;
   uint32_t mask;
-  EM_BOOL alphaToCoverageEnabled;
+  WGPU_BOOL alphaToCoverageEnabled;
 } WGpuMultisampleState;
+
+VERIFY_STRUCT_SIZE(WGpuMultisampleState, 3*sizeof(uint32_t));
 
 /*
 dictionary GPUFragmentState: GPUProgrammableStage {
     required sequence<GPUColorTargetState?> targets;
 };
 */
-typedef struct WGpuFragmentState
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuFragmentState
 {
-  WGpuShaderModule module;
   const char *entryPoint;
-  int numTargets;
+  _WGPU_PTR_PADDING(0);
+
   const WGpuColorTargetState *targets;
-  int numConstants;
+  _WGPU_PTR_PADDING(1);
+
   const WGpuPipelineConstant *constants;
+  _WGPU_PTR_PADDING(2);
+
+  WGpuShaderModule module;
+  int numTargets;
+  int numConstants;
+  uint32_t unused_padding;
 } WGpuFragmentState;
 
+VERIFY_STRUCT_SIZE(WGpuFragmentState, 10*sizeof(uint32_t));
 /*
 dictionary GPUColorTargetState {
     required GPUTextureFormat format;
@@ -1761,23 +1835,31 @@ enum GPUBlendFactor {
     "src-alpha-saturated",
     "constant",
     "one-minus-constant"
+    "src1",
+    "one-minus-src1",
+    "src1-alpha",
+    "one-minus-src1-alpha",
 };
 */
 typedef int WGPU_BLEND_FACTOR;
-#define WGPU_BLEND_FACTOR_INVALID 0
-#define WGPU_BLEND_FACTOR_ZERO 1
-#define WGPU_BLEND_FACTOR_ONE 2
-#define WGPU_BLEND_FACTOR_SRC 3
-#define WGPU_BLEND_FACTOR_ONE_MINUS_SRC 4
-#define WGPU_BLEND_FACTOR_SRC_ALPHA 5
-#define WGPU_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA 6
-#define WGPU_BLEND_FACTOR_DST 7
-#define WGPU_BLEND_FACTOR_ONE_MINUS_DST 8
-#define WGPU_BLEND_FACTOR_DST_ALPHA 9
-#define WGPU_BLEND_FACTOR_ONE_MINUS_DST_ALPHA 10
-#define WGPU_BLEND_FACTOR_SRC_ALPHA_SATURATED 11
-#define WGPU_BLEND_FACTOR_CONSTANT 12
-#define WGPU_BLEND_FACTOR_ONE_MINUS_CONSTANT 13
+#define WGPU_BLEND_FACTOR_INVALID               0
+#define WGPU_BLEND_FACTOR_ZERO                  1
+#define WGPU_BLEND_FACTOR_ONE                   2
+#define WGPU_BLEND_FACTOR_SRC                   3
+#define WGPU_BLEND_FACTOR_ONE_MINUS_SRC         4
+#define WGPU_BLEND_FACTOR_SRC_ALPHA             5
+#define WGPU_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA   6
+#define WGPU_BLEND_FACTOR_DST                   7
+#define WGPU_BLEND_FACTOR_ONE_MINUS_DST         8
+#define WGPU_BLEND_FACTOR_DST_ALPHA             9
+#define WGPU_BLEND_FACTOR_ONE_MINUS_DST_ALPHA  10
+#define WGPU_BLEND_FACTOR_SRC_ALPHA_SATURATED  11
+#define WGPU_BLEND_FACTOR_CONSTANT             12
+#define WGPU_BLEND_FACTOR_ONE_MINUS_CONSTANT   13
+#define WGPU_BLEND_FACTOR_SRC1                 14
+#define WGPU_BLEND_FACTOR_ONE_MINUS_SRC1       15
+#define WGPU_BLEND_FACTOR_SRC1_ALPHA           16
+#define WGPU_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA 17
 
 /*
 enum GPUBlendOperation {
@@ -1833,6 +1915,7 @@ typedef struct WGpuStencilFaceState
   WGPU_STENCIL_OPERATION passOp;
 } WGpuStencilFaceState;
 
+VERIFY_STRUCT_SIZE(WGpuStencilFaceState, 4*sizeof(uint32_t));
 /*
 enum GPUStencilOperation {
     "keep",
@@ -1939,7 +2022,7 @@ typedef int WGPU_VERTEX_FORMAT;
 #define WGPU_VERTEX_FORMAT_SINT32X4        125
 #define WGPU_VERTEX_FORMAT_UNORM10_10_10_2 126
 
-#if _cplusplus >= 201103L
+#if __cplusplus >= 201103L
 static_assert(WGPU_VERTEX_FORMAT_FIRST_VALUE == WGPU_TEXTURE_FORMAT_LAST_VALUE + 1, "WGPU_VERTEX_FORMAT enums must have values after WGPU_TEXTURE_FORMAT values!");
 #endif
 
@@ -1959,15 +2042,24 @@ dictionary GPUVertexState: GPUProgrammableStage {
     sequence<GPUVertexBufferLayout?> buffers = [];
 };
 */
-typedef struct WGpuVertexState
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuVertexState
 {
-  WGpuShaderModule module;
   const char *entryPoint;
-  int numBuffers;
+  _WGPU_PTR_PADDING(0);
+
   const WGpuVertexBufferLayout *buffers;
-  int numConstants;
+  _WGPU_PTR_PADDING(1);
+
   const WGpuPipelineConstant *constants;
+  _WGPU_PTR_PADDING(2);
+
+  WGpuShaderModule module;
+  int numBuffers;
+  int numConstants;
+  uint32_t unused_padding;
 } WGpuVertexState;
+
+VERIFY_STRUCT_SIZE(WGpuVertexState, 10*sizeof(uint32_t));
 
 /*
 dictionary GPUVertexBufferLayout {
@@ -1976,14 +2068,16 @@ dictionary GPUVertexBufferLayout {
     required sequence<GPUVertexAttribute> attributes;
 };
 */
-typedef struct WGpuVertexBufferLayout
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuVertexBufferLayout
 {
-  int numAttributes;
   const WGpuVertexAttribute *attributes;
-  uint64_t arrayStride;
+  _WGPU_PTR_PADDING(0);
+  int numAttributes;
   WGPU_VERTEX_STEP_MODE stepMode;
-  uint32_t _unused64BitPadding;
+  uint64_t arrayStride;
 } WGpuVertexBufferLayout;
+
+VERIFY_STRUCT_SIZE(WGpuVertexBufferLayout, 6*sizeof(uint32_t));
 
 /*
 dictionary GPUVertexAttribute {
@@ -2008,7 +2102,7 @@ GPUCommandBuffer includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuCommandBuffer;
 // Returns true if the given handle references a valid GPUCommandBuffer.
-EM_BOOL wgpu_is_command_buffer(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_command_buffer(WGpuObjectBase object);
 
 /*
 dictionary GPUCommandBufferDescriptor : GPUObjectDescriptorBase {
@@ -2016,7 +2110,7 @@ dictionary GPUCommandBufferDescriptor : GPUObjectDescriptorBase {
 */
 typedef struct WGpuCommandBufferDescriptor
 {
-  uint32_t _dummyPadding; // Appease mixed C and C++ compilation to agree on non-zero struct size. Remove this once label is added
+  uint32_t unused_padding; // Appease mixed C and C++ compilation to agree on non-zero struct size. Remove this once label is added
   // TODO: add label
 } WGpuCommandBufferDescriptor;
 
@@ -2081,17 +2175,15 @@ GPUCommandEncoder includes GPUDebugCommandsMixin;
 */
 typedef WGpuObjectBase WGpuCommandEncoder;
 // Returns true if the given handle references a valid GPUCommandEncoder.
-EM_BOOL wgpu_is_command_encoder(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_command_encoder(WGpuObjectBase object);
 
 WGpuRenderPassEncoder wgpu_command_encoder_begin_render_pass(WGpuCommandEncoder commandEncoder, const WGpuRenderPassDescriptor *renderPassDesc NOTNULL);
-// Like above, but tiny code size path for the case when there is exactly one color and zero depth-stencil targets and no occlusion query set specified for the render pass.
-WGpuRenderPassEncoder wgpu_command_encoder_begin_render_pass_1color_0depth(WGpuCommandEncoder commandEncoder, const WGpuRenderPassDescriptor *renderPassDesc NOTNULL);
 WGpuComputePassEncoder wgpu_command_encoder_begin_compute_pass(WGpuCommandEncoder commandEncoder, const WGpuComputePassDescriptor *computePassDesc _WGPU_DEFAULT_VALUE(0));
 void wgpu_command_encoder_copy_buffer_to_buffer(WGpuCommandEncoder commandEncoder, WGpuBuffer source, double_int53_t sourceOffset, WGpuBuffer destination, double_int53_t destinationOffset, double_int53_t size);
 void wgpu_command_encoder_copy_buffer_to_texture(WGpuCommandEncoder commandEncoder, const WGpuImageCopyBuffer *source NOTNULL, const WGpuImageCopyTexture *destination NOTNULL, uint32_t copyWidth, uint32_t copyHeight _WGPU_DEFAULT_VALUE(1), uint32_t copyDepthOrArrayLayers _WGPU_DEFAULT_VALUE(1));
 void wgpu_command_encoder_copy_texture_to_buffer(WGpuCommandEncoder commandEncoder, const WGpuImageCopyTexture *source NOTNULL, const WGpuImageCopyBuffer *destination NOTNULL, uint32_t copyWidth, uint32_t copyHeight _WGPU_DEFAULT_VALUE(1), uint32_t copyDepthOrArrayLayers _WGPU_DEFAULT_VALUE(1));
 void wgpu_command_encoder_copy_texture_to_texture(WGpuCommandEncoder commandEncoder, const WGpuImageCopyTexture *source NOTNULL, const WGpuImageCopyTexture *destination NOTNULL, uint32_t copyWidth, uint32_t copyHeight _WGPU_DEFAULT_VALUE(1), uint32_t copyDepthOrArrayLayers _WGPU_DEFAULT_VALUE(1));
-void wgpu_command_encoder_clear_buffer(WGpuCommandEncoder commandEncoder, WGpuBuffer buffer, double_int53_t offset _WGPU_DEFAULT_VALUE(0), double_int53_t size _WGPU_DEFAULT_VALUE(WGPU_INFINITY));
+void wgpu_command_encoder_clear_buffer(WGpuCommandEncoder commandEncoder, WGpuBuffer buffer, double_int53_t offset _WGPU_DEFAULT_VALUE(0), double_int53_t size _WGPU_DEFAULT_VALUE(WGPU_MAX_SIZE));
 void wgpu_command_encoder_resolve_query_set(WGpuCommandEncoder commandEncoder, WGpuQuerySet querySet, uint32_t firstQuery, uint32_t queryCount, WGpuBuffer destination, double_int53_t destinationOffset);
 
 // GPUCommandEncoder and GPURenderBundleEncoder share the same finish() command.
@@ -2109,7 +2201,7 @@ dictionary GPUCommandEncoderDescriptor : GPUObjectDescriptorBase {
 */
 typedef struct WGpuCommandEncoderDescriptor
 {
-  uint32_t _dummyPadding; // Appease mixed C and C++ compilation to agree on non-zero struct size.
+  uint32_t unused_padding; // Appease mixed C and C++ compilation to agree on non-zero struct size.
 } WGpuCommandEncoderDescriptor;
 extern const WGpuCommandEncoderDescriptor WGPU_COMMAND_ENCODER_DESCRIPTOR_DEFAULT_INITIALIZER;
 
@@ -2133,7 +2225,7 @@ typedef struct WGpuImageCopyBuffer
   uint32_t bytesPerRow;
   uint32_t rowsPerImage;
   WGpuBuffer buffer;
-  uint32_t _explicitPaddingFor8BytesAlignedSize;
+  uint32_t unused_padding;
 } WGpuImageCopyBuffer;
 extern const WGpuImageCopyBuffer WGPU_IMAGE_COPY_BUFFER_DEFAULT_INITIALIZER;
 
@@ -2177,7 +2269,7 @@ interface mixin GPUBindingCommandsMixin {
 */
 typedef WGpuObjectBase WGpuBindingCommandsMixin;
 // Returns true if the given handle references a valid GPUBindingCommandsMixin. (one of: GPUComputePassEncoder, GPURenderPassEncoder, or GPURenderBundleEncoder)
-EM_BOOL wgpu_is_binding_commands_mixin(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_binding_commands_mixin(WGpuObjectBase object);
 void wgpu_encoder_set_bind_group(WGpuBindingCommandsMixin encoder, uint32_t index, WGpuBindGroup bindGroup, const uint32_t *dynamicOffsets _WGPU_DEFAULT_VALUE(0), uint32_t numDynamicOffsets _WGPU_DEFAULT_VALUE(0));
 
 // Some of the functions in GPURenderBundleEncoder, GPURenderPassEncoder and GPUComputePassEncoder are identical in implementation,
@@ -2201,7 +2293,7 @@ GPUComputePassEncoder includes GPUBindingCommandsMixin;
 */
 typedef WGpuObjectBase WGpuComputePassEncoder;
 // Returns true if the given handle references a valid GPUComputePassEncoder.
-EM_BOOL wgpu_is_compute_pass_encoder(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_compute_pass_encoder(WGpuObjectBase object);
 
 #define wgpu_compute_pass_encoder_set_pipeline wgpu_encoder_set_pipeline
 void wgpu_compute_pass_encoder_dispatch_workgroups(WGpuComputePassEncoder encoder, uint32_t workgroupCountX, uint32_t workgroupCountY _WGPU_DEFAULT_VALUE(1), uint32_t workgroupCountZ _WGPU_DEFAULT_VALUE(1));
@@ -2230,6 +2322,8 @@ typedef struct WGpuComputePassTimestampWrites
   int32_t endOfPassWriteIndex;       // Important! Specify -1 to not perform a write at end of pass. Setting 0 will write to index 0. Ignored if querySet == 0.
 } WGpuComputePassTimestampWrites;
 extern const WGpuComputePassTimestampWrites WGPU_COMPUTE_PASS_TIMESTAMP_WRITES_DEFAULT_INITIALIZER;
+
+VERIFY_STRUCT_SIZE(WGpuComputePassTimestampWrites, 3*sizeof(uint32_t));
 
 /*
 dictionary GPUComputePassDescriptor
@@ -2264,7 +2358,7 @@ interface mixin GPURenderCommandsMixin {
 // Deliberate API naming divergence: in upstream WebGPU API, there are base "mixin" classes
 typedef WGpuObjectBase WGpuRenderCommandsMixin;
 // Returns true if the given handle references a valid GPURenderCommandsMixin.
-EM_BOOL wgpu_is_render_commands_mixin(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_render_commands_mixin(WGpuObjectBase object);
 
 #define wgpu_render_commands_mixin_set_pipeline wgpu_encoder_set_pipeline
 void wgpu_render_commands_mixin_set_index_buffer(WGpuRenderCommandsMixin renderCommandsMixin, WGpuBuffer buffer, WGPU_INDEX_FORMAT indexFormat, double_int53_t offset _WGPU_DEFAULT_VALUE(0), double_int53_t size _WGPU_DEFAULT_VALUE(WGPU_MAX_SIZE));
@@ -2303,7 +2397,7 @@ GPURenderPassEncoder includes GPURenderCommandsMixin;
 */
 typedef WGpuObjectBase WGpuRenderPassEncoder;
 // Returns true if the given handle references a valid GPURenderPassEncoder.
-EM_BOOL wgpu_is_render_pass_encoder(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_render_pass_encoder(WGpuObjectBase object);
 
 void wgpu_render_pass_encoder_set_viewport(WGpuRenderPassEncoder encoder, float x, float y, float width, float height, float minDepth, float maxDepth);
 void wgpu_render_pass_encoder_set_scissor_rect(WGpuRenderPassEncoder encoder, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
@@ -2367,14 +2461,16 @@ typedef struct WGpuRenderPassDepthStencilAttachment
   float depthClearValue;
 
   WGPU_STORE_OP depthStoreOp;
-  EM_BOOL depthReadOnly;
+  WGPU_BOOL depthReadOnly;
 
   WGPU_LOAD_OP stencilLoadOp;  // Either WGPU_LOAD_OP_LOAD (== default, 0) or WGPU_LOAD_OP_CLEAR
   uint32_t stencilClearValue;
   WGPU_STORE_OP stencilStoreOp;
-  EM_BOOL stencilReadOnly;
+  WGPU_BOOL stencilReadOnly;
 } WGpuRenderPassDepthStencilAttachment;
 extern const WGpuRenderPassDepthStencilAttachment WGPU_RENDER_PASS_DEPTH_STENCIL_ATTACHMENT_DEFAULT_INITIALIZER;
+
+VERIFY_STRUCT_SIZE(WGpuRenderPassDepthStencilAttachment, 9*sizeof(uint32_t));
 
 /*
 enum GPULoadOp {
@@ -2415,7 +2511,7 @@ GPURenderBundle includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuRenderBundle;
 // Returns true if the given handle references a valid GPURenderBundle.
-EM_BOOL wgpu_is_render_bundle(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_render_bundle(WGpuObjectBase object);
 
 /*
 dictionary GPURenderBundleDescriptor : GPUObjectDescriptorBase {
@@ -2423,7 +2519,7 @@ dictionary GPURenderBundleDescriptor : GPUObjectDescriptorBase {
 */
 typedef struct WGpuRenderBundleDescriptor
 {
-  uint32_t _dummyPadding; // Appease mixed C and C++ compilation to agree on non-zero struct size. Remove this once label is added
+  uint32_t unused_padding; // Appease mixed C and C++ compilation to agree on non-zero struct size. Remove this once label is added
   // TODO add label
 } WGpuRenderBundleDescriptor;
 
@@ -2440,7 +2536,7 @@ GPURenderBundleEncoder includes GPURenderCommandsMixin;
 */
 typedef WGpuObjectBase WGpuRenderBundleEncoder;
 // Returns true if the given handle references a valid GPURenderBundleEncoder.
-EM_BOOL wgpu_is_render_bundle_encoder(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_render_bundle_encoder(WGpuObjectBase object);
 #define wgpu_render_bundle_encoder_finish wgpu_encoder_finish
 
 #define wgpu_render_bundle_encoder_set_bind_group wgpu_encoder_set_bind_group
@@ -2466,11 +2562,11 @@ dictionary GPURenderBundleEncoderDescriptor : GPURenderPassLayout {
 typedef struct WGpuRenderBundleEncoderDescriptor
 {
   int numColorFormats;
-  const WGPU_TEXTURE_FORMAT *colorFormats;
+  const WGPU_TEXTURE_FORMAT *colorFormats; // TODO: Wasm64
   WGPU_TEXTURE_FORMAT depthStencilFormat;
   uint32_t sampleCount;
-  EM_BOOL depthReadOnly;
-  EM_BOOL stencilReadOnly;
+  WGPU_BOOL depthReadOnly;
+  WGPU_BOOL stencilReadOnly;
 } WGpuRenderBundleEncoderDescriptor;
 
 /*
@@ -2502,7 +2598,7 @@ GPUQueue includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuQueue;
 // Returns true if the given handle references a valid GPUQueue.
-EM_BOOL wgpu_is_queue(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_queue(WGpuObjectBase object);
 
 // Submits one command buffer to the given queue for rendering. Then, the command buffer is destroyed. (as if calling wgpu_object_destroy() on it)
 // N.b. if you start recording a command buffer and choose not to submit it, then you must manually call wgpu_object_destroy() on it to avoid
@@ -2535,7 +2631,7 @@ GPUQuerySet includes GPUObjectBase;
 */
 typedef WGpuObjectBase WGpuQuerySet;
 // Returns true if the given handle references a valid GPUQuerySet.
-EM_BOOL wgpu_is_query_set(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_query_set(WGpuObjectBase object);
 // Getters for retrieving query set properties:
 WGPU_QUERY_TYPE wgpu_query_set_type(WGpuQuerySet querySet);
 uint32_t wgpu_query_set_count(WGpuQuerySet querySet);
@@ -2563,6 +2659,7 @@ typedef int WGPU_QUERY_TYPE;
 #define WGPU_QUERY_TYPE_OCCLUSION 1
 #define WGPU_QUERY_TYPE_TIMESTAMP 2
 
+// TODO: Remove, GPUPipelineStatisticName no longer exists
 /*
 enum GPUPipelineStatisticName {
     "timestamp"
@@ -2585,7 +2682,7 @@ interface GPUCanvasContext {
 */
 typedef WGpuObjectBase WGpuCanvasContext;
 // Returns true if the given handle references a valid GPUCanvasContext.
-EM_BOOL wgpu_is_canvas_context(WGpuObjectBase object);
+WGPU_BOOL wgpu_is_canvas_context(WGpuObjectBase object);
 
 // TODO: Add char *wgpu_canvas_context_get_canvas_selector_id() for 'canvas' member property, as both CSS ID selector and object ID.
 
@@ -2686,7 +2783,7 @@ enum GPUErrorFilter {
 };
 */
 typedef int WGPU_ERROR_FILTER;
-#define WGPU_ERROR_FILTER_INVALID       0
+#define WGPU_ERROR_FILTER_NO_ERROR      0
 #define WGPU_ERROR_FILTER_OUT_OF_MEMORY 1
 #define WGPU_ERROR_FILTER_VALIDATION    2
 #define WGPU_ERROR_FILTER_INTERNAL      3
@@ -2699,9 +2796,17 @@ partial interface GPUDevice {
 */
 void wgpu_device_push_error_scope(WGpuDevice device, WGPU_ERROR_FILTER filter);
 
-typedef void (*WGpuDeviceErrorCallback)(WGpuDevice device, WGPU_ERROR_TYPE errorType, const char *errorMessage NOTNULL, void *userData);
+// Callback type for popped error scopes.
+// errorType: The type of error that occurred, or WGPU_ERROR_FILTER_NO_ERROR.
+// errorMessage: Points to string message of the error, or null pointer if no error occurred.
+typedef void (*WGpuDeviceErrorCallback)(WGpuDevice device, WGPU_ERROR_TYPE errorType, const char *errorMessage, void *userData);
 void wgpu_device_pop_error_scope_async(WGpuDevice device, WGpuDeviceErrorCallback callback, void *userData);
 
+// Synchronously pop an error scope.
+// Returns the type of an error that occurred, or WGPU_ERROR_FILTER_NO_ERROR if no error.
+// dstErrorMessage: A pointer to a buffer area to receive the error message, if one exists.
+// errorMessageLength: Number of bytes that can be written to dstErrorMessage.
+WGPU_ERROR_TYPE wgpu_device_pop_error_scope_sync(WGpuDevice device, char *dstErrorMessage, int errorMessageLength);
 /*
 [
     Exposed=(Window, DedicatedWorker)
@@ -2800,25 +2905,50 @@ typedef struct WGpuOrigin3D
 // Sorted struct definitions for proper C parsing order:
 
 /*
+enum GPUCanvasToneMappingMode {
+    "standard",
+    "extended",
+};
+*/
+typedef int WGPU_CANVAS_TONE_MAPPING_MODE;
+#define WGPU_CANVAS_TONE_MAPPING_MODE_INVALID  0
+#define WGPU_CANVAS_TONE_MAPPING_MODE_STANDARD 1
+#define WGPU_CANVAS_TONE_MAPPING_MODE_EXTENDED 2
+
+/*
+dictionary GPUCanvasToneMapping {
+  GPUCanvasToneMappingMode mode = "standard";
+};
+*/
+typedef struct WGpuCanvasToneMapping
+{
+  WGPU_CANVAS_TONE_MAPPING_MODE mode; // = 'standard';
+} WGpuCanvasToneMapping;
+extern const WGpuCanvasToneMapping WGPU_CANVAS_TONE_MAPPING_DEFAULT_INITIALIZER;
+
+/*
 dictionary GPUCanvasConfiguration : GPUObjectDescriptorBase {
     required GPUDevice device;
     required GPUTextureFormat format;
     GPUTextureUsageFlags usage = 0x10;  // GPUTextureUsage.RENDER_ATTACHMENT
     sequence<GPUTextureFormat> viewFormats = [];
     PredefinedColorSpace colorSpace = "srgb";
+    GPUCanvasToneMapping toneMapping = {};
     GPUCanvasAlphaMode alphaMode = "opaque";
-    GPUExtent3D size;
 };
 */
-typedef struct WGpuCanvasConfiguration
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuCanvasConfiguration
 {
   WGpuDevice device;
   WGPU_TEXTURE_FORMAT format;
   WGPU_TEXTURE_USAGE_FLAGS usage;
   int numViewFormats;
   WGPU_TEXTURE_FORMAT *viewFormats;
+  _WGPU_PTR_PADDING(0);
   HTML_PREDEFINED_COLOR_SPACE colorSpace;
+  WGpuCanvasToneMapping toneMapping;
   WGPU_CANVAS_ALPHA_MODE alphaMode;
+  uint32_t unused_padding;
 } WGpuCanvasConfiguration;
 extern const WGpuCanvasConfiguration WGPU_CANVAS_CONFIGURATION_DEFAULT_INITIALIZER;
 
@@ -2848,15 +2978,15 @@ dictionary GPURenderPassDescriptor : GPUObjectDescriptorBase {
     GPUSize64 maxDrawCount = 50000000;
 };
 */
-typedef struct WGpuRenderPassDescriptor
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuRenderPassDescriptor
 {
-  int numColorAttachments;
+  double_int53_t maxDrawCount; // If set to zero, the default value (50000000) will be used.
   const WGpuRenderPassColorAttachment *colorAttachments;
+  _WGPU_PTR_PADDING(0);
+  int numColorAttachments;
   WGpuRenderPassDepthStencilAttachment depthStencilAttachment;
   WGpuQuerySet occlusionQuerySet;
-  double_int53_t maxDrawCount; // If set to zero, the default value (50000000) will be used.
   WGpuRenderPassTimestampWrites timestampWrites;
-  uint32_t unused_padding;
 } WGpuRenderPassDescriptor;
 extern const WGpuRenderPassDescriptor WGPU_RENDER_PASS_DESCRIPTOR_DEFAULT_INITIALIZER;
 
@@ -2868,16 +2998,18 @@ typedef struct WGpuRenderPassColorAttachment
 
   WGPU_STORE_OP storeOp; // Required, be sure to set to WGPU_STORE_OP_STORE (default) or WGPU_STORE_OP_DISCARD
   WGPU_LOAD_OP loadOp; // Either WGPU_LOAD_OP_LOAD (== default, 0) or WGPU_LOAD_OP_CLEAR.
-  int dummyDoublePadding; // unused, added to pad the doubles in clearValue to 8-byte multiples.
+  uint32_t unused_padding; // unused, added to pad the doubles in clearValue to 8-byte multiples.
   WGpuColor clearValue; // Used if loadOp == WGPU_LOAD_OP_CLEAR. Default value = { r = 0.0, g = 0.0, b = 0.0, a = 1.0 }
 } WGpuRenderPassColorAttachment;
 extern const WGpuRenderPassColorAttachment WGPU_RENDER_PASS_COLOR_ATTACHMENT_DEFAULT_INITIALIZER;
+
+VERIFY_STRUCT_SIZE(WGpuRenderPassColorAttachment, 14*sizeof(uint32_t));
 
 typedef struct WGpuImageCopyExternalImage
 {
   WGpuObjectBase source; // must point to a WGpuImageBitmap (could also point to a HTMLVideoElement, HTMLCanvasElement or OffscreenCanvas, but those are currently unimplemented)
   WGpuOrigin2D origin;
-  EM_BOOL flipY; // defaults to EM_FALSE.
+  WGPU_BOOL flipY; // defaults to false.
 } WGpuImageCopyExternalImage;
 extern const WGpuImageCopyExternalImage WGPU_IMAGE_COPY_EXTERNAL_IMAGE_DEFAULT_INITIALIZER;
 
@@ -2899,7 +3031,7 @@ typedef struct WGpuImageCopyTextureTagged
   WGPU_TEXTURE_ASPECT aspect;
 
   HTML_PREDEFINED_COLOR_SPACE colorSpace; // = "srgb";
-  EM_BOOL premultipliedAlpha; // = false;
+  WGPU_BOOL premultipliedAlpha; // = false;
 } WGpuImageCopyTextureTagged;
 extern const WGpuImageCopyTextureTagged WGPU_IMAGE_COPY_TEXTURE_TAGGED_DEFAULT_INITIALIZER;
 
@@ -2909,7 +3041,7 @@ typedef struct WGpuDepthStencilState
   // to disable depth+stenciling altogether.
   WGPU_TEXTURE_FORMAT format;
 
-  EM_BOOL depthWriteEnabled;
+  WGPU_BOOL depthWriteEnabled;
   WGPU_COMPARE_FUNCTION depthCompare;
 
   uint32_t stencilReadMask;
@@ -2923,8 +3055,10 @@ typedef struct WGpuDepthStencilState
   WGpuStencilFaceState stencilBack;
 
   // Enable depth clamping (requires "depth-clamping" feature)
-  EM_BOOL clampDepth;
+  WGPU_BOOL clampDepth;
 } WGpuDepthStencilState;
+
+VERIFY_STRUCT_SIZE(WGpuDepthStencilState, 17*sizeof(uint32_t));
 
 typedef struct WGpuBlendState
 {
@@ -2945,14 +3079,16 @@ typedef struct WGpuColorTargetState
 } WGpuColorTargetState;
 extern const WGpuColorTargetState WGPU_COLOR_TARGET_STATE_DEFAULT_INITIALIZER;
 
-typedef struct WGpuRenderPipelineDescriptor
+typedef struct _WGPU_ALIGN_TO_64BITS WGpuRenderPipelineDescriptor
 {
   WGpuVertexState vertex;
   WGpuPrimitiveState primitive;
   WGpuDepthStencilState depthStencil;
   WGpuMultisampleState multisample;
+  uint32_t unused_padding;
   WGpuFragmentState fragment;
   WGpuPipelineLayout layout; // Set to special value WGPU_AUTO_LAYOUT_MODE_AUTO to specify that automatic layout should be used.
+  uint32_t unused_padding2;
 } WGpuRenderPipelineDescriptor;
 extern const WGpuRenderPipelineDescriptor WGPU_RENDER_PIPELINE_DESCRIPTOR_DEFAULT_INITIALIZER;
 
@@ -2961,7 +3097,7 @@ typedef struct WGpuBindGroupLayoutEntry
   uint32_t binding;
   WGPU_SHADER_STAGE_FLAGS visibility;
   WGPU_BIND_GROUP_LAYOUT_TYPE type;
-  uint32_t _dummyPadding64Bits; // Explicitly present to pad 'buffer' to 64-bit alignment
+  uint32_t unused_padding; // Explicitly present to pad 'buffer' to 64-bit alignment
 
   union {
     WGpuBufferBindingLayout buffer;
@@ -2981,8 +3117,72 @@ typedef WGpuObjectBase WGpuImageBitmap;
 // Called when the ImageBitmap finishes loading. If loading fails, this callback will be called with width==height==0.
 typedef void (*WGpuLoadImageBitmapCallback)(WGpuImageBitmap bitmap, int width, int height, void *userData);
 
-void wgpu_load_image_bitmap_from_url_async(const char *url NOTNULL, EM_BOOL flipY, WGpuLoadImageBitmapCallback callback, void *userData);
+void wgpu_load_image_bitmap_from_url_async(const char *url NOTNULL, WGPU_BOOL flipY, WGpuLoadImageBitmapCallback callback, void *userData);
 
+// This function is available when building with JSPI enabled. It performs three things:
+// 1) presents all canvases that have been rendered to from the current scope of execution.
+// 2) yields back to browser's event loop with JSPI, so processes all pending browser events (keyboard, mouse, etc.)
+// 3) sleeps the calling thread until the next requestAnimationFrame event.
+void wgpu_present_all_rendering_and_wait_for_next_animation_frame(void);
+
+#ifdef __EMSCRIPTEN__
+// Creates a new OffscreenCanvas object that is not associated with any HTML Canvas element on the web page.
+// Use this function to perform offline background rendering.
+// This function can be called directly in a Wasm Worker/pthread. (i.e. one does not need to call it in a main
+// thread and then post it to a Worker, although that is also possible)
+// id: A custom ID number that you will use in other functions to refer to this Offscreen Canvas. You can
+//     choose this ID any way you want, i.e. up to you to make it unique across multiple OffscreenCanvases you might create.
+//     Value 0 is not a valid ID to assign.
+// Call wgpuOffscreenCanvases[offscreenCanvasId].convertToBlob() or wgpuOffscreenCanvases[offscreenCanvasId].transferToImageBitmap()
+// in hand-written JavaScript code to access the result of the rendering.
+// Note that if you want to render to a visible Canvas on a web page from a background Worker, do not call this function,
+// but instead call canvas_transfer_control_to_offscreen(). See samples/offscreen_canvas/offscreen_canvas.c for a full example.
+void offscreen_canvas_create(OffscreenCanvasId id, int width, int height);
+
+// Converts the given Canvas in HTML DOM (located via a given CSS selector) to be rendered via an OffscreenCanvas,
+// by calling .transferControlToOffscreen() on it. Calling this function creates a new OffscreenCanvas object.
+// Call this function at most once for any given HTML Canvas element.
+// There is no browser API to undo the effects of this call (except to delete and recreate a new Canvas element)
+// id: A custom ID to assign to the newly created OffscreenCanvas object, like with offscreen_canvas_create().
+void canvas_transfer_control_to_offscreen(const char *canvasSelector NOTNULL, OffscreenCanvasId id);
+
+// Transfers the ownership of the given OffscreenCanvas to the given Wasm Worker.
+// id: The ID of an OffscreenCanvas created via canvas_transfer_control_to_offscreen().
+// worker: The ID of a Wasm Worker created e.g. via emscripten_malloc_wasm_worker().
+//         Pass special ID worker=EMSCRIPTEN_WASM_WORKER_ID_PARENT her to transfer ownership
+//         of an OffscreenCanvas back from the current Worker thread its parent thread (the main thread).
+// Note: After calling this function, the Offscreen Canvas no longer exists in the current thread, the effect being
+//       as if offscreen_canvas_destroy(id) had been called in this thread.
+void offscreen_canvas_post_to_worker(OffscreenCanvasId id, emscripten_wasm_worker_t worker);
+
+// Same as above, but used when operating with pthreads.
+void offscreen_canvas_post_to_pthread(OffscreenCanvasId id, pthread_t pthread);
+
+// Returns true if the given Offscreen Canvas ID is valid and is owned by the calling thread.
+// If an Offscreen Canvas with the given ID exists in the ownership of another thread, this function will return
+// false.
+WGPU_BOOL offscreen_canvas_is_valid(OffscreenCanvasId id);
+
+// Releases reference to the given Offscreen Canvas in the calling thread, if one exists. A no-op if no canvas
+// with given ID exists.
+void offscreen_canvas_destroy(OffscreenCanvasId id);
+
+// These functions return the width/height of render surface the given OffscreenCanvas element.
+// The OffscreenCanvas must be owned by the calling thread.
+// Note that this size does not refer to the visible size of the Canvas. The visible size is governed by a CSS
+// style on the HTML page (i.e. canvas.style.width and canvas.style.height JS properties). To adjust the visible
+// size on the HTML page, see the Emscripten function emscripten_get_element_css_size(). (which must be called
+// on the main thread, and not on the Worker thread)
+int offscreen_canvas_width(OffscreenCanvasId id);
+int offscreen_canvas_height(OffscreenCanvasId id);
+void offscreen_canvas_size(OffscreenCanvasId id, int *outWidth NOTNULL, int *outHeight NOTNULL);
+
+// Sets the render surface size of the given OffscreenCanvas element.
+// The OffscreenCanvas must be owned by the calling thread. Note this is not the visible CSS size, see above.
+// Use the function emscripten_set_element_css_size() on the main thread to set the visible size.
+void offscreen_canvas_set_size(OffscreenCanvasId id, int width, int height);
+
+#endif
 
 #ifdef __cplusplus
 } // ~extern "C"
