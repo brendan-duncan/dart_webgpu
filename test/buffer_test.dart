@@ -37,7 +37,8 @@ void main() async {
             mapped = true;
           });
       while (!mapped) {
-        d.queue.submit(); // process pending commands
+        d.tick(); // process pending commands
+        d.queue.submit();
       }
       expect(b.mappedState, GPUMappedState.mapped);
       final data = b.getMappedRange().as<Float32List>();

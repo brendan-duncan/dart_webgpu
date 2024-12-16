@@ -39,6 +39,7 @@ EXPORTS
     wgpu_device_create_command_encoder_simple
     wgpu_device_create_render_bundle_encoder
     wgpu_device_create_query_set
+    wgpu_device_tick
     wgpu_is_buffer
     wgpu_buffer_map_async
     wgpu_buffer_map_sync

@@ -85,20 +85,24 @@ class GPUDevice extends GPUObjectBase<wgpu.WGpuDevice> {
     limits = GPULimits.fromWgpu(l);
     calloc.free(l);
 
-    final cb = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
-            Pointer<Void>)>(_deviceLostCB);
+    //final cb = Pointer.fromFunction<
+        //Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
+            //Pointer<Void>)>(_deviceLostCB);
 
     //libwebgpu.wgpu_device_set_lost_callback(object, cb, object.cast());
 
-    _errorCallbackData[object.cast<Void>()] = _DeviceCallbackData(this);
+    //_errorCallbackData[object.cast<Void>()] = _DeviceCallbackData(this);
 
-    final fn = Pointer.fromFunction<
-        Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
-            Pointer<Void>)>(_uncapturedErrorCB);
+    //final fn = Pointer.fromFunction<
+        //Void Function(Pointer<wgpu.WGpuDawnObject>, Int, Pointer<Char>,
+            //Pointer<Void>)>(_uncapturedErrorCB);
 
-    libwebgpu.wgpu_device_set_uncapturederror_callback(
-        object, fn, object.cast());
+    //libwebgpu.wgpu_device_set_uncapturederror_callback(
+        //object, fn, object.cast());
+  }
+
+  void tick() {
+    libwebgpu.wgpu_device_tick(object);
   }
 
   /// Create a [GPUBuffer].
